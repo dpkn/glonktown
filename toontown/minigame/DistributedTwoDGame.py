@@ -139,8 +139,7 @@ class DistributedTwoDGame(DistributedMinigame):
                 toon.hideName()
                 toon.startSmooth()
                 toon.startLookAround()
-                distCNP = toon.find('**/distAvatarCollNode*')
-                distCNP.node().setIntoCollideMask(BitMask32.allOff())
+                toon.stashBodyCollisions()
                 toonSD = TwoDGameToonSD.TwoDGameToonSD(avId, self)
                 self.toonSDs[avId] = toonSD
                 toonSD.enter()
@@ -256,6 +255,11 @@ class DistributedTwoDGame(DistributedMinigame):
         del self.twoDWalk
         self.twoDDrive = None
         del self.twoDDrive
+
+        for avId in self.remoteAvIdList:
+            toon = self.getAvatar(avId)
+            if toon:
+                toon.unstashBodyCollisions()
         return
 
     def exitCleanup(self):
