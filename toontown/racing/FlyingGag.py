@@ -1,4 +1,5 @@
 from panda3d.core import *
+from panda3d.physics import ForceNode, LinearVectorForce, ActorNode
 from direct.gui.DirectGui import *
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
