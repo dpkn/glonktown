@@ -65,12 +65,11 @@ class ToontownLoadingScreen:
         if self.backdrop is not None:
             self.backdrop.removeNode()
         aspect = max(base.getAspectRatio(), 1.0)
-        h = max(1.05, (aspect + 0.15) / 2.0)
-        w = 2.0 * h
+        half = max(1.05, aspect + 0.05)
         cm = CardMaker('loading-backdrop')
-        cm.setFrame(-w, w, -h, h)
+        cm.setFrame(-half, half, -half, half)
         self.backdrop = self.gui.attachNewNode(cm.generate(), -10)
-        tex = loader.loadTexture('phase_3/maps/pat_sky_backdrop.jpg')
+        tex = loader.loadTexture('phase_3/maps/loading_bg_clouds.jpg')
         tex.setWrapU(SamplerState.WM_clamp)
         tex.setWrapV(SamplerState.WM_clamp)
         self.backdrop.setTexture(tex)

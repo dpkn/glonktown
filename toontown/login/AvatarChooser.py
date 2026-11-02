@@ -71,12 +71,11 @@ class AvatarChooser(StateData.StateData):
         try:
             self._clearBackdrop()
             aspect = max(base.getAspectRatio(), 1.0)
-            h = max(1.05, (aspect + 0.15) / 2.0)           # half height of the picture in aspect2d units (the screen is -1..1 tall, -aspect..aspect wide)
-            w = 2.0 * h                                     # the picture is 2:1, so its half width is twice its half height
+            half = max(1.05, aspect + 0.05)                 # the stock sky picture is square: cover the whole screen (-aspect..aspect wide, -1..1 tall)
             cm = CardMaker('pat-backdrop')
-            cm.setFrame(-w, w, -h, h)
+            cm.setFrame(-half, half, -half, half)
             bg = aspect2d.attachNewNode(cm.generate(), -100)
-            tex = loader.loadTexture('phase_3/maps/pat_sky_backdrop.jpg')
+            tex = loader.loadTexture('phase_3/maps/loading_bg_clouds.jpg')
             tex.setMinfilter(SamplerState.FT_linear)
             tex.setMagfilter(SamplerState.FT_linear)
             tex.setWrapU(SamplerState.WM_clamp)
