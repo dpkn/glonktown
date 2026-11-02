@@ -96,6 +96,7 @@ class ToontownClientRepository(OTPClientRepository.OTPClientRepository):
         self.magicWordManager = None
         self.friendsMap = {}
         self.__petDetailsPending = set()    # doodle ids whose name and look have been asked for
+        self.__petHandleWaiters = []        # callbacks waiting for our doodle's handle (see getPetHandle)
         self.friendsOnline = {}
         self.friendsMapPending = 0
         self.friendsListError = 0
@@ -937,15 +938,37 @@ class ToontownClientRepository(OTPClientRepository.OTPClientRepository):
         self.toonPresence.up_requestPetDetails(doId)
         taskMgr.doMethodLater(10.0, self.__petDetailsTimedOut, 'petDetails-%d' % doId, extraArgs=[doId])
 
+    def getPetHandle(self, callback):
+        """Calls callback with our doodle's handle (name and look), or None if the server does not answer. On Astron PetDetail gets
+        nothing back for a doodle we cannot see, so screens that only need the name and look (returning it at the pet shop) use this."""
+        doId = base.localAvatar.getPetId()
+        handle = self.friendsMap.get(doId) if doId else None
+        if not doId or isinstance(handle, (PetHandle.PetDetailsHandle, PetHandle.PetHandle)):
+            callback(handle)
+            return
+        self.__petHandleWaiters.append(callback)
+        self.addPetToFriendsMap()
+
+    def __answerPetHandleWaiters(self, handle):
+        waiters, self.__petHandleWaiters = self.__petHandleWaiters, []
+        for callback in waiters:
+            try:
+                callback(handle)
+            except Exception:
+                self.notify.warning('a doodle handle callback failed: %s' % traceback.format_exc())
+
     def __petDetailsTimedOut(self, doId):
         self.__petDetailsPending.discard(doId)
+        self.__answerPetHandleWaiters(None)
 
     def handlePetDetailsResponse(self, petId, code, name, look):
         taskMgr.remove('petDetails-%d' % petId)
         self.__petDetailsPending.discard(petId)
         if code or not hasattr(base, 'localAvatar') or petId != base.localAvatar.getPetId():
+            self.__answerPetHandleWaiters(None)
             return
         self.friendsMap[petId] = PetHandle.PetDetailsHandle(petId, name, look, base.localAvatar.doId, self)
+        self.__answerPetHandleWaiters(self.friendsMap[petId])
         messenger.send('friendsListChanged')
 
     def handleGetFriendsList(self, di):

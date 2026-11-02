@@ -254,11 +254,15 @@ class PetshopGUI(DirectObject):
         def __init__(self, doneEvent):
 
             def showDialog(avatar):
+                if self.gone:
+                    return                    # the clerk's screen closed before the doodle's details came back
                 model = loader.loadModel('phase_4/models/gui/ReturnPet')
                 modelPos = (0, 0, -0.3)
                 modelScale = (0.055, 0.055, 0.055)
                 base.r = self
-                DirectFrame.__init__(self, relief=None, state='normal', geom=model, geom_scale=modelScale, frameSize=(-1, 1, -1, 1), pos=modelPos, text=TTLocalizer.PetshopReturnConfirm % avatar.getName(), text_wordwrap=12, text_scale=TTLocalizer.PGUIreturnConfirm, text_pos=(0, 0.45), text_fg=text2Color)
+                # avatar is None when the server sent nothing back: still ask, by a plain name and without the picture
+                name = avatar.getName() if avatar else 'your doodle'
+                DirectFrame.__init__(self, relief=None, state='normal', geom=model, geom_scale=modelScale, frameSize=(-1, 1, -1, 1), pos=modelPos, text=TTLocalizer.PetshopReturnConfirm % name, text_wordwrap=12, text_scale=TTLocalizer.PGUIreturnConfirm, text_pos=(0, 0.45), text_fg=text2Color)
                 self.initialiseoptions(PetshopGUI.ReturnPetDlg)
                 okImageList = (model.find('**/CheckButtonUp'), model.find('**/CheckButtonDown'), model.find('**/CheckRollover'))
                 cancelImageList = (model.find('**/CancelButtonUp'), model.find('**/CancelButtonDown'), model.find('**/CancelRollover'))
@@ -268,26 +272,38 @@ class PetshopGUI(DirectObject):
                 self.okButton = DirectButton(parent=self, relief=None, image=okImageList, geom=checkIcon, scale=modelScale, text=('', TTLocalizer.PetshopReturn), text_pos=(5.8, 4.4), text_scale=0.7, pressEffect=False, command=lambda : messenger.send(doneEvent, [1]))
                 self.petView = self.attachNewNode('petView')
                 self.petView.setPos(-0.15, 0, 0.8)
-                self.petModel = Pet.Pet(forGui=1)
-                self.petModel.setDNA(avatar.getDNA())
-                self.petModel.fitAndCenterHead(0.395, forGui=1)
-                self.petModel.reparentTo(self.petView)
-                self.petModel.setH(130)
-                self.petModel.enterNeutralSad()
+                self.petModel = None
+                if avatar:
+                    self.petModel = Pet.Pet(forGui=1)
+                    self.petModel.setDNA(avatar.getDNA())
+                    self.petModel.fitAndCenterHead(0.395, forGui=1)
+                    self.petModel.reparentTo(self.petView)
+                    self.petModel.setH(130)
+                    self.petModel.enterNeutralSad()
                 model.removeNode()
                 self.initialized = True
                 return
 
             self.initialized = False
-            self.petPanel = PetDetail.PetDetail(base.localAvatar.getPetId(), showDialog)
+            self.gone = False
+            self.petPanel = None
+            if __astron__:
+                # Astron has no way to fill in a doodle the client cannot see (PetDetail gets nothing back and the dialog never
+                # opened): use the name and look the UberDOG's ToonPresence reads from the database
+                base.cr.getPetHandle(showDialog)
+            else:
+                self.petPanel = PetDetail.PetDetail(base.localAvatar.getPetId(), showDialog)
 
         def destroy(self):
+            self.gone = True
             if self.initialized:
-                self.petPanel.avatar.disable()
-                self.petPanel.avatar.delete()
-                self.petPanel.avatar = None
-                self.PetPanel = None
-                self.petModel.delete()
+                if self.petPanel:
+                    self.petPanel.avatar.disable()
+                    self.petPanel.avatar.delete()
+                    self.petPanel.avatar = None
+                    self.PetPanel = None
+                if self.petModel:
+                    self.petModel.delete()
                 DirectFrame.destroy(self)
             return
 

@@ -5,6 +5,8 @@ from toontown.toonbase import ToontownGlobals
 from direct.interval.IntervalGlobal import *
 from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.PyDatagramIterator import PyDatagramIterator
+# the datagram types for a placed item's position: not in panda3d.core, so without this every save of a house's furniture failed
+from panda3d.direct import STInt8, STInt16
 import sys
 CatalogReverseType = None
 CatalogItemVersion = 8
