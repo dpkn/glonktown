@@ -21,8 +21,10 @@ changes (the first section). `git log 2b366a2..glonktown` in `server/` lists the
   chat (arrow keys or WASD presets), and a Smooth Animations switch (on by default, as before).
 - **Times** are Amsterdam's (`TTLocalizer.TimeZone`, and `TZ` in the container), so holidays follow the host's date.
 - The loading and pick-a-toon screens use the stock cloud sky (`loading_bg_clouds.jpg`).
-- **The page** is called Glonktown; the server choice card, the community links and the credit line are gone. nginx passes each
-  guest's own address on, so the bridge's per-address connection limit is per device on a LAN.
+- **The page** is called Glonktown; the server choice card, the community links and the credit line are gone.
+- **Connection limits for a party.** Docker Desktop on a Mac hides each guest's own address (every connection arrives from its
+  gateway), so the bridge's per-address limits would be shared by everyone. They are settings now (`MAX_PER_IP`,
+  `MAX_NEW_PER_MIN`, and `CLOG_PER_HOUR` for crash reports), set for the whole party in `docker/docker-compose.yml`.
 
 ## Server
 

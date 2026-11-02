@@ -90,8 +90,9 @@ while it was written, but the server using it instead of the compiled library is
 ### 2.3 The network
 
 Docker publishes the container's port 80 as port 7380 on the Mac, and guests open `http://<the Mac's address>:7380/play/`. It
-is plain HTTP on the home network: nothing is exposed to the internet, and nothing must be (section 3 explains why). nginx passes
-each guest's own address to the bridge and the sign-in service, so their per-address limits apply per device.
+is plain HTTP on the home network: nothing is exposed to the internet, and nothing must be (section 3 explains why). Docker Desktop
+hides each guest's own address (every connection arrives from its gateway), so the bridge's and the sign-in service's
+per-address limits count all guests together; `docker/docker-compose.yml` sets them for the whole party.
 
 ### 2.4 The server container (`docker/` in the fork)
 
