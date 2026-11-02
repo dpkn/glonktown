@@ -28,3 +28,7 @@ class MMHoodDataAI(HoodDataAI.HoodDataAI):
         self.classicChar.generateWithRequired(self.zoneId)
         self.classicChar.start()
         self.addDistObj(self.classicChar)
+        piano = DistributedMMPianoAI.DistributedMMPianoAI(self.air)
+        piano.generateWithRequired(self.zoneId)
+        piano.start()
+        self.addDistObj(piano)
