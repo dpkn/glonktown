@@ -466,6 +466,18 @@ except BaseException:
 from direct.showbase.ShowBase import ShowBase
 ShowBase.run = lambda self: None
 
+# the page decides full screen: a window opened with the game's "windowed" option would make Panda leave full screen
+_orig_openWindow = ShowBase.openWindow
+
+
+def _openWindow(self, props=None, *args, **kw):
+    props = WindowProperties(props if props is not None else WindowProperties.getDefault())
+    props.clearFullscreen()
+    return _orig_openWindow(self, props, *args, **kw)
+
+
+ShowBase.openWindow = _openWindow
+
 # sound: the page plays it (see webaudio.py / ttr-audio.js)
 import webaudio
 webaudio.install(ShowBase)
