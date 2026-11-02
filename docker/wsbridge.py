@@ -12,8 +12,8 @@ LISTEN_HOST = os.environ.get("WS_LISTEN", "0.0.0.0")
 LISTEN_PORT = int(os.environ.get("WS_PORT", "7390"))
 GAME_HOST = os.environ.get("GAME_HOST", "127.0.0.1")
 GAME_PORT = int(os.environ.get("GAME_PORT", "7198"))
-MAX_PER_IP = 8
-MAX_NEW_PER_MIN = 30
+MAX_PER_IP = int(os.environ.get("MAX_PER_IP", "8"))
+MAX_NEW_PER_MIN = int(os.environ.get("MAX_NEW_PER_MIN", "30"))
 _open = collections.Counter()
 _recent = collections.defaultdict(collections.deque)
 

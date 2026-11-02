@@ -9,6 +9,11 @@ services:
     restart: unless-stopped
     environment:
       TZ: Europe/Amsterdam
+      # Docker Desktop hides each guest's own address (every connection arrives from its gateway), so the per-address limits
+      # are shared by everyone: set them for the whole party
+      MAX_PER_IP: "100"
+      MAX_NEW_PER_MIN: "300"
+      CLOG_PER_HOUR: "60000"
     logging:
       driver: json-file
       options: { max-size: "10m", max-file: "3" }

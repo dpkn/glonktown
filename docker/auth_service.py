@@ -73,10 +73,10 @@ def recover(text,ip):
         save(db)
     FAILS.pop("u:"+name,None)
     return None
-CLOG="/ot/data/logs/client.log"; CLOG_MAX=30*1024*1024; CLOG_RATE={}
+CLOG="/ot/data/logs/client.log"; CLOG_MAX=30*1024*1024; CLOG_RATE={}; CLOG_PER_HOUR=int(os.environ.get("CLOG_PER_HOUR","6000"))
 def client_log(ip,text):
     now=time.time(); q=CLOG_RATE.setdefault(ip,[]); q[:]=[t for t in q if now-t<3600]
-    if len(q)>=6000: return False
+    if len(q)>=CLOG_PER_HOUR: return False
     try:
         if os.path.exists(CLOG) and os.path.getsize(CLOG)>CLOG_MAX: return False
         q.append(now)
