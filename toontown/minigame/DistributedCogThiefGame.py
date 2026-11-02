@@ -98,15 +98,15 @@ class DistributedCogThiefGame(DistributedMinigame):
         zone = self.getSafezoneId()
         if zone == ToontownGlobals.ToontownCentral:
             self.gameBoard.find('**/floor_TT').show()
-        elif zone == ToontownGlobals.DockHarbor:
+        elif zone == ToontownGlobals.DonaldsDock:
             self.gameBoard.find('**/floor_DD').show()
-        elif zone == ToontownGlobals.GardenGrove:
+        elif zone == ToontownGlobals.DaisyGardens:
             self.gameBoard.find('**/floor_DG').show()
-        elif zone == ToontownGlobals.MelodyMeadow:
+        elif zone == ToontownGlobals.MinniesMelodyland:
             self.gameBoard.find('**/floor_MM').show()
         elif zone == ToontownGlobals.TheBrrrgh:
             self.gameBoard.find('**/floor_BR').show()
-        elif zone == ToontownGlobals.SlumberSprings:
+        elif zone == ToontownGlobals.DonaldsDreamland:
             self.gameBoard.find('**/floor_DL').show()
         else:
             self.gameBoard.find('**/floor_TT').show()

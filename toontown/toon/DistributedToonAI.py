@@ -261,10 +261,10 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
                         hoodsVisited.append(canonicalHood)
                         self.b_setHoodsVisited(hoodsVisited)
 
-                    if canonicalZoneId == ToontownGlobals.SpeedwayPark:
+                    if canonicalZoneId == ToontownGlobals.GoofySpeedway:
                         teleportAccess = self.getTeleportAccess()
-                        if ToontownGlobals.SpeedwayPark not in teleportAccess:
-                            teleportAccess.append(ToontownGlobals.SpeedwayPark)
+                        if ToontownGlobals.GoofySpeedway not in teleportAccess:
+                            teleportAccess.append(ToontownGlobals.GoofySpeedway)
                             self.b_setTeleportAccess(teleportAccess)
 
     def sendDeleteEvent(self):

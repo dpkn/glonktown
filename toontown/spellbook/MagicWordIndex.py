@@ -669,12 +669,12 @@ class Teleport(MagicWord):
         # Can add stuff like streets to this too if you wanted, but if you do you'll want it to be a valid zone on that street. eg: 2100 is invalid, but any value 2101 to 2156 is fine.
         # so if you wanted to add a silly street key, theroetically you could do something like this: 'sillystreet': ToontownGlobals.SillyStreet +1,
         zoneName2Id = {'ttc': ToontownGlobals.ToontownCentral,
-                       'dd': ToontownGlobals.DockHarbor,
-                       'dg': ToontownGlobals.GardenGrove,
-                       'mml': ToontownGlobals.MelodyMeadow,
+                       'dd': ToontownGlobals.DonaldsDock,
+                       'dg': ToontownGlobals.DaisyGardens,
+                       'mml': ToontownGlobals.MinniesMelodyland,
                        'tb': ToontownGlobals.TheBrrrgh,
-                       'ddl': ToontownGlobals.SlumberSprings,
-                       'gs': ToontownGlobals.SpeedwayPark,
+                       'ddl': ToontownGlobals.DonaldsDreamland,
+                       'gs': ToontownGlobals.GoofySpeedway,
                        'oz': ToontownGlobals.OutdoorZone,
                        'aa': ToontownGlobals.OutdoorZone,
                        'gz': ToontownGlobals.GolfZone,
@@ -788,14 +788,14 @@ class Fireworks(MagicWord):
         showId = name2showId[name]
 
         zoneToStyleDict = {
-        ToontownGlobals.DockHarbor : 5,
+        ToontownGlobals.DonaldsDock : 5,
         ToontownGlobals.ToontownCentral : 0,
         ToontownGlobals.TheBrrrgh : 4,
-        ToontownGlobals.MelodyMeadow : 3,
-        ToontownGlobals.GardenGrove : 1,
+        ToontownGlobals.MinniesMelodyland : 3,
+        ToontownGlobals.DaisyGardens : 1,
         ToontownGlobals.OutdoorZone : 0,
-        ToontownGlobals.SpeedwayPark : 0,
-        ToontownGlobals.SlumberSprings : 2
+        ToontownGlobals.GoofySpeedway : 0,
+        ToontownGlobals.DonaldsDreamland : 2
         }
         
         from toontown.hood import ZoneUtil

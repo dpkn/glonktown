@@ -182,10 +182,10 @@ class DistributedCashbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
             healAmount = 3
         else:
             if goon.strength <= 15:
-                style = random.choice([ToontownGlobals.DockHarbor, ToontownGlobals.GardenGrove, ToontownGlobals.MelodyMeadow])
+                style = random.choice([ToontownGlobals.DonaldsDock, ToontownGlobals.DaisyGardens, ToontownGlobals.MinniesMelodyland])
                 healAmount = 10
             else:
-                style = random.choice([ToontownGlobals.TheBrrrgh, ToontownGlobals.SlumberSprings])
+                style = random.choice([ToontownGlobals.TheBrrrgh, ToontownGlobals.DonaldsDreamland])
                 healAmount = 12
         if self.recycledTreasures:
             treasure = self.recycledTreasures.pop(0)

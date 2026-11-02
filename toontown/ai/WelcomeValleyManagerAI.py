@@ -38,5 +38,5 @@ class WelcomeValleyManagerAI(DistributedObjectAI):
         # Toontown Central
         self.air.generateHood(TTHoodDataAI, 22000)
 
-        # Speedway Park
+        # Goofy Speedway
         self.air.generateHood(GSHoodDataAI, 23000)

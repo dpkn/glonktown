@@ -9,7 +9,7 @@ class ToontownAccess:
         allowed = False
         allowedZones = [ToontownGlobals.ToontownCentral,
          ToontownGlobals.MyEstate,
-         ToontownGlobals.SpeedwayPark,
+         ToontownGlobals.GoofySpeedway,
          ToontownGlobals.Tutorial]
         specialZones = [ToontownGlobals.SellbotLobby]
         if hasattr(base.cr, 'newsManager') and base.cr.newsManager:

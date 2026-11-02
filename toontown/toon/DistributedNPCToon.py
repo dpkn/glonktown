@@ -59,7 +59,7 @@ class DistributedNPCToon(DistributedNPCToonBase):
             myHoodId = place.id
         if myHoodId in (ToontownGlobals.ToontownCentral,
          ToontownGlobals.MyEstate,
-         ToontownGlobals.SpeedwayPark,
+         ToontownGlobals.GoofySpeedway,
          ToontownGlobals.Tutorial):
             return True
         return False

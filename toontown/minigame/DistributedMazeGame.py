@@ -526,10 +526,8 @@ class DistributedMazeGame(DistributedMinigame):
         self.__defineConstants()
         mazeName = MazeGameGlobals.getMazeName(self.doId, self.numPlayers, MazeData.mazeNames)
         self.maze = Maze.Maze(mazeName)
-        model = loader.loadModel('phase_5.5/models/estate/jellyBean')
-        self.treasureModel = model.find('**/jellyBean')
-        if self.treasureModel.isEmpty():
-            self.treasureModel = model.getChild(0)
+        model = loader.loadModel('phase_3.5/models/props/mickeySZ')
+        self.treasureModel = model.find('**/mickeySZ')
         model.removeNode()
         self.treasureModel.setScale(1.6)
         self.treasureModel.setP(-90)

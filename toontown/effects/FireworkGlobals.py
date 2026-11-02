@@ -100,7 +100,7 @@ class FireworkType:
     TrailBurst = 8
     GlowFlare = 9
     PalmTree = 10
-    Moe = 11
+    Mickey = 11
     PirateSkull = 12
     AmericanFlag = 13
     IceCream = 14
