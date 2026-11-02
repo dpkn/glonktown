@@ -8,6 +8,7 @@ from panda3d.core import *
 from otp.chat.TalkMessage import TalkMessage
 from otp.chat.TalkHandle import TalkHandle
 import time
+import unicodedata
 from otp.chat.TalkGlobals import *
 from otp.chat.ChatGlobals import *
 from panda3d.otp import CFSpeech, CFTimeout, CFThought
@@ -615,8 +616,19 @@ class TalkAssistant(DirectObject.DirectObject):
         messenger.send('NewOpenMessage', [newMessage])
         return error
 
+    # Curly quotes, accents and emoji (from a Mac or iPad keyboard typing into the game) make the server refuse the chat field and throw
+    # the player out, so chat goes out as plain ASCII: punctuation is swapped for its plain form, accents dropped, anything else removed.
+    _PLAIN = {0x2018: "'", 0x2019: "'", 0x201A: "'", 0x201B: "'", 0x2032: "'", 0x201C: '"', 0x201D: '"', 0x201E: '"', 0x2033: '"',
+              0x2013: '-', 0x2014: '-', 0x2212: '-', 0x2026: '...', 0x00A0: ' ', 0x2007: ' ', 0x202F: ' '}
+
+    @staticmethod
+    def plainText(message):
+        message = unicodedata.normalize('NFKD', str(message).translate(TalkAssistant._PLAIN))
+        return ''.join(c for c in message if ord(c) < 127)
+
     def sendOpenTalk(self, message):
         error = None
+        message = self.plainText(message)
         if base.cr.magicWordManager and base.cr.wantMagicWords and len(message) > 0 and message[0] == base.cr.magicWordManager.chatPrefix:
             messenger.send('magicWord', [message])
             self.receiveDeveloperMessage(message)
@@ -640,6 +652,7 @@ class TalkAssistant(DirectObject.DirectObject):
 
     def sendWhisperTalk(self, message, receiverAvId):
         error = None
+        message = self.plainText(message)
         receiver = base.cr.doId2do.get(receiverAvId)
         if receiver:
             receiver.sendUpdate('setTalkWhisper', [0,
