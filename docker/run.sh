@@ -1,5 +1,5 @@
 #!/bin/sh
-# Open Toontown, everything in one container: Astron, UberDOG, three districts, the web bridge, the sign-in service, nginx and nightly backups.
+# Open Toontown, everything in one container: Astron, UberDOG, one district, the web bridge, the sign-in service, nginx and nightly backups.
 if [ ! -d /ot/src/resources/phase_3 ]; then
   echo "The game's resources are missing: mount your resources folder (with phase_3, phase_4 and the rest) at /ot/src/resources" >&2
   exit 1
@@ -9,9 +9,9 @@ mkdir -p /ot/data/phone_logs /ot/data/backups /ot/data/logs /ot/src/astron/datab
 chmod 666 /ot/data/users.json
 L=/ot/data/logs
 # the services write their own log files (so they survive in the data folder); show them in `docker logs` / the Zima's Logs tab too
-for f in auth bridge discord astron ud ai1 ai2 ai3 client; do touch $L/$f.log; done
-echo "Open Toontown: starting. The three districts open one after another, about two and a half minutes."
-tail -n 0 -F $L/auth.log $L/bridge.log $L/discord.log $L/astron.log $L/ud.log $L/ai1.log $L/ai2.log $L/ai3.log $L/client.log 2>/dev/null &
+for f in auth bridge discord astron ud ai1 client; do touch $L/$f.log; done
+echo "Open Toontown: starting. The district opens in about a minute and a half."
+tail -n 0 -F $L/auth.log $L/bridge.log $L/discord.log $L/astron.log $L/ud.log $L/ai1.log $L/client.log 2>/dev/null &
 nginx
 python -u /ot/auth_service.py > $L/auth.log 2>&1 &
 python -u /ot/wsbridge.py > $L/bridge.log 2>&1 &
@@ -25,15 +25,9 @@ UD=$!
 sleep 25
 python -u -m toontown.ai.AIStart --base-channel 401000000 $COMMON --district-name "Toon Valley" etc/Configrc.prc etc/live.prc > $L/ai1.log 2>&1 &
 A1=$!
-sleep 15
-python -u -m toontown.ai.AIStart --base-channel 402000000 $COMMON --district-name "Giggle Grove" etc/Configrc.prc etc/live.prc > $L/ai2.log 2>&1 &
-A2=$!
-sleep 15
-python -u -m toontown.ai.AIStart --base-channel 403000000 $COMMON --district-name "Silly Meadow" etc/Configrc.prc etc/live.prc > $L/ai3.log 2>&1 &
-A3=$!
 # nightly backup of the toons and users, keeping 14 days
 ( while true; do sleep 86400; tar czf /ot/data/backups/auto-$(date +%Y%m%d-%H%M).tgz -C /ot/src/astron databases -C /ot/data users.json 2>/dev/null; ls -1t /ot/data/backups/auto-*.tgz | tail -n +15 | xargs -r rm -f; done ) &
 # if the UberDOG or a district dies, exit so Docker restarts everything
-while kill -0 $UD 2>/dev/null && kill -0 $A1 2>/dev/null && kill -0 $A2 2>/dev/null && kill -0 $A3 2>/dev/null; do sleep 20; done
+while kill -0 $UD 2>/dev/null && kill -0 $A1 2>/dev/null; do sleep 20; done
 echo "a game process died; exiting so the container restarts" >&2
 exit 1

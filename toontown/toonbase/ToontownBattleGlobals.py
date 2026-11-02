@@ -126,7 +126,7 @@ def gagIsVelvetRoped(track, level):
     return False
 
 
-MaxToonAcc = 95
+MaxToonAcc = 100
 StartingLevel = 0
 CarryLimits = (
     # Heal
@@ -528,7 +528,7 @@ def getBossBattleCreditMultiplier(battleNumber):
 
 
 def getInvasionMultiplier():
-    return 2.0
+    return 3.0
 
 
 def getMoreXpHolidayMultiplier():
