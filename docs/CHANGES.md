@@ -146,7 +146,7 @@ changes (the first section). `git log 2b366a2..glonktown` in `server/` lists the
 
 ## The page shell (`web/`)
 
-- Sign-in with password recovery, the loading and download screen, the touch controls, the rotate and "add to Home Screen"
+- Sign-in, the loading and download screen, the touch controls, the rotate and "add to Home Screen"
   screens (on a sky background), an optional test-session log (`?log=1`), and the Toon font.
 
 ## Known problems

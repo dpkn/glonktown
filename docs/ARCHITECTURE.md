@@ -28,7 +28,7 @@ container** on the host's Mac, reached over the party's home network.
  │  nginx :80 ─┬─ /play/, /packs.json, /_packs/*, /_ui/   static files    │
  │             ├─ /ws ───────────► ws bridge :7390 ──► Astron client agent│
  │             │                                         :7198 (TCP)      │
- │             └─ /auth /recover /setrecovery /__log ──► sign-in service  │
+ │             └─ /auth /__log ───────────────────────► sign-in service  │
  │                                                       :7381            │
  │                                                                        │
  │  Astron (message director :7199, state server, database, client agent) │
@@ -47,7 +47,7 @@ Two layers run on the phone.
 **The page shell** is plain JavaScript and CSS (`web/ttr-ui.js`, `web/ttr-ui.css`, `web/ttr-audio.js`). It owns
 everything outside the game itself:
 
-- the sign-in screen, password recovery, the loading screen and its progress bar;
+- the sign-in screen, the loading screen and its progress bar;
 - the "turn your phone sideways" and "add to Home Screen" screens (iPhone, iPad and Android);
 - downloading and caching the game files (section 4);
 - the touch controls (thumb stick, jump, camera, book) and the on-screen keyboard handling;
@@ -101,7 +101,7 @@ district dies, so Docker restarts everything together:
 
 1. **nginx** (port 80 inside, 7380 published). Serves the page and game files, and proxies `/ws` and the sign-in
    paths (`docker/nginx.conf`).
-2. **Sign-in service** (`docker/auth_service.py`, port 7381). Checks passwords, handles recovery, collects test-session
+2. **Sign-in service** (`docker/auth_service.py`, port 7381). Checks passwords, collects test-session
    logs. Section 5.
 3. **WebSocket bridge** (`docker/wsbridge.py`, port 7390). Copies bytes between a browser WebSocket and Astron's TCP
    client port. It reads nothing and changes nothing. It allows 8 connections and 30 new connections a minute per
@@ -142,8 +142,7 @@ holds no data:
 
 1. The player types a name and password. The shell lower-cases the name and sends `name:password` to `POST /auth`.
 2. The sign-in service looks the name up in `users.json`. An unknown name is registered on the spot (while registration is
-   open), with a salted PBKDF2-SHA256 hash (100,000 rounds). A wrong password gets "Wrong password". A first-time user is
-   asked to set two recovery answers.
+   open), with a salted PBKDF2-SHA256 hash (100,000 rounds). A wrong password gets "Wrong password".
 3. On success the shell downloads or checks the game files, then starts the game, giving it **only the name**.
 4. The game opens a WebSocket to `/ws`. nginx passes it to the bridge, which opens a TCP connection to Astron's client
    agent.
@@ -190,11 +189,12 @@ There are two separate stores, deliberately:
 
 | Store | File | What it holds |
 |---|---|---|
-| Logins | `data/users.json` | name, salted password hash, recovery answers (also hashed), an admin flag, a registration switch |
+| Logins | `data/users.json` | name, salted password hash, an admin flag, a registration switch |
 | Game | `databases/accounts.json` and `astrondb/*.yaml` | which account belongs to which name; each account's toons and every toon's fields |
 
-The sign-in service is the only thing that touches `users.json`. Password recovery asks for two answers the player chose
-(their nickname and their toon's name), hashes them the same way, and throttles repeated failures per name and per address.
+The sign-in service is the only thing that touches `users.json`. The page remembers each device's name and password, and a
+forgotten password is reset by the host (see OPERATIONS.md, "Accounts"). The service's recovery-answer endpoints are still there,
+but the page no longer asks for answers: Glonktown removed that step.
 
 ## 6. Data and backups
 

@@ -102,9 +102,12 @@ Server-only changes (anything under `toontown/…AI.py`, `astron/`) need only th
 
 ### Logins (`runtime/data/users.json`)
 
-The file has `open_registration` (true or false) and `users` (name to salted hash, recovery answers and an optional `admin` flag).
-The sign-in service rereads it on every request, so you can edit it while the server runs. To close registration to new names, set
-`open_registration` to `false`. To remove someone's login, delete their entry (their toons stay in the database).
+The file has `open_registration` (true or false) and `users` (name to salted hash and an optional `admin` flag). The sign-in
+service rereads it on every request, so you can edit it while the server runs. To close registration to new names, set
+`open_registration` to `false`.
+
+**A guest forgot their password:** delete their entry from `users`. They sign in again with the same name and a new password,
+and get the same toons back, because the game account is matched by name (`runtime/databases/accounts.json`).
 
 ### Game accounts and toons (`runtime/databases`)
 
@@ -147,7 +150,7 @@ browser visit and is off again on the next normal visit.
 |---|---|
 | Guests cannot connect at all | Is the container up? Does `ai1.log` end in "Done."? Is the Mac's firewall letting Docker accept connections? Then `bridge.log` for `open` lines. |
 | The page loads on the Mac but not on phones | Use the Mac's network address, not `localhost`; check the phone is on the same Wi-Fi. |
-| "Wrong password" for someone who is sure | `users.json`: is the name spelled as they type it (names are lower-cased)? Recovery answers reset it. |
+| "Wrong password" for someone who is sure | `users.json`: is the name spelled as they type it (names are lower-cased)? Deleting their entry resets it (see Accounts). |
 | A change is not showing | Was `tools/build_client.sh` run, and the page reloaded? A phone that still shows the old page needs its site data cleared. |
 | A toon looks wrong | Colours are the 39-entry table in `ToonDNA.py`; check client and server both have it. |
 | Game output after a crash is gone | Logs are replaced on restart; use a `?log=1` session next time. |

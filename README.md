@@ -16,7 +16,7 @@ Use the same name and password next time.
 
 - The first start downloads the game files (about 390 MB). They are kept on the device afterwards.
 - Phones drop the connection when you switch to another app. Coming back, the game tries to reconnect by itself.
-- Passwords can be recovered with the two answers you set up (**Forgot password?**).
+- Forgot your password? Ask the host to reset it; your toons stay.
 
 The server only trusts the name the page sends, so it must stay on the home network: never forward its port or tunnel it to the
 internet.
