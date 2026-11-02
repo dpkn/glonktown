@@ -1,15 +1,21 @@
-# docker compose -f docker/docker-compose.yml up -d
+# Glonktown on the host Mac: docker compose -f docker/docker-compose.yml up -d --build
+# Paths are relative to this file: ~/Documents/glonktown/{server,runtime} and the stock resources in ~/Documents/open-toontown.
 services:
-  open-toontown:
-    image: ghcr.io/lpuffyy/open-toontown-anywhere:latest
-    # build: { context: .., dockerfile: docker/Dockerfile }       # to build it here instead
+  glonktown:
+    image: glonktown-server
+    platform: linux/amd64
+    build: { context: .., dockerfile: docker/Dockerfile }
+    container_name: glonktown
     restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
     logging:
       driver: json-file
-      options: { max-size: "10m", max-file: "3" }     # the game's logs are also printed here, so keep them from piling up
+      options: { max-size: "10m", max-file: "3" }
     ports:
       - "7380:80"
     volumes:
-      - ./resources:/ot/src/resources:ro       # the game's resources (not included): phase_3, phase_4, ...
-      - ./databases:/ot/src/astron/databases
-      - ./data:/ot/data
+      - ../../../open-toontown/resources:/ot/src/resources:ro
+      - ../../runtime/databases:/ot/src/astron/databases
+      - ../../runtime/data:/ot/data
+      - ../../runtime/web:/ot/web
