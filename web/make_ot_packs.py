@@ -89,11 +89,11 @@ def web_patch(arc, text):
     elif arc.endswith("toontown/chat/TTWhiteList.py"):
         # the chat word list: without it every typed word is refused and nothing is sent
         sub("        if __debug__:\n            searchPath.appendDirectory(Filename('resources/phase_3/etc'))",
-            "\n".join(["        for _d in ('resources/phase_3/etc', '/data/data/game_ot/assets/resources/phase_3/etc', '/data/data/game_ot/assets/phase_3/etc'):",
+            "\n".join(["        for _d in ('resources/phase_3/etc', '/data/data/game/assets/resources/phase_3/etc', '/data/data/game/assets/phase_3/etc'):",
                        "            searchPath.appendDirectory(Filename(_d))"]))
     elif arc.endswith("toontown/pets/PetNameGenerator.py"):
         sub("        filename = Filename(TTLocalizer.PetNameMaster)",
-            "\n".join(["        for _d in ('resources/phase_3/etc', '/data/data/game_ot/assets/resources/phase_3/etc', '/data/data/game_ot/assets/phase_3/etc'):",
+            "\n".join(["        for _d in ('resources/phase_3/etc', '/data/data/game/assets/resources/phase_3/etc', '/data/data/game/assets/phase_3/etc'):",
                        "            searchPath.appendDirectory(Filename(_d))",
                        "        filename = Filename(TTLocalizer.PetNameMaster)"]))
     return text
