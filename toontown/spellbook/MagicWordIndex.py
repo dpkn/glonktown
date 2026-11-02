@@ -315,8 +315,22 @@ class SetPinkSlips(MagicWord):
 
     def handleWord(self, invoker, avId, toon, *args):
         toon.b_setPinkSlips(args[0])
-        return f"Gave {toon.getName()} {args[0]} pink slips!" 
-    
+        return f"Gave {toon.getName()} {args[0]} pink slips!"
+
+
+class GiveBeans(MagicWord):
+    aliases = ["beans", "jellybeans", "money"]
+    desc = "Gives the target toon jellybeans: the jar fills first, the rest goes to the bank. With no amount, both are filled."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    arguments = [("amount", int, False, 0)]
+
+    def handleWord(self, invoker, avId, toon, *args):
+        amount = args[0] or toon.getMaxMoney() + toon.getMaxBankMoney()
+        if amount < 0:
+            return "Give a positive number of jellybeans."
+        toon.addMoney(amount)
+        return f"{toon.getName()} has {toon.getMoney()} jellybeans in the jar and {toon.getBankMoney()} in the bank."
+
 class AbortMinigame(MagicWord):
     aliases = ["exitgame", "exitminigame", "quitgame", "quitminigame", "skipgame", "skipminigame"]
     desc = "Aborts an ongoing minigame."
