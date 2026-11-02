@@ -1,5 +1,5 @@
 @font-face { font-family: "Toon Display"; src: url("_ui/ToonDisplay.ttf") format("truetype"); font-weight: 100 900; font-style: normal; font-display: swap; }
-/* Toontown: Anywhere (web): All sizes are in points times --sc, the page scale. */
+/* Glonktown (web): All sizes are in points times --sc, the page scale. */
 :root {
   --sc: 1;
   --mf: "Toon Display", "Marker Felt", "MarkerFelt-Wide", "Chalkboard SE", "Comic Sans MS", "Segoe Print", system-ui, sans-serif;
@@ -47,12 +47,10 @@ canvas.emscripten { touch-action: none; position: fixed !important; inset: 0 !im
 .ttr-btn { position: absolute; border-radius: 18px; border: 4px solid #8c520d; background: #ffd926; color: #733805; font: 700 calc(30px * var(--sc)) var(--mf); text-align: center; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .ttr-btn:disabled { opacity: .6; }
 .ttr-pill { position: absolute; border-radius: 12px; border: 2px solid rgba(255,255,255,.9); color: #fff; font: 700 calc(13px * var(--sc)) var(--mf); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 8px; -webkit-tap-highlight-color: transparent; }
-.ttr-pill img { height: 62%; width: auto; }
 .ttr-pill.light { background: rgba(255,255,255,.85); color: #1a3380; border-color: #1f4da6; }
 .ttr-link { position: absolute; font: 700 calc(14px * var(--sc)) system-ui, sans-serif; color: #14338c; text-align: center; background: none; border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 #ttr-msg { position: absolute; left: 40px; right: 40px; text-align: center; font-weight: 700; font-size: calc(17px * var(--sc)); color: #1a408c; }
 #ttr-msg.bad { color: #d91a1a; }
-#ttr-credit { position: absolute; left: 20px; right: 20px; text-align: center; font: 600 calc(11px * var(--sc)) system-ui, sans-serif; color: rgba(20,51,115,.9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ---- cards (server choice, recovery) ---- */
 #ttr-cardwrap { position: absolute; inset: 0; overflow-y: auto; pointer-events: auto; -webkit-overflow-scrolling: touch; }

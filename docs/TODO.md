@@ -35,25 +35,15 @@ Open work, most important first. Each item says what is known. When one is finis
   Windows test machine.
 - [ ] **Keep server logs across restarts.** The log files are replaced each time the container starts, so the evidence
   for a crash is gone after the restart that follows it. Append instead, or rotate with a date.
-- [ ] **Friend invitations across districts.** Friends, online status, Go To and ending a friendship work across districts,
-  but the invitation itself needs both toons next to each other (as in the game). Secret friends are not offered.
 - [ ] **A friend who is offline when you end the friendship** keeps you on their list until they remove you.
-- [ ] **Houses, furniture, gardens, Doodles and the catalog were not migrated** from the old server. See
-  [MIGRATION.md](MIGRATION.md) for what players lost.
 - [ ] **iPhone strip under the toolbar** in landscape on some phones: the page's overlays are sized to the large viewport
   as a fix, not confirmed everywhere.
 - [ ] **Wide-screen layouts.** Some Open Toontown screens may still look stretched on very wide phones. Fix them as they
   are found (the Cog Gallery and the fishing screen are done).
-- [ ] **Build the Linux Astron binary from source** and note which version it is, instead of reusing the one copied from the
-  old install.
 - [ ] **Add the test-session log reading to the operations notes** with an example of what a crash looks like.
 
 ## Ideas
 
 - A server-side copy of each player's options, so sound settings follow them to another phone (today they are saved
   per phone in the browser).
-- A small page for staff to see who is online and which districts have invasions.
-- Release notes to Discord (low priority): post a short plain-language note to a release-notes channel when the server image
-  is published (a last step in the fork's build workflow, webhook kept as a GitHub Actions secret) and when a client pack is
-  uploaded (a small script on the server that reads the webhook from a private file). Only commits with a `Release note:` line
-  would post. Open questions: which channel, whether players read it, and one message per update or one edited message.
+- A small page for the host to see who is online and whether an invasion is on.

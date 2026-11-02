@@ -1,9 +1,7 @@
-/* Toontown: Anywhere (web) - loading screen, game-file downloader, sign-in, server choice, recovery cards and the in-game
+/* Glonktown (web) - loading screen, game-file downloader, sign-in, recovery cards and the in-game
    touch controls. The layout numbers are copied from the iOS app (main.m). The game itself runs in Python (main.py). */
 (function () {
   'use strict';
-  const ICONS = window.TTR_ICONS || {};
-  const DEFAULT = { name: 'Toontown: Anywhere', host: 'toontown.puffsco.com' };
   const LS = (() => { try { return window.localStorage; } catch (e) { return { getItem() { return null; }, setItem() {}, removeItem() {} }; } })();
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const T = window.ttr = {
@@ -157,7 +155,7 @@
   });
   const title = el('div', null, root);
   title.id = 'ttr-title';
-  title.textContent = 'TOONTOWN: ANYWHERE';
+  title.textContent = 'GLONKTOWN';
   const logo = el('img', null, root);
   logo.id = 'ttr-logo';
   logo.style.display = 'none';
@@ -216,7 +214,7 @@
   const detail = el('div', null, load); detail.id = 'ttr-detail';
   const spin = el('div', null, load); spin.id = 'ttr-spin'; spin.style.display = 'none';
   const errBox = el('div', null, load); errBox.id = 'ttr-error'; errBox.style.display = 'none';
-  const errBtn = el('button', 'ttr-pill light on', load); errBtn.textContent = 'Change server'; errBtn.style.display = 'none';
+  const errBtn = el('button', 'ttr-pill light on', load); errBtn.textContent = 'Try again'; errBtn.style.display = 'none';
   layouts.push(() => {
     const bw = Math.min(W * 0.6, 640);
     Object.assign(bar.style, { width: bw + 'px', top: H * 0.68 - 29 + 'px' });
@@ -233,7 +231,7 @@
     spin.style.display = 'none'; status.textContent = 'Something went wrong';
     errBox.textContent = msg; errBox.style.display = ''; errBtn.style.display = '';
   }
-  errBtn.addEventListener('click', () => { errBox.style.display = 'none'; errBtn.style.display = 'none'; showServerCard(false); });
+  errBtn.addEventListener('click', () => { errBox.style.display = 'none'; errBtn.style.display = 'none'; beginDownload(); });
 
   // ------------------------------------------------------------------ the downloader
   // Saved packs: the Cache API on secure (https) pages, IndexedDB everywhere else, so the files are not downloaded every launch.
@@ -360,10 +358,8 @@
   }
 
   // ------------------------------------------------------------------ shared pieces: pills, fields
-  function pill(text, icon, fill, parent, cls) {
+  function pill(text, parent, cls) {
     const b = el('button', 'ttr-pill ' + (cls || ''), parent);
-    if (fill) b.style.background = fill;
-    if (icon && ICONS[icon]) { const i = el('img', null, b); i.src = ICONS[icon]; }
     const s = document.createElement('span'); s.textContent = text; b.appendChild(s);
     b.classList.add('on');
     return b;
@@ -384,13 +380,6 @@
   const playBtn = el('button', 'ttr-btn on', login); playBtn.textContent = 'PLAY!';
   const forgot = el('button', 'ttr-link on', login); forgot.textContent = 'Forgot password?';
   const lmsg = el('div', null, login); lmsg.id = 'ttr-msg';
-  const credit = el('div', null, login); credit.id = 'ttr-credit';
-  credit.textContent = 'Official client for Toontown: Anywhere';
-  const chg = pill('Change server', null, null, login, 'light');
-  const dis = pill('Discord', 'discord', 'rgb(88,101,242)', login);
-  const red = pill('Reddit', 'reddit', 'rgb(255,69,0)', login);
-  dis.addEventListener('click', () => window.open('https://discord.gg/NxdkuR2aCp', '_blank', 'noopener'));
-  red.addEventListener('click', () => window.open('https://www.reddit.com/r/ToontownAnywhere/s/p7FFnl9jGJ', '_blank', 'noopener'));
   let kbMode = false;
   function loginLayout() {
     const vv = window.visualViewport;
@@ -402,13 +391,6 @@
     place(playBtn, (W - bw) / 2, y0 + 106 * sc, bw, bh);
     place(forgot, (W + bw) / 2 + 10 * sc, y0 + 106 * sc, 150 * sc, bh);
     lmsg.style.top = y0 + 160 * sc + 'px'; lmsg.style.fontSize = 17 * sc + 'px';
-    credit.style.top = H - 22 * sc - Math.max(SAFE.b, 4) + 'px';
-    const pw = 126 * sc, ph = 30 * sc;
-    place(chg, W - pw - 14 - SAFE.r, Math.max(SAFE.t, 6) + 8, pw, ph);
-    const lby = H - Math.max(SAFE.b, 4) - 22 * sc - 8 - 30 * sc, lbx = 14 + SAFE.l;
-    place(dis, lbx, lby - 38 * sc, 112 * sc, ph);
-    place(red, lbx, lby, 112 * sc, ph);
-    [credit, chg, dis, red].forEach((n) => { n.style.visibility = kb ? 'hidden' : ''; });
     logo.style.opacity = kb ? '0' : '';
   }
   layouts.push(loginLayout);
@@ -452,7 +434,7 @@
       if (document.activeElement !== uField && document.activeElement !== pField) { kbMode = false; loginLayout(); window.scrollTo(0, 0); }
     }, 80));
   });
-  login.addEventListener('pointerdown', (e) => { if (e.target === login || e.target === credit || e.target === lmsg) { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } });
+  login.addEventListener('pointerdown', (e) => { if (e.target === login || e.target === lmsg) { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } });
   playBtn.addEventListener('click', signIn);
   // Enter / Go / Send on a phone keyboard does not always arrive as a plain "Enter" key press (Android keyboards that are suggesting words
   // report key "Unidentified" and send the line break as an input event instead), so listen for both ways.
@@ -469,7 +451,6 @@
     if (!user) { loginMessage('Type your toon name above first, then tap Forgot password.', true); return; }
     showRecoveryCard(true, '', user, () => { showLogin(); });
   });
-  chg.addEventListener('click', () => showServerCard(true));
 
   // ------------------------------------------------------------------ cards (server choice, recovery)
   const cardWrap = el('div', null, root);
@@ -498,57 +479,6 @@
     Object.assign(b.style, { position: 'absolute', left: (geo.cw - wpx * sc) / 2 + 'px', top: top * sc + 'px', width: wpx * sc + 'px', height: hpx * sc + 'px' });
     if (fill) b.style.background = fill;
     return b;
-  }
-  function useServer(mode, res, game) {
-    LS.setItem('ttr_srv_mode', mode);
-    if (mode === 'custom') { LS.setItem('ttr_srv_res', res); LS.setItem('ttr_srv_game', game); }
-  }
-  function showServerCard(canGoBack) {
-    showLoad(false);
-    const g = newCard(canGoBack ? 430 : 392);
-    cText(g.card, 't', 'Choose a server', 12, 26);
-    const def = cButton(g.card, 'Connect to ' + DEFAULT.name, 'ttr-btn', 52, (g.w / sc), 48, g);
-    Object.assign(def.style, { left: g.pad + 'px', width: g.w + 'px', fontSize: 21 * sc + 'px' });
-    cText(g.card, 's', DEFAULT.host, 102, 12);
-    cText(g.card, 't', 'or connect to a different server', 128, 16, { fontWeight: 700 });
-    const rf = cField(g.card, 'File server  (https://...)', false, 154, g);
-    const gf = cField(g.card, 'Game server  (host:port)', false, 202, g);
-    if (!prefs.isDefault) { rf.value = prefs.res; gf.value = prefs.game; }
-    const warn = cText(g.card, 's', "Only connect to servers you trust. A server supplies the game's code, which runs inside this app.", 250, 11, { color: 'rgb(115,51,26)', padding: '0 ' + g.pad + 'px' });
-    const cbtn = cButton(g.card, 'Connect', 'ttr-btn', 290, 200, 44, g, 'rgb(89,166,255)');
-    Object.assign(cbtn.style, { color: '#fff', fontSize: 22 * sc + 'px', border: '3px solid #1f4da6' });
-    const msg = cText(g.card, 's', '', 338, 14, { padding: '0 ' + g.pad + 'px' });
-    const setMsg = (t, bad) => { msg.textContent = t; msg.style.color = bad ? '#d91a1a' : '#1a408c'; };
-    if (canGoBack) {
-      const bk = cButton(g.card, 'Back', 'ttr-pill gray', 384, 120, 32, g);
-      bk.addEventListener('click', () => { cardClose(); login.style.display = ''; });
-    }
-    def.addEventListener('click', () => {
-      const same = prefs.isDefault && prefs.mode;
-      useServer('default'); cardClose();
-      if (same && canGoBack) { login.style.display = ''; return; }
-      beginDownload();
-    });
-    const connect = async () => {
-      const res = rf.value.trim(), game = gf.value.trim();
-      if (!res || !game) { setMsg('Fill in both boxes, or tap the button above.', true); return; }
-      if (/[^A-Za-z0-9.\-:/_\[\]%]/.test(res + game)) { setMsg("Those addresses have a character that isn't allowed.", true); return; }
-      cbtn.disabled = def.disabled = true; setMsg('Checking the server...', false);
-      let url = /^https?:\/\//i.test(res) ? res : 'https://' + res;
-      url = url.replace(/\/+$/, '');
-      let err = '';
-      try {
-        const r = await fetch(url + '/manifest.json', { cache: 'no-store' });
-        if (!r.ok) err = 'The file server answered with an error (' + r.status + '). Check the address.';
-        else { const rd = r.body.getReader(); const c = await rd.read(); rd.cancel(); if (!c.value || c.value[0] !== 123) err = "That address doesn't look like a Toontown file server."; }
-      } catch (e) { err = "Can't reach the file server. Check the address, your connection, and that the server allows web access."; }
-      cbtn.disabled = def.disabled = false;
-      if (err) { setMsg(err, true); return; }
-      useServer('custom', url, game); cardClose(); beginDownload();
-    };
-    cbtn.addEventListener('click', connect);
-    onEnter(gf, () => connect());
-    onEnter(rf, () => gf.focus());
   }
   function showRecoveryCard(reset, cookie, user, done) {
     const g = newCard(reset ? 392 : 344);
@@ -741,9 +671,9 @@
   gearBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
   gearBtn.addEventListener('click', (e) => { e.preventDefault(); showSettings(); });
   layouts.push(() => place(gearBtn, W / 2 + 46 * sc, Math.max(SAFE.t, 6), 30 * sc, 28 * sc));
-  const dsp = pill('Display', null, null, login, 'light');
+  const dsp = pill('Display', login, 'light');
   dsp.addEventListener('click', showSettings);
-  layouts.push(() => { const ph = 30 * sc; place(dsp, W - 126 * sc - 14 - SAFE.r, Math.max(SAFE.t, 6) + 8 + ph + 8, 126 * sc, ph); dsp.style.visibility = kbMode ? 'hidden' : ''; });
+  layouts.push(() => { const ph = 30 * sc; place(dsp, W - 126 * sc - 14 - SAFE.r, Math.max(SAFE.t, 6) + 8, 126 * sc, ph); dsp.style.visibility = kbMode ? 'hidden' : ''; });
 
   // ------------------------------------------------------------------ typed chat: the game's own text box shows the text live;
   // this invisible input only brings up the keyboard and passes every keystroke to the game
@@ -949,7 +879,7 @@
   document.addEventListener('visibilitychange', () => { if (!document.hidden && hud.style.display !== 'none') keepAwake(); });
   // Open Toontown test build: served from the PC's own test server (port 8002), the files and the game connection are on that same machine
   if (!prefs.mode && location.port === '8002') { LS.setItem('ttr_srv_mode', 'custom'); LS.setItem('ttr_srv_res', location.origin); LS.setItem('ttr_srv_game', 'ws://' + location.hostname + ':8766'); }
-  function begin() { if (!prefs.mode) showServerCard(false); else beginDownload(); }
+  function begin() { beginDownload(); }
   if (needInstall) {
     installUp = true; checkRotate();
     const ins = el('div', null, root); ins.id = 'ttr-install';
@@ -957,13 +887,13 @@
     const steps = isAndroid
       ? '<ol><li><i>1</i><span>Open this page in your browser app itself (Chrome works best), not inside another app</span></li>' +
         '<li><i>2</i><span>Tap the &#8942; menu, then &ldquo;Install app&rdquo; (or &ldquo;Add to Home screen&rdquo;)</span></li>' +
-        '<li><i>3</i><span>Open TT: Anywhere from your Home screen. If it still shows a bar at the top, install it again from Chrome</span></li></ol>' +
+        '<li><i>3</i><span>Open Glonktown from your Home screen. If it still shows a bar at the top, install it again from Chrome</span></li></ol>' +
         '<button class="go" id="ttr-installbtn" style="display:none;text-decoration:none;background:#ffd926;color:#733805;border-radius:14px;padding:10px 22px;box-shadow:0 3px 0 rgba(0,0,0,.35);text-shadow:none">Install app</button>'
       : '<ol><li><i>1</i><span>Tap the Share button ' + share + ' in Safari (tap &middot;&middot;&middot; first if you do not see it)</span></li>' +
         '<li><i>2</i><span>Tap &ldquo;View More&rdquo; if you see it, then scroll down and tap &ldquo;Add to Home Screen&rdquo;</span></li>' +
-        '<li><i>3</i><span>Tap Add, then open TT: Anywhere from your Home Screen</span></li></ol>';
+        '<li><i>3</i><span>Tap Add, then open Glonktown from your Home Screen</span></li></ol>';
     ins.innerHTML = '<div class="box"><div class="ic">' + share.replace('width="26" height="26"', 'width="30" height="30"') + '</div>' +
-      '<div class="h">Add Toontown: Anywhere to your Home Screen</div>' + steps +
+      '<div class="h">Add Glonktown to your Home Screen</div>' + steps +
       '<button class="go skip">Continue in the browser anyway</button></div>';
     const ib = ins.querySelector('#ttr-installbtn');
     if (ib) { if (installEvt) ib.style.display = ''; ib.addEventListener('click', () => { if (installEvt) { installEvt.prompt(); installEvt.userChoice.then(() => {}).catch(() => {}); } }); }

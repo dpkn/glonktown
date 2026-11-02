@@ -1,5 +1,5 @@
 """Build the browser download packs: _code.zip (the game's Python + config + our otpy) and one zip per resource folder, plus packs.json.
-   OT_DIR=<open-toontown-anywhere fork checkout, with its resources folder>  [OTPY_BASE=<folder holding otpy/> if OT_DIR has none]  python make_ot_packs.py      (writes into web/build/site)"""
+   OT_DIR=<the game server checkout (Glonktown's server/), with its resources folder>  [OTPY_BASE=<folder holding otpy/> if OT_DIR has none]  python make_ot_packs.py      (writes into web/build/site)"""
 import json
 import os
 import zipfile
@@ -7,12 +7,12 @@ import zipfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 OT = os.environ.get("OT_DIR")
 if not OT or not os.path.isdir(os.path.join(OT, "toontown")):
-    raise SystemExit("set OT_DIR to a checkout of the open-toontown-anywhere fork that has its resources folder")
+    raise SystemExit("set OT_DIR to the game server checkout that has its resources folder")
 RES = os.path.join(OT, "resources")
-# otpy/ (our replacement for the game's compiled libraries) is in the open-toontown-anywhere fork; use the one in OT_DIR, or OTPY_BASE=<folder that holds otpy/>
+# otpy/ (our replacement for the game's compiled libraries) is in the game server checkout; use the one in OT_DIR, or OTPY_BASE=<folder that holds otpy/>
 OTPY_BASE = os.environ.get("OTPY_BASE") or OT
 if not os.path.isdir(os.path.join(OTPY_BASE, "otpy")):
-    raise SystemExit("otpy/ not found: build from a checkout of the open-toontown-anywhere fork, or set OTPY_BASE to the folder that holds otpy/")
+    raise SystemExit("otpy/ not found: build from the game server checkout, or set OTPY_BASE to the folder that holds otpy/")
 SITE = os.path.join(HERE, "build", "site")
 OUT = os.path.join(SITE, "_packs")
 os.makedirs(OUT, exist_ok=True)
@@ -25,7 +25,7 @@ def add(z, full, arc):
 
 
 def web_patch(arc, text):
-    """Phone-friendly chat (the same idea as the Toontown Anywhere build): big chat buttons placed against the screen corner, so the
+    """Phone-friendly chat: big chat buttons placed against the screen corner, so the
     page's safe-area margins can move them clear of the notch."""
     def sub(a, b):
         nonlocal text

@@ -1,15 +1,34 @@
 # What differs from stock Open Toontown
 
-Everything we changed in the game, grouped by what it is for, followed by the known problems. The changes are
-the `anywhere` branch of our fork, [open-toontown-anywhere](https://github.com/lPuffyy/open-toontown-anywhere), on top of upstream Open Toontown commit `2b366a2`
-(`git log develop..anywhere` there, or compare it with upstream).
+Everything changed in the game, grouped by what it is for, followed by the known problems. The server repository's `glonktown`
+branch is upstream Open Toontown commit `2b366a2`, plus Toontown: Anywhere's server fork (most of this file), plus Glonktown's own
+changes (the first section). `git log 2b366a2..glonktown` in `server/` lists them all.
+
+## Glonktown
+
+- **The classic characters are back** (Mickey, Minnie, Goofy, Donald, Daisy, Pluto, Chip and Dale, with their holiday chatter),
+  and the neighborhoods have their original names (Donald's Dock, Minnie's Melodyland, Daisy Gardens, Goofy Speedway, Donald's
+  Dreamland, Chip 'n Dale's Acorn Acres). The Donald's Dock boat and Minnie's piano are back too. Toontown: Anywhere had removed
+  them.
+- **One district** (Toon Valley), with Cog invasions.
+- **Fixes from other forks:** upstream pull requests #115, #148 to #153 (tag game, database writes, news page, unknown magic
+  words, the photo album page, street branch zones), Retrolight's Cashbot HQ and Speedway pie crashes, DarthMDev's entity file
+  fix and maxrdz's GM name fix.
+- **Small-group tuning** (from Retrolight): gag carry limits and the Aoogah and Trunk damage as on Toontown Rewritten, toons enter
+  boss fights on one side when there are fewer than four, no Laff requirement for facilities, street Cog levels per
+  neighborhood, accuracy can reach 100, and invasions give x3 gag XP. The gag XP boost itself is still `gameconfig.json`'s.
+- **Controls** (from calebcodesalot): a Controls tab in the Shticker Book's options to rebind walking, jumping, ToonTasks, gags and
+  chat (arrow keys or WASD presets), and a Smooth Animations switch (on by default, as before).
+- **Times** are Amsterdam's (`TTLocalizer.TimeZone`, and `TZ` in the container), so holidays follow the host's date.
+- The loading and pick-a-toon screens use the stock cloud sky (`loading_bg_clouds.jpg`).
+- **The page** is called Glonktown; the server choice card, the community links and the credit line are gone. nginx passes each
+  guest's own address on, so the bridge's per-address connection limit is per device on a LAN.
 
 ## Server
 
 ### Districts and population
 
-- Three districts, started by `docker/run.sh` in the fork: **Toon Valley**, **Giggle Grove** and **Silly Meadow**, one AI process
-  each, with their own channel ranges.
+- Toontown: Anywhere ran three districts (Toon Valley, Giggle Grove and Silly Meadow); Glonktown starts only Toon Valley.
 - The district statistics object (`ToontownDistrictStats`) is now generated under the game's root object, which is where
   the client's interest can see it. This is what makes the Districts page show populations.
 - A district's population is counted for its own streets. Toons in Welcome Valley are listed under Welcome Valley, not
@@ -88,8 +107,7 @@ the `anywhere` branch of our fork, [open-toontown-anywhere](https://github.com/l
 
 ### Content removal
 
-- Disney characters and their code (`toontown/classicchars`, 43 files) are removed, as are a few character-art
-  references elsewhere. Matching art in the resource folders was repainted or removed when the packs were prepared.
+- Toontown: Anywhere removed the Disney characters and renamed the neighborhoods. Glonktown puts both back (see the first section).
 
 ## Client (the game on the phone)
 
@@ -128,9 +146,8 @@ the `anywhere` branch of our fork, [open-toontown-anywhere](https://github.com/l
 
 ## The page shell (`web/`)
 
-- Sign-in with password recovery, a server choice card, the loading and download screen, the touch controls, the rotate
-  and "add to Home Screen" screens (on a sky background), an optional test-session log (`?log=1`), and the Toon font.
-- Discord and Reddit buttons on the sign-in screen.
+- Sign-in with password recovery, the loading and download screen, the touch controls, the rotate and "add to Home Screen"
+  screens (on a sky background), an optional test-session log (`?log=1`), and the Toon font.
 
 ## Known problems
 
@@ -139,15 +156,12 @@ Honest list, most important first.
 1. **The game connection does not check the password.** Only the page does (see ARCHITECTURE.md, section 3). Anyone who
    connects straight to the WebSocket with another player's name is let in as them. Planned fix: the sign-in service
    issues a short-lived signed token and the login manager verifies it.
-2. **Friend invitations only work between toons in the same district** (the two toons have to be next to each other, as in
-   the game). Friends, online status and Go To work across districts.
-3. **The phone ringing is reported missing** (the sound file is in the pack; why it is not heard is not found). Some phones
+2. **The phone ringing is reported missing** (the sound file is in the pack; why it is not heard is not found). Some phones
    are also silent because of the ring/silent switch.
-4. **The server runs on `otpy`**, our pure-Python replacement for the game's compiled libraries, not the compiled ones. It
+3. **The server runs on `otpy`**, our pure-Python replacement for the game's compiled libraries, not the compiled ones. It
    has been checked, but less than the compiled code has been used. Watch Cog movement and building behaviour.
-5. **Logs are lost on every restart.**
-6. **Houses, pets, friends and catalog items were not migrated** (see MIGRATION.md).
-7. **Fish Bingo is disabled** because it causes crashes; see [TODO.md](TODO.md).
-8. **iPhone strip:** a thin strip can show under the toolbar on some iPhones in landscape. The overlays are sized to the
+4. **Logs are lost on every restart.**
+5. **Fish Bingo is disabled** because it causes crashes; see [TODO.md](TODO.md).
+6. **iPhone strip:** a thin strip can show under the toolbar on some iPhones in landscape. The overlays are sized to the
    large viewport as a fix; not confirmed on every phone.
-9. Some Open Toontown screens may still look stretched on very wide phones; they are fixed as they are found.
+7. Some Open Toontown screens may still look stretched on very wide phones; they are fixed as they are found.

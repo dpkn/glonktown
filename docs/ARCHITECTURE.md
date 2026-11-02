@@ -1,15 +1,15 @@
-# How Toontown: Anywhere works
+# How Glonktown works
 
-This is the full write-up of the system as it runs today. It covers what the pieces are, how they fit together, and why
-they were built this way. Day-to-day running is in [OPERATIONS.md](OPERATIONS.md), the move from the old server in
-[MIGRATION.md](MIGRATION.md), and every difference from stock Open Toontown in [CHANGES.md](CHANGES.md).
+This is the write-up of the system: what the pieces are, how they fit together, and why they were built this way. Day-to-day
+running is in [OPERATIONS.md](OPERATIONS.md), and every difference from stock Open Toontown in [CHANGES.md](CHANGES.md). The
+design is Toontown: Anywhere's; Glonktown runs it on one Mac for a party.
 
 ## 1. The short version
 
-Players open a web page on a phone. The page downloads the game (Python code and Toontown's art and sound, about 390 MB,
-kept on the device) and runs it inside the browser, using Python compiled to WebAssembly. The game talks to our server
-over a WebSocket. The server is the Open Toontown game server (Astron plus Python services), running in **one Docker
-container** on a home server, reached from the internet through a Cloudflare tunnel.
+Players open a web page on a phone, tablet or laptop. The page downloads the game (Python code and Toontown's art and sound,
+about 390 MB, kept on the device) and runs it inside the browser, using Python compiled to WebAssembly. The game talks to the
+server over a WebSocket. The server is the Open Toontown game server (Astron plus Python services), running in **one Docker
+container** on the host's Mac, reached over the party's home network.
 
 ```
  phone / tablet (browser or home-screen app)
@@ -18,12 +18,12 @@ container** on a home server, reached from the internet through a Cloudflare tun
  │  game        Open Toontown + otpy, in Python │   Panda3D + CPython in WebAssembly (pygbag)
  │              /Panda3D, running in the browser│
  └───────────────┬───────────────┬──────────────┘
-                 │ HTTPS         │ WSS  /ws
+                 │ HTTP          │ WS  /ws
                  ▼               ▼
-            Cloudflare  ──(tunnel)──►  home server :7380
+            home network  ───────────►  host Mac :7380
                                           │
  ┌────────────────────────────────────────▼───────────────────────────────┐
- │ Docker container "ot-live"                                             │
+ │ Docker container "glonktown"                                           │
  │                                                                        │
  │  nginx :80 ─┬─ /play/, /packs.json, /_packs/*, /_ui/   static files    │
  │             ├─ /ws ───────────► ws bridge :7390 ──► Astron client agent│
@@ -32,10 +32,10 @@ container** on a home server, reached from the internet through a Cloudflare tun
  │                                                       :7381            │
  │                                                                        │
  │  Astron (message director :7199, state server, database, client agent) │
- │  UberDOG ─ Toon Valley AI ─ Giggle Grove AI ─ Silly Meadow AI          │
+ │  UberDOG ─ Toon Valley AI (the one district)                           │
  │  nightly backup loop                                                   │
  └────────────────────────────────────────────────────────────────────────┘
-        volumes:  src/ (code + astron/databases)   web/ (page + packs)   data/ (users, backups, logs)
+        volumes:  resources (read-only)   databases   web/ (page + packs)   data/ (users, backups, logs)
 ```
 
 ## 2. The parts
@@ -87,17 +87,17 @@ loader, Cog street paths, movement code). There is no build of them for WebAssem
 into every Python process through a `sitecustomize.py`, section 2.4). It was checked against the compiled versions
 while it was written, but the server using it instead of the compiled library is the least-tested part of the system.
 
-### 2.3 The edge
+### 2.3 The network
 
-The home server is not exposed directly. A Cloudflare tunnel (`cloudflared`) forwards the public name
-`toontown.puffsco.com` to the container's one published port, 7380. Cloudflare caches static files, which matters when
-files change (see OPERATIONS.md, "Updating the client").
+Docker publishes the container's port 80 as port 7380 on the Mac, and guests open `http://<the Mac's address>:7380/play/`. It
+is plain HTTP on the home network: nothing is exposed to the internet, and nothing must be (section 3 explains why). nginx passes
+each guest's own address to the bridge and the sign-in service, so their per-address limits apply per device.
 
 ### 2.4 The server container (`docker/` in the fork)
 
-Everything the game needs on the server side runs in a single container (`ot-live`, built from the fork's `docker/Dockerfile`).
-`docker/run.sh` starts these, in order, and stops the whole container if the UberDOG or any district dies, so Docker
-restarts everything together:
+Everything the game needs on the server side runs in a single container (`glonktown`, built from the server's `docker/Dockerfile`
+by `docker/docker-compose.yml`). `docker/run.sh` starts these, in order, and stops the whole container if the UberDOG or the
+district dies, so Docker restarts everything together:
 
 1. **nginx** (port 80 inside, 7380 published). Serves the page and game files, and proxies `/ws` and the sign-in
    paths (`docker/nginx.conf`).
@@ -113,9 +113,9 @@ restarts everything together:
    delivery manager, news and the rest listed in `astrond-linux.yml`.
    The one we added is **ToonPresence** (object 4730): it knows who is playing in any district, tells friends when
    someone comes or goes, and relays the Go To messages.
-6. **Three district AIs** (`toontown.ai.AIStart`), one process each: **Toon Valley** (channel base 401000000),
-   **Giggle Grove** (402000000) and **Silly Meadow** (403000000). They start 25 seconds, then 15 seconds apart, and each
-   takes about a minute to finish loading, so a restart takes about two and a half minutes.
+6. **One district AI** (`toontown.ai.AIStart`): **Toon Valley** (channel base 401000000). It starts 25 seconds after the
+   UberDOG and takes about a minute to finish loading. It has Cog invasions (only a district named Silly Meadow is kept
+   free of them).
 7. **A backup loop** (section 6).
 
 The image is Python 3.9 with:
@@ -128,13 +128,15 @@ The image is Python 3.9 with:
 - `pytz` and `websockets`;
 - a `sitecustomize.py` that loads `otpy`, so `panda3d.otp` and `panda3d.toontown` exist in every Python process.
 
-Three folders are mounted into the container, so the image itself holds no data:
+The game's code is copied into the image, so a code change means rebuilding it. Four folders are mounted, so the image itself
+holds no data:
 
 | Mount | Holds |
 |---|---|
-| `/ot/src` | the patched Open Toontown code, `otpy`, and `astron/databases` (the toons and accounts) |
-| `/ot/web` | `_play/` (the built page) and `root/` (packs, packs.json, `_ui/`) |
-| `/ot/data` | `users.json`, `backups/`, `logs/`, `phone_logs/` |
+| `/ot/src/resources` | the game's art, sound and DNA files, read-only (the stock `open-toontown/resources`) |
+| `/ot/src/astron/databases` | the toons and accounts (`runtime/databases`) |
+| `/ot/web` | `_play/` (the built page) and `root/` (packs, packs.json) (`runtime/web`) |
+| `/ot/data` | `users.json`, `gameconfig.json`, `backups/`, `logs/`, `phone_logs/` (`runtime/data`) |
 
 ## 3. Sign-in and a play session
 
@@ -189,7 +191,7 @@ There are two separate stores, deliberately:
 | Store | File | What it holds |
 |---|---|---|
 | Logins | `data/users.json` | name, salted password hash, recovery answers (also hashed), an admin flag, a registration switch |
-| Game | `src/astron/databases/accounts.json` and `astrondb/*.yaml` | which account belongs to which name; each account's toons and every toon's fields |
+| Game | `databases/accounts.json` and `astrondb/*.yaml` | which account belongs to which name; each account's toons and every toon's fields |
 
 The sign-in service is the only thing that touches `users.json`. Password recovery asks for two answers the player chose
 (their nickname and their toon's name), hashes them the same way, and throttles repeated failures per name and per address.
@@ -202,8 +204,7 @@ The sign-in service is the only thing that touches `users.json`. Password recove
 
 ## 7. Seeing what happens
 
-- **Server logs:** one file per process in `data/logs/` (`astron.log`, `ud.log`, `ai1.log` to `ai3.log`, `bridge.log`,
-  `auth.log`).
+- **Server logs:** one file per process in `data/logs/` (`astron.log`, `ud.log`, `ai1.log`, `bridge.log`, `auth.log`).
 - **Test sessions:** open the page with `?log=1`. For the rest of that visit the page sends everything the game prints
   (including Python errors), page errors and browser console warnings and errors to `POST /__log`. The sign-in service
   appends them to `data/logs/client.log` with the time and the device's address. It stops at 30 MB and 6,000 lines per
@@ -214,7 +215,7 @@ The sign-in service is the only thing that touches `users.json`. Password recove
 
 | Thing | Where | Port |
 |---|---|---|
-| Public site | Cloudflare tunnel to the container | 7380 |
+| Guest page | the Mac, on the home network | 7380 |
 | nginx | container | 80 |
 | Sign-in service | container | 7381 |
 | WebSocket bridge | container | 7390 |
@@ -224,4 +225,4 @@ The sign-in service is the only thing that touches `users.json`. Password recove
 | State server (control channel) | container, inside Astron | 4002 |
 | Database server (control channel) | container, inside Astron | 4003 |
 
-Only 7380 is reachable from outside the container.
+Only 7380 is reachable from outside the container, and only from the home network.
