@@ -9,13 +9,12 @@ mkdir -p /ot/data/phone_logs /ot/data/backups /ot/data/logs /ot/src/astron/datab
 chmod 666 /ot/data/users.json
 L=/ot/data/logs
 # the services write their own log files (so they survive in the data folder); show them in `docker logs` / the Zima's Logs tab too
-for f in auth bridge discord astron ud ai1 client; do touch $L/$f.log; done
+for f in auth bridge astron ud ai1 client; do touch $L/$f.log; done
 echo "Open Toontown: starting. The district opens in about a minute and a half."
-tail -n 0 -F $L/auth.log $L/bridge.log $L/discord.log $L/astron.log $L/ud.log $L/ai1.log $L/client.log 2>/dev/null &
+tail -n 0 -F $L/auth.log $L/bridge.log $L/astron.log $L/ud.log $L/ai1.log $L/client.log 2>/dev/null &
 nginx
 python -u /ot/auth_service.py > $L/auth.log 2>&1 &
 python -u /ot/wsbridge.py > $L/bridge.log 2>&1 &
-python -u /ot/discord_status.py > $L/discord.log 2>&1 &       # edits one Discord message with the number of toons playing (needs data/discord_webhook)
 cd /ot/src/astron/linux && chmod +x astrond && ./astrond --loglevel info ../config/astrond-linux.yml > $L/astron.log 2>&1 &
 sleep 6
 cd /ot/src

@@ -12,7 +12,7 @@ class ToonPresenceUD(DistributedObjectGlobalUD):
     a friend coming or going, and the Go To (teleport to a friend) questions and answers. Each district's AI tells it when a
     toon arrives or leaves; a client can only ask it to pass a Go To message on to a friend."""
     notify = DirectNotifyGlobal.directNotify.newCategory('ToonPresenceUD')
-    STATUS_FILE = '/ot/data/online.json'          # who is playing, for the Discord status script (counts only)
+    STATUS_FILE = '/ot/data/online.json'          # how many are playing (counts only)
     STATUS_EVERY = 30.0
 
     def __init__(self, air):
@@ -23,7 +23,7 @@ class ToonPresenceUD(DistributedObjectGlobalUD):
         taskMgr.doMethodLater(self.STATUS_EVERY, self.__writeStatus, 'toonPresenceStatus')
 
     def __writeStatus(self, task):
-        """Write how many toons are playing (in total and in each district) for the Discord status script. Counts only, no names."""
+        """Write how many toons are playing (in total and in each district). Counts only, no names."""
         try:
             counts = {}
             for avId in self.online:

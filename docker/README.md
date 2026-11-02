@@ -1,69 +1,48 @@
 # Running the server in Docker
 
-This folder builds **one image that runs the whole Open Toontown server**: Astron (built from source), the UberDOG, three districts
-(Toon Valley, Giggle Grove, Silly Meadow), a WebSocket bridge for the browser client, a small sign-in service, nginx, and nightly
-backups. It is the same system that runs [Toontown: Anywhere](https://github.com/lPuffyy/toontown-anywhere).
+This folder builds **one image that runs the whole Glonktown server**: Astron (built from source), the UberDOG, one district
+(Toon Valley), a WebSocket bridge for the browser client, a small sign-in service, nginx, and backups. The design is Toontown:
+Anywhere's server fork; Glonktown runs it on the host's Mac for a LAN party.
 
 The image has the game's **code**. It does **not** have the game's **resources** (the art, sound and DNA files): they belong to
-Disney, they are not in this repository, and a public image must not contain them. You bring your own and mount them.
+Disney and are not in this repository. They are mounted read-only from the stock `~/Documents/open-toontown/resources`.
 
-## Get the image
+## Build and run
 
-From the GitHub Container Registry (built by the workflow in `.github/workflows/docker.yml`):
-
-```
-docker pull ghcr.io/lpuffyy/open-toontown-anywhere:latest
-```
-
-or build it yourself from the root of this repository:
+On the Mac, with Docker (Docker Desktop or OrbStack) and Rosetta emulation for amd64 switched on, from the root of this repository:
 
 ```
-docker build -f docker/Dockerfile -t open-toontown-anywhere .
+docker compose -f docker/docker-compose.yml up -d --build
 ```
 
-(The first build compiles Astron and takes several minutes.)
+The image is `linux/amd64`, because the server's Panda3D wheel only exists for x86_64; the first build compiles Astron and takes
+several minutes. The district is open when `runtime/data/logs/ai1.log` ends with `Done.`, about a minute and a half after the start.
 
-## Run it
-
-You need a folder of the game's resources with `phase_3`, `phase_4` and the rest inside, and two empty folders for the data.
-
-```
-docker run -d --name open-toontown --restart unless-stopped -p 7380:80 \
-  -v /srv/ot/resources:/ot/src/resources:ro \
-  -v /srv/ot/databases:/ot/src/astron/databases \
-  -v /srv/ot/data:/ot/data \
-  ghcr.io/lpuffyy/open-toontown-anywhere:latest
-```
-
-or with Compose (`docker/docker-compose.yml`). Wait about **two and a half minutes** (the three districts start one after
-another). Each of `/srv/ot/data/logs/ai1.log` to `ai3.log` ends with `Done.` when its district is open.
-
-| Mount | What it holds |
+| Mount (from `docker-compose.yml`) | What it holds |
 |---|---|
-| `/ot/src/resources` | **Required.** The game's resources. The container stops with a message if `phase_3` is missing. |
-| `/ot/src/astron/databases` | The toons and accounts (Astron's YAML database). Back this up. |
-| `/ot/data` | `users.json` (sign-ins), `logs/`, `backups/`. |
-| `/ot/web` | Optional. The browser client's page and download packs, if you serve them from this container. |
+| `/ot/src/resources` | **Required.** The game's resources, read-only. The container stops with a message if `phase_3` is missing. |
+| `/ot/src/astron/databases` | `runtime/databases`: the toons and accounts (Astron's YAML database). Back this up. |
+| `/ot/data` | `runtime/data`: `users.json` (sign-ins), `gameconfig.json`, `logs/`, `backups/`. |
+| `/ot/web` | `runtime/web`: the browser client's page (`_play/`) and download packs (`root/`), built by `tools/build_client.sh`. |
 
-Port **80** inside is the only port to publish: nginx serves the page and packs, and passes `/ws` (the game's WebSocket),
-`/auth`, `/recover` and `/setrecovery` (sign-in) to the services behind it.
+Port **80** inside is the only port published, as **7380** on the Mac: nginx serves the page and packs, and passes `/ws` (the game's
+WebSocket), `/auth`, `/recover` and `/setrecovery` (sign-in) to the services behind it. Keep it on the home network.
 
 ## The client
 
-The browser client (the page, its Python glue, and the scripts that build the download packs from your resources) is in
-[Toontown: Anywhere](https://github.com/lPuffyy/toontown-anywhere), in its `web/` folder.
+The browser client (the page, its Python glue, and the scripts that build the download packs from the resources) is the `web/`
+repository next to this one.
 
 ## Notes
 
 - **Players are ordinary.** `docker/live.prc` makes new accounts `NO_ACCESS`. To make someone staff, set `ACCESS_LEVEL` to
-  `SYSTEM_ADMIN` (or `ADMIN`, `DEVELOPER`, `MODERATOR`) in their account file under `astron/databases/astrondb`, while the server is stopped.
+  `SYSTEM_ADMIN` (or `ADMIN`, `DEVELOPER`, `MODERATOR`) in their account file under `runtime/databases/astrondb`, while the server is stopped.
 - **Sign-in.** The sign-in service keeps `users.json` (salted PBKDF2-SHA256). The game connection itself trusts the name the page sends, so the
-  server should only be reachable through nginx, never by publishing Astron's ports. See the Toontown: Anywhere docs for this limitation.
+  server must only be reachable through nginx on the home network: never publish Astron's ports, forward 7380 or tunnel it to the internet.
 - **What is inside.** Python 3.9, Panda3D 1.11 (a development wheel), the Python side of Panda3D 1.11 in `docker/overlay/direct`
   (Panda3D's own files, with its license), our pure-Python replacement for the compiled `libotp` / `libtoontown` (`otpy/`), and Astron
   built from <https://github.com/Astron/Astron> at the commit named in the Dockerfile.
-- **Optional Discord status.** If `/ot/data/discord_webhook` exists (one line, a webhook address), `docker/discord_status.py` keeps one message
-  updated with the number of toons playing. It does nothing without that file.
+- **Time zone.** The container runs on Amsterdam time (`TZ` in `docker-compose.yml`), so holidays follow the host's date.
 
 ## Game settings (no rebuild)
 
