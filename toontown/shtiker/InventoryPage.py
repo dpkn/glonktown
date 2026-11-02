@@ -3,6 +3,7 @@ from toontown.toonbase import ToontownBattleGlobals
 from direct.gui.DirectGui import *
 from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
+from otp.otpbase import KeyBindings
 from toontown.toonbase import TTLocalizer
 
 class InventoryPage(ShtikerPage.ShtikerPage):
@@ -118,12 +119,12 @@ class InventoryPage(ShtikerPage.ShtikerPage):
         return
 
     def acceptOnscreenHooks(self):
-        self.accept(ToontownGlobals.InventoryHotkeyOn, self.showInventoryOnscreen)
-        self.accept(ToontownGlobals.InventoryHotkeyOff, self.hideInventoryOnscreen)
+        self.accept(KeyBindings.InventoryEvent, self.showInventoryOnscreen)
+        self.accept(KeyBindings.InventoryEvent + '-up', self.hideInventoryOnscreen)
 
     def ignoreOnscreenHooks(self):
-        self.ignore(ToontownGlobals.InventoryHotkeyOn)
-        self.ignore(ToontownGlobals.InventoryHotkeyOff)
+        self.ignore(KeyBindings.InventoryEvent)
+        self.ignore(KeyBindings.InventoryEvent + '-up')
 
     def showInventoryOnscreen(self):
         messenger.send('wakeup')

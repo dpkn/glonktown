@@ -1,9 +1,10 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
-ARROW_KEYCODE_MAP = {'arrow_up': 'u',
- 'arrow_down': 'd',
- 'arrow_left': 'l',
- 'arrow_right': 'r'}
+from otp.otpbase import KeyBindings
+ARROW_KEYCODE_MAP = {KeyBindings.ForwardEvent: 'u',
+ KeyBindings.ReverseEvent: 'd',
+ KeyBindings.TurnLeftEvent: 'l',
+ KeyBindings.TurnRightEvent: 'r'}
 KEYCODE_TIMEOUT_SECONDS = 1.5
 
 class KeyCodes(DirectObject):

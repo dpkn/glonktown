@@ -22,6 +22,7 @@ from toontown.toonbase.ToonBaseGlobal import base
 from toontown.toonbase.ToontownTimer import ToontownTimer
 
 import math
+from otp.otpbase import KeyBindings
 
 LAND_TIME = 2
 WORLD_SCALE = 2.0
@@ -54,11 +55,11 @@ class DistributedCannonGame(DistributedMinigame):
     HIT_GROUND = 0
     HIT_TOWER = 1
     HIT_WATER = 2
-    FIRE_KEY = 'control'
-    UP_KEY = 'arrow_up'
-    DOWN_KEY = 'arrow_down'
-    LEFT_KEY = 'arrow_left'
-    RIGHT_KEY = 'arrow_right'
+    FIRE_KEY = KeyBindings.JumpEvent
+    UP_KEY = KeyBindings.ForwardEvent
+    DOWN_KEY = KeyBindings.ReverseEvent
+    LEFT_KEY = KeyBindings.TurnLeftEvent
+    RIGHT_KEY = KeyBindings.TurnRightEvent
     INTRO_TASK_NAME = 'CannonGameIntro'
     INTRO_TASK_NAME_CAMERA_LERP = 'CannonGameIntroCamera'
 

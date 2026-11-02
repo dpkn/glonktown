@@ -1,10 +1,11 @@
 from direct.showbase.DirectObject import DirectObject
 from panda3d.core import ModifierButtons
-ROTATE_LEFT_KEY = 'arrow_left'
-ROTATE_RIGHT_KEY = 'arrow_right'
-FORWARD_KEY = 'arrow_up'
-BACKWARDS_KEY = 'arrow_down'
-THROW_PIE_KEYS = ['control', 'delete', 'insert']
+from otp.otpbase import KeyBindings
+ROTATE_LEFT_KEY = KeyBindings.TurnLeftEvent
+ROTATE_RIGHT_KEY = KeyBindings.TurnRightEvent
+FORWARD_KEY = KeyBindings.ForwardEvent
+BACKWARDS_KEY = KeyBindings.ReverseEvent
+THROW_PIE_KEYS = [KeyBindings.JumpEvent, 'delete', 'insert']
 
 class PartyCogActivityInput(DirectObject):
     notify = directNotify.newCategory('PartyCogActivityInput')

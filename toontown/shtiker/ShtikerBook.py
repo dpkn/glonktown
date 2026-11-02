@@ -414,6 +414,14 @@ class ShtikerBook(DirectFrame, StateData.StateData):
             self.prevArrow.hide()
             self.nextArrow.show()
 
+    def setPageArrowKeysEnabled(self, enabled):
+        # The Controls tab turns these off so the arrow keys can be bound.
+        if enabled:
+            self.__checkForNewsPage()
+        else:
+            self.ignore('arrow_left')
+            self.ignore('arrow_right')
+
     def __checkForNewsPage(self):
         from toontown.shtiker import NewsPage
         self.ignore('arrow_left')

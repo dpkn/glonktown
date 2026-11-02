@@ -4677,6 +4677,8 @@ OptionsPageFriendsEnabledLabel = 'Accepting new friend requests.'
 OptionsPageFriendsDisabledLabel = 'Not accepting friend requests.'
 OptionsPageWhisperEnabledLabel = 'Allowing whispers from anyone.'
 OptionsPageWhisperDisabledLabel = 'Allowing whispers from friends only.'
+OptionsPageSmoothAnimationsOnLabel = 'Smooth Animations are on.'
+OptionsPageSmoothAnimationsOffLabel = 'Smooth Animations are off.'
 OptionsPageSpeedChatStyleLabel = 'SpeedChat Color'
 OptionsPageDisplayWindowed = 'windowed'
 OptionsPageDisplayEmbedded = 'In the browser'
@@ -4702,6 +4704,37 @@ DisplaySettingsAccept = 'Press OK to keep the new settings, or Cancel to revert.
 DisplaySettingsRevertUser = 'Your previous display settings have been restored.'
 DisplaySettingsRevertFailed = 'The selected display settings do not work on your computer.  Your previous display settings have been restored.'
 OptionsPageCodesTab = 'Enter Code'
+OptionsPageControlsTab = 'Controls'
+ControlsPageTitle = 'Controls'
+ControlsPageActionNames = {'forward': 'Walk Forward',
+ 'reverse': 'Walk Backward',
+ 'turnLeft': 'Turn Left',
+ 'turnRight': 'Turn Right',
+ 'jump': 'Jump / Action',
+ 'quests': 'Show ToonTasks',
+ 'inventory': 'Show Gags',
+ 'chat': 'Open Chat'}
+ControlsPageKeyNames = {'arrow_up': 'Up Arrow',
+ 'arrow_down': 'Down Arrow',
+ 'arrow_left': 'Left Arrow',
+ 'arrow_right': 'Right Arrow',
+ 'control': 'Ctrl',
+ 'shift': 'Shift',
+ 'alt': 'Alt',
+ 'space': 'Space',
+ 'enter': 'Enter',
+ 'backspace': 'Backspace',
+ 'page_up': 'Page Up',
+ 'page_down': 'Page Down'}
+ControlsPageInstructions = 'Click a key to change it.'
+ControlsPagePressKey = 'Press a key...'
+ControlsPageWaiting = 'Press the new key for %s.\nClick it again to cancel.'
+ControlsPageReservedKey = '%s is already used for something else.\nPress a different key.'
+ControlsPageChatTyping = 'Start typing at any time to chat.'
+ControlsPageChatKey = "Letter keys are in use, so typing won't open chat.\nPress %s to chat."
+ControlsPagePresets = 'Presets:'
+ControlsPageArrowKeysPreset = 'Arrow Keys'
+ControlsPageWASDPreset = 'WASD'
 CdrPageTitle = 'Enter a Code'
 CdrInstructions = 'Enter your code to receive a special item in your mailbox.'
 CdrResultSuccess = 'Congratulations! Check your mailbox to claim your item!'

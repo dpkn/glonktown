@@ -23,6 +23,7 @@ from toontown.toon.Toon import teleportDebug
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase.ToonBaseGlobal import base
+from otp.otpbase import KeyBindings
 
 
 class Place(StateData, FriendsListManager):
@@ -279,14 +280,14 @@ class Place(StateData, FriendsListManager):
         self.accept('teleportQuery', self.handleTeleportQuery)
         base.localAvatar.setTeleportAvailable(1)
         base.localAvatar.b_setAnimState('SitStart', 1)
-        self.accept('arrow_up', self.fsm.request, extraArgs=['walk'])
+        self.accept(KeyBindings.ForwardEvent, self.fsm.request, extraArgs=['walk'])
 
     def exitSit(self):
         self.exitFLM()
         base.localAvatar.laffMeter.stop()
         base.localAvatar.setTeleportAvailable(0)
         self.ignore('teleportQuery')
-        self.ignore('arrow_up')
+        self.ignore(KeyBindings.ForwardEvent)
 
     def enterDrive(self):
         self.enterFLM()

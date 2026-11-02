@@ -15,6 +15,7 @@ from toontown.toonbase import TTLocalizer
 from otp.otpbase import OTPGlobals
 from toontown.cogdominium import CogdoCraneGameConsts as GameConsts
 import random
+from otp.otpbase import KeyBindings
 
 class DistCogdoCrane(DistributedObject.DistributedObject, FSM.FSM):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistCogdoCrane')
@@ -392,8 +393,8 @@ class DistCogdoCrane(DistributedObject.DistributedObject, FSM.FSM):
 
     def __enableControlInterface(self):
         gui = loader.loadModel('phase_3.5/models/gui/avatar_panel_gui')
-        self.accept('control', self.__controlPressed)
-        self.accept('control-up', self.__controlReleased)
+        self.accept(KeyBindings.JumpEvent, self.__controlPressed)
+        self.accept(KeyBindings.JumpEvent + '-up', self.__controlReleased)
         self.accept('InputState-forward', self.__upArrow)
         self.accept('InputState-reverse', self.__downArrow)
         self.accept('InputState-turnLeft', self.__leftArrow)
@@ -410,8 +411,8 @@ class DistCogdoCrane(DistributedObject.DistributedObject, FSM.FSM):
         self.__cleanupCraneAdvice()
         self.__cleanupMagnetAdvice()
         self.ignore('escape')
-        self.ignore('control')
-        self.ignore('control-up')
+        self.ignore(KeyBindings.JumpEvent)
+        self.ignore(KeyBindings.JumpEvent + '-up')
         self.ignore('InputState-forward')
         self.ignore('InputState-reverse')
         self.ignore('InputState-turnLeft')

@@ -10,6 +10,7 @@ from . import CogdoGameConsts
 from . import CogdoMazeGameGlobals as Globals
 from .CogdoMazePlayer import CogdoMazePlayer
 from .CogdoMazeCameraManager import CogdoMazeCameraManager
+from otp.otpbase import KeyBindings
 
 class CogdoMazeLocalPlayer(CogdoMazePlayer):
     notify = directNotify.newCategory('CogdoMazeLocalPlayer')
@@ -44,7 +45,7 @@ class CogdoMazeLocalPlayer(CogdoMazePlayer):
          'squashed': False,
          'boss': False,
          'minion': False}
-        self.accept('control', self.controlKeyPressed)
+        self.accept(KeyBindings.JumpEvent, self.controlKeyPressed)
 
     def destroy(self):
         self.toon.showName()
@@ -132,7 +133,7 @@ class CogdoMazeLocalPlayer(CogdoMazePlayer):
     def enterDone(self):
         CogdoMazePlayer.enterDone(self)
         self._guiMgr.hideQuestArrow()
-        self.ignore('control')
+        self.ignore(KeyBindings.JumpEvent)
         self._guiMgr.setMessage('')
         if self.exited == False:
             self.lostMemos()

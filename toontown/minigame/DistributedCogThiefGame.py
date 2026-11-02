@@ -18,6 +18,7 @@ from toontown.minigame.DistributedMinigame import DistributedMinigame
 from toontown.minigame import Trajectory
 from toontown.minigame import MinigameGlobals
 from toontown.minigame import CogThiefWalk
+from otp.otpbase import KeyBindings
 CTGG = CogThiefGameGlobals
 
 class DistributedCogThiefGame(DistributedMinigame):
@@ -270,12 +271,12 @@ class DistributedCogThiefGame(DistributedMinigame):
         self.notify.debug('enterPlay')
         self.startGameWalk()
         self.spawnUpdateSuitsTask()
-        self.accept('control', self.controlKeyPressed)
+        self.accept(KeyBindings.JumpEvent, self.controlKeyPressed)
         self.pieHandler = CollisionHandlerEvent()
         self.pieHandler.setInPattern('pieHit-%fn')
 
     def exitPlay(self):
-        self.ignore('control')
+        self.ignore(KeyBindings.JumpEvent)
         if self.resultIval and self.resultIval.isPlaying():
             self.resultIval.finish()
             self.resultIval = None

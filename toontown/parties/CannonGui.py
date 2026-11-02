@@ -2,14 +2,15 @@ from direct.showbase.DirectObject import DirectObject
 from direct.gui.DirectGui import DirectFrame, DirectButton
 import direct.gui.DirectGuiGlobals as DGG
 from toontown.parties import PartyUtils
+from otp.otpbase import KeyBindings
 
 class CannonGui(DirectObject):
     notify = directNotify.newCategory('CannonGui')
-    FIRE_KEY = 'control'
-    UP_KEY = 'arrow_up'
-    DOWN_KEY = 'arrow_down'
-    LEFT_KEY = 'arrow_left'
-    RIGHT_KEY = 'arrow_right'
+    FIRE_KEY = KeyBindings.JumpEvent
+    UP_KEY = KeyBindings.ForwardEvent
+    DOWN_KEY = KeyBindings.ReverseEvent
+    LEFT_KEY = KeyBindings.TurnLeftEvent
+    RIGHT_KEY = KeyBindings.TurnRightEvent
     FIRE_PRESSED = 'cannongui_fire_pressed'
 
     def __init__(self):

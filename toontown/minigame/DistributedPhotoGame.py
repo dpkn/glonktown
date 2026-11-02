@@ -29,6 +29,7 @@ from otp.otpbase import OTPGlobals
 from toontown.battle import BattleParticles
 from toontown.minigame import PhotoGameBase
 from panda3d.otp import *
+from otp.otpbase import KeyBindings
 
 WORLD_SCALE = 2.0
 FAR_PLANE_DIST = 600 * WORLD_SCALE
@@ -57,11 +58,11 @@ class DistributedPhotoGame(DistributedMinigame, PhotoGameBase.PhotoGameBase):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedPhotoGame')
     font = ToontownGlobals.getToonFont()
     LOCAL_PHOTO_MOVE_TASK = 'localPhotoMoveTask'
-    FIRE_KEY = 'control'
-    UP_KEY = 'arrow_up'
-    DOWN_KEY = 'arrow_down'
-    LEFT_KEY = 'arrow_left'
-    RIGHT_KEY = 'arrow_right'
+    FIRE_KEY = KeyBindings.JumpEvent
+    UP_KEY = KeyBindings.ForwardEvent
+    DOWN_KEY = KeyBindings.ReverseEvent
+    LEFT_KEY = KeyBindings.TurnLeftEvent
+    RIGHT_KEY = KeyBindings.TurnRightEvent
     INTRO_TASK_NAME = 'PhotoGameIntro'
     INTRO_TASK_NAME_CAMERA_LERP = 'PhotoGameIntroCamera'
 

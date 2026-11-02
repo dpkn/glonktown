@@ -10,7 +10,9 @@ from direct.directnotify import DirectNotifyGlobal
 from otp.login import LeaveToPayDialog
 from direct.gui.DirectGui import *
 from panda3d.core import *
+from otp.otpbase import KeyBindings
 ChatEvent = 'ChatEvent'
+ChatKeyEvent = KeyBindings.getEvent(KeyBindings.Chat)
 NormalChatEvent = 'NormalChatEvent'
 SCChatEvent = 'SCChatEvent'
 SCCustomChatEvent = 'SCCustomChatEvent'
@@ -43,7 +45,6 @@ class ChatManager(DirectObject.DirectObject):
     def __init__(self, cr, localAvatar):
         self.cr = cr
         self.localAvatar = localAvatar
-        self.wantBackgroundFocus = 1
         self.__scObscured = 0
         self.__normalObscured = 0
         self.openChatWarning = None
@@ -216,7 +217,24 @@ class ChatManager(DirectObject.DirectObject):
         if self.localAvatar.canChat() or self.cr.wantMagicWords:
             if self.wantBackgroundFocus:
                 self.chatInputNormal.chatEntry['backgroundFocus'] = 1
+            else:
+                self.acceptChatKey()
             self.acceptOnce('enterNormalChat', self.fsm.request, ['normalChat'])
+
+    @property
+    def wantBackgroundFocus(self):
+        # Typing opens the chat box unless a key you'd type is bound to something.
+        return not base.keyBindings.hasTypingKeys()
+
+    def acceptChatKey(self):
+        # Without background focus, the chat key opens the chat box.  Skip the
+        # press that just sent a message and brought us here.
+        self.accept(ChatKeyEvent, self.__chatKeyPressed, [globalClock.getFrameCount()])
+
+    def __chatKeyPressed(self, frame):
+        if globalClock.getFrameCount() != frame:
+            messenger.send('wakeup')
+            messenger.send('enterNormalChat')
 
     def checkObscurred(self):
         if not self.__scObscured:
@@ -228,6 +246,7 @@ class ChatManager(DirectObject.DirectObject):
         self.scButton.hide()
         self.normalButton.hide()
         self.ignore('enterNormalChat')
+        self.ignore(ChatKeyEvent)
         if self.wantBackgroundFocus:
             self.chatInputNormal.chatEntry['backgroundFocus'] = 0
 
@@ -317,10 +336,14 @@ class ChatManager(DirectObject.DirectObject):
             if playerId and not chatToToon:
                 if self.wantBackgroundFocus:
                     self.chatInputNormal.chatEntry['backgroundFocus'] = 1
+                else:
+                    self.acceptChatKey()
                 self.acceptOnce('enterNormalChat', self.fsm.request, ['whisperChatPlayer', [avatarName, playerId]])
             elif online and chatToToon:
                 if self.wantBackgroundFocus:
                     self.chatInputNormal.chatEntry['backgroundFocus'] = 1
+                else:
+                    self.acceptChatKey()
                 self.acceptOnce('enterNormalChat', self.fsm.request, ['whisperChat', [avatarName, avatarId]])
         if ConfigVariableBool('force-typed-whisper-enabled', 0).value:
             self.whisperButton['state'] = 'normal'
@@ -342,6 +365,7 @@ class ChatManager(DirectObject.DirectObject):
     def exitWhisper(self):
         self.whisperFrame.hide()
         self.ignore('enterNormalChat')
+        self.ignore(ChatKeyEvent)
         self.chatInputNormal.chatEntry['backgroundFocus'] = 0
 
     def enterWhisperSpeedChat(self, avatarId):

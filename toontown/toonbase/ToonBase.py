@@ -1,6 +1,8 @@
 from otp.otpbase import OTPBase
 from otp.otpbase import OTPLauncherGlobals
 from otp.otpbase import OTPGlobals
+from otp.otpbase import KeyBindings
+from otp.otpbase import SmoothAnimations
 from otp.settings.Settings import Settings
 from direct.showbase.PythonUtil import *
 from . import ToontownGlobals
@@ -48,6 +50,8 @@ class ToonBase(OTPBase.OTPBase):
 
             sys.exit(1)
         self.disableShowbaseMouse()
+        self.keyBindings = KeyBindings.KeyBindings()
+        SmoothAnimations.setEnabled(self.settings.getSetting(SmoothAnimations.SettingName, True))
         base.debugRunningMultiplier /= OTPGlobals.ToonSpeedFactor
         self.toonChatSounds = ConfigVariableBool('toon-chat-sounds', 1).value
         self.placeBeforeObjects = ConfigVariableBool('place-before-objects', 0).value

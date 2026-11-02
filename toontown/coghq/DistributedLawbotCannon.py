@@ -15,6 +15,7 @@ from toontown.toon import ToonHead
 from toontown.toonbase import TTLocalizer
 from toontown.minigame import Trajectory
 from toontown.effects import DustCloud
+from otp.otpbase import KeyBindings
 GROUND_PLANE_MIN = -15
 CANNON_ROTATION_MIN = -55
 CANNON_ROTATION_MAX = 50
@@ -30,11 +31,11 @@ CAMERA_PULLBACK_MAX = 40
 class DistributedLawbotCannon(DistributedObject.DistributedObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedLawbotCannon')
     LOCAL_CANNON_MOVE_TASK = 'localCannonMoveTask'
-    FIRE_KEY = 'control'
-    UP_KEY = 'arrow_up'
-    DOWN_KEY = 'arrow_down'
-    LEFT_KEY = 'arrow_left'
-    RIGHT_KEY = 'arrow_right'
+    FIRE_KEY = KeyBindings.JumpEvent
+    UP_KEY = KeyBindings.ForwardEvent
+    DOWN_KEY = KeyBindings.ReverseEvent
+    LEFT_KEY = KeyBindings.TurnLeftEvent
+    RIGHT_KEY = KeyBindings.TurnRightEvent
     HIT_GROUND = 0
 
     def __init__(self, cr):

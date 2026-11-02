@@ -23,6 +23,7 @@ from toontown.toonbase import TTLocalizer
 from direct.distributed import DistributedObject
 from toontown.effects import Wake
 from direct.controls.ControlManager import CollisionHandlerRayStart
+from otp.otpbase import KeyBindings
 LAND_TIME = 2
 WORLD_SCALE = 2.0
 GROUND_SCALE = 1.4 * WORLD_SCALE
@@ -60,11 +61,11 @@ class DistributedCannon(DistributedObject.DistributedObject):
     HIT_GROUND = 0
     HIT_TOWER = 1
     HIT_WATER = 2
-    FIRE_KEY = 'control'
-    UP_KEY = 'arrow_up'
-    DOWN_KEY = 'arrow_down'
-    LEFT_KEY = 'arrow_left'
-    RIGHT_KEY = 'arrow_right'
+    FIRE_KEY = KeyBindings.JumpEvent
+    UP_KEY = KeyBindings.ForwardEvent
+    DOWN_KEY = KeyBindings.ReverseEvent
+    LEFT_KEY = KeyBindings.TurnLeftEvent
+    RIGHT_KEY = KeyBindings.TurnRightEvent
     BUMPER_KEY = 'delete'
     BUMPER_KEY2 = 'insert'
     INTRO_TASK_NAME = 'CannonGameIntro'

@@ -4,10 +4,11 @@ from direct.gui.DirectGui import *
 from direct.showbase.PythonUtil import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase.InputStateGlobal import inputState
-from direct.controls import ControlManager
+from .OTPControlManager import OTPControlManager
 from . import DistributedAvatar
 from direct.task import Task
 from otp.otpbase import OTPGlobals
+from otp.otpbase import KeyBindings
 import math
 import random
 from direct.directnotify import DirectNotifyGlobal
@@ -43,7 +44,7 @@ class LocalAvatar(DistributedAvatar.DistributedAvatar, DistributedSmoothNode.Dis
         base.pushCTrav(self.cTrav)
         self.cTrav.setRespectPrevTransform(1)
         self.avatarControlsEnabled = 0
-        self.controlManager = ControlManager.ControlManager(True, passMessagesThrough)
+        self.controlManager = OTPControlManager(True, passMessagesThrough)
         self.initializeCollisions()
         self.initializeSmartCamera()
         self.cameraPositions = []
@@ -935,24 +936,14 @@ class LocalAvatar(DistributedAvatar.DistributedAvatar, DistributedSmoothNode.Dis
         return self.animMultiplier
 
     def enableRun(self):
-        self.accept('arrow_up', self.startRunWatch)
-        self.accept('arrow_up-up', self.stopRunWatch)
-        self.accept('control-arrow_up', self.startRunWatch)
-        self.accept('control-arrow_up-up', self.stopRunWatch)
-        self.accept('alt-arrow_up', self.startRunWatch)
-        self.accept('alt-arrow_up-up', self.stopRunWatch)
-        self.accept('shift-arrow_up', self.startRunWatch)
-        self.accept('shift-arrow_up-up', self.stopRunWatch)
+        forwardEvent = KeyBindings.getEvent(KeyBindings.Forward)
+        self.accept(forwardEvent, self.startRunWatch)
+        self.accept(forwardEvent + '-up', self.stopRunWatch)
 
     def disableRun(self):
-        self.ignore('arrow_up')
-        self.ignore('arrow_up-up')
-        self.ignore('control-arrow_up')
-        self.ignore('control-arrow_up-up')
-        self.ignore('alt-arrow_up')
-        self.ignore('alt-arrow_up-up')
-        self.ignore('shift-arrow_up')
-        self.ignore('shift-arrow_up-up')
+        forwardEvent = KeyBindings.getEvent(KeyBindings.Forward)
+        self.ignore(forwardEvent)
+        self.ignore(forwardEvent + '-up')
 
     def startRunWatch(self):
 

@@ -21,6 +21,7 @@ from .CogdoFlyingObjects import CogdoFlyingPlatform, CogdoFlyingGatherable
 from .CogdoFlyingLegalEagle import CogdoFlyingLegalEagle
 from . import CogdoFlyingGameGlobals as Globals
 from enum import IntEnum
+from otp.otpbase import KeyBindings
 
 class CogdoFlyingLocalPlayer(CogdoFlyingPlayer):
     notify = DirectNotifyGlobal.directNotify.newCategory('CogdoFlyingLocalPlayer')
@@ -706,9 +707,9 @@ class CogdoFlyingLocalPlayer(CogdoFlyingPlayer):
             self.notify.debug('Pressed Control and have fuel')
             self.request('FlyingUp')
         else:
-            self.ignore('control')
+            self.ignore(KeyBindings.JumpEvent)
             self.ignore('lcontrol')
-            self.acceptOnce('control', self.pressedControlWhileRunning)
+            self.acceptOnce(KeyBindings.JumpEvent, self.pressedControlWhileRunning)
             self.acceptOnce('lcontrol', self.pressedControlWhileRunning)
 
     def setPropellerState(self, propState):
@@ -867,9 +868,9 @@ class CogdoFlyingLocalPlayer(CogdoFlyingPlayer):
             self._collideSfx.play()
         self.orthoWalk.start()
         self.setPropellerState(CogdoFlyingLocalPlayer.PropStates.Normal)
-        self.ignore('control')
+        self.ignore(KeyBindings.JumpEvent)
         self.ignore('lcontrol')
-        self.acceptOnce('control', self.pressedControlWhileRunning)
+        self.acceptOnce(KeyBindings.JumpEvent, self.pressedControlWhileRunning)
         self.acceptOnce('lcontrol', self.pressedControlWhileRunning)
 
     def filterRunning(self, request, args):
@@ -882,7 +883,7 @@ class CogdoFlyingLocalPlayer(CogdoFlyingPlayer):
     def exitRunning(self):
         CogdoFlyingLocalPlayer.notify.debug("exit%s: '%s' -> '%s'" % (self.oldState, self.oldState, self.newState))
         self.orthoWalk.stop()
-        self.ignore('control')
+        self.ignore(KeyBindings.JumpEvent)
         self.ignore('lcontrol')
 
     def enterOutOfTime(self):

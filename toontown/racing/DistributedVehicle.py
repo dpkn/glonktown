@@ -24,6 +24,7 @@ import random
 from direct.showbase.PythonUtil import randFloat
 from direct.task.Task import Task
 import math
+from otp.otpbase import KeyBindings
 iceTurnFactor = 0.25
 iceAccelFactor = 0.4
 
@@ -989,8 +990,8 @@ class DistributedVehicle(DistributedSmoothNode.DistributedSmoothNode, Kart.Kart,
 
     def enableControls(self):
         self.canRace = True
-        self.accept('control', self.__controlPressed)
-        self.accept('control-up', self.__controlReleased)
+        self.accept(KeyBindings.JumpEvent, self.__controlPressed)
+        self.accept(KeyBindings.JumpEvent + '-up', self.__controlReleased)
         self.accept('InputState-forward', self.__upArrow)
         self.accept('InputState-reverse', self.__downArrow)
         self.accept('InputState-turnLeft', self.__leftArrow)
@@ -999,8 +1000,8 @@ class DistributedVehicle(DistributedSmoothNode.DistributedSmoothNode, Kart.Kart,
     def disableControls(self):
         self.arrowVert = 0
         self.arrowHorz = 0
-        self.ignore('control')
-        self.ignore('control-up')
+        self.ignore(KeyBindings.JumpEvent)
+        self.ignore(KeyBindings.JumpEvent + '-up')
         self.ignore('tab')
         self.ignore('InputState-forward')
         self.ignore('InputState-reverse')

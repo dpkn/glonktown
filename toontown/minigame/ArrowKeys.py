@@ -1,12 +1,13 @@
 from panda3d.core import ModifierButtons
 from direct.showbase.DirectObject import DirectObject
+from otp.otpbase import KeyBindings
 
 class ArrowKeys(DirectObject):
-    UP_KEY = 'arrow_up'
-    DOWN_KEY = 'arrow_down'
-    LEFT_KEY = 'arrow_left'
-    RIGHT_KEY = 'arrow_right'
-    JUMP_KEY = 'control'
+    UP_KEY = KeyBindings.ForwardEvent
+    DOWN_KEY = KeyBindings.ReverseEvent
+    LEFT_KEY = KeyBindings.TurnLeftEvent
+    RIGHT_KEY = KeyBindings.TurnRightEvent
+    JUMP_KEY = KeyBindings.JumpEvent
     UP_INDEX = 0
     DOWN_INDEX = 1
     LEFT_INDEX = 2

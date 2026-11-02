@@ -65,9 +65,13 @@ class ToontownChatManager(ChatManager.ChatManager):
             self.chatInputNormal = TTChatInputNormal(self)
         self.chatInputWhiteList.setPos(self.speedChatPlusPos)
         self.chatInputWhiteList.desc = 'chatInputWhiteList'
+        base.keyBindings.watchTextEntry(self.chatInputNormal.chatEntry)
+        base.keyBindings.watchTextEntry(self.chatInputWhiteList.chatEntry)
         return
 
     def delete(self):
+        base.keyBindings.ignoreTextEntry(self.chatInputNormal.chatEntry)
+        base.keyBindings.ignoreTextEntry(self.chatInputWhiteList.chatEntry)
         ChatManager.ChatManager.delete(self)
         loader.unloadModel('phase_3.5/models/gui/chat_input_gui')
         self.normalButton.destroy()

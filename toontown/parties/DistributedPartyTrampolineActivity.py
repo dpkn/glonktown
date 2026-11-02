@@ -31,6 +31,7 @@ from toontown.parties import PartyGlobals
 from toontown.parties.DistributedPartyActivity import DistributedPartyActivity
 from toontown.parties.activityFSMs import TrampolineActivityFSM
 from toontown.parties import PartyUtils
+from otp.otpbase import KeyBindings
 
 class DistributedPartyTrampolineActivity(DistributedPartyActivity):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedPartyTrampolineActivity')
@@ -234,7 +235,7 @@ class DistributedPartyTrampolineActivity(DistributedPartyActivity):
             self.leavingTrampoline = True
             self.timer.reset()
             self.trampB = self.leavingTrampB
-            self.ignore('control')
+            self.ignore(KeyBindings.JumpEvent)
             self.quitEarlyButton.stash()
         return
 
@@ -301,10 +302,10 @@ class DistributedPartyTrampolineActivity(DistributedPartyActivity):
         DistributedPartyTrampolineActivity.notify.debug('startActive')
         if self.toon != None and self.toon.doId == base.localAvatar.doId:
             base.setCellsAvailable(base.bottomCells, True)
-            self.accept('arrow_left', self.onLeft)
-            self.accept('arrow_left-up', self.onLeftUp)
-            self.accept('arrow_right', self.onRight)
-            self.accept('arrow_right-up', self.onRightUp)
+            self.accept(KeyBindings.TurnLeftEvent, self.onLeft)
+            self.accept(KeyBindings.TurnLeftEvent + '-up', self.onLeftUp)
+            self.accept(KeyBindings.TurnRightEvent, self.onRight)
+            self.accept(KeyBindings.TurnRightEvent + '-up', self.onRightUp)
             self.beginRoundInterval = Sequence(Func(self._showFlashMessage, TTLocalizer.PartyTrampolineReady), Wait(1.2), Func(self.flashMessage, TTLocalizer.PartyTrampolineGo), Func(self.beginRound))
             self.beginRoundInterval.start()
         return
@@ -366,7 +367,7 @@ class DistributedPartyTrampolineActivity(DistributedPartyActivity):
         self.timer.show()
         self.quitEarlyButton.unstash()
         self.notify.debug('Accepting contorl')
-        self.accept('control', self.onJump)
+        self.accept(KeyBindings.JumpEvent, self.onJump)
         self.notify.debug('setting simulate step to true')
         self.doSimulateStep = True
 
@@ -397,10 +398,10 @@ class DistributedPartyTrampolineActivity(DistributedPartyActivity):
 
     def releaseToon(self):
         self._hideFlashMessage()
-        self.ignore('arrow_left')
-        self.ignore('arrow_left-up')
-        self.ignore('arrow_right')
-        self.ignore('arrow_right-up')
+        self.ignore(KeyBindings.TurnLeftEvent)
+        self.ignore(KeyBindings.TurnLeftEvent + '-up')
+        self.ignore(KeyBindings.TurnRightEvent)
+        self.ignore(KeyBindings.TurnRightEvent + '-up')
         taskMgr.remove(self.uniqueName('TrampolineActivity.updateTask'))
         self.hopOffAnim = Sequence(self.toon.hprInterval(0.5, VBase3(-90.0, 0.0, 0.0), other=self.tramp), Func(self.toon.b_setAnimState, 'jump', 1.0), Func(self.toon.dropShadow.reparentTo, hidden), Wait(0.4), PartyUtils.arcPosInterval(0.75, self.toon, self.hopOffPos, 5.0, self.tramp), Func(self.postHopOff))
         self.hopOffAnim.start()
