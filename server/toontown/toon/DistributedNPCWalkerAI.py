@@ -1,22 +1,33 @@
 import random
+import traceback
 from panda3d.core import Point3, Vec3
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.ClockDelta import globalClockDelta
 from direct.task import Task
 from otp.avatar.DistributedPlayerAI import DistributedPlayerAI
+from toontown.hood import ZoneUtil
+from toontown.toonbase import ToontownGlobals
 from . import DistributedNPCToonBaseAI
+from . import Experience
+from . import InventoryBase
+from . import NPCWalkerBattleAI
 from . import NPCWalkerGlobals as WG
 
 # How far a walker strays from the route's nodes, so a group does not walk in single file
 NODE_SPREAD = 2.5
 GREET_COOLDOWN = 90.0
+# A chase after a Cog gives up after this many tries to catch it
+MAX_CHASES = 3
+# Within this many feet of a Cog, a walker starts the battle
+CATCH_DISTANCE = 30.0
 
 
 class DistributedNPCWalkerAI(DistributedNPCToonBaseAI.DistributedNPCToonBaseAI):
-    """A toon that wanders around a playground so it feels busy. NPCWalkerManagerAI creates and removes them.
+    """A toon that wanders around a playground or street so it feels busy. NPCWalkerManagerAI creates and removes them.
 
     The server owns where the walker is: each setWalk names a path and the time it started, and every client walks the toon
-    along it by itself, so a walk costs one message.
+    along it by itself, so a walk costs one message. On a street it also fights Cogs, alone or in real toons' battles
+    (NPCWalkerBattleAI plays its part in the battle).
     """
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedNPCWalkerAI')
 
@@ -37,6 +48,49 @@ class DistributedNPCWalkerAI(DistributedNPCToonBaseAI.DistributedNPCToonBaseAI):
         self.walkHeading = WG.KEEP_HEADING
         self.walkFlags = 0
         self.walkStamp = 0
+        self.gameAccess = ToontownGlobals.AccessFull
+        self.battleDoId = None
+        self.battlePos = None
+        self.battleState = None
+        self.battleStateSince = 0.0
+        self.battleChoiceDelay = 0.0
+        self.battleTries = 0
+        self.joinsSeen = {}
+        self.chases = 0
+
+    def setupFighter(self, stats):
+        """Gives the walker its laff, gag tracks, experience and a full gag pouch, before it is generated."""
+        self.setMaxHp(stats['maxHp'])
+        self.setHp(stats['maxHp'])
+        self.setTrackAccess(list(stats['tracks']))
+        self.experience = Experience.Experience(owner=self)
+        self.experience.experience = list(stats['experience'])
+        self.setMaxCarry(stats['maxCarry'])
+        self.inventory = InventoryBase.InventoryBase(self)
+        self.inventory.maxOutInv(1, 0)
+        self.setBattleId(0)
+        self.setCogTypes([0] * 4)
+        self.setCogLevels([0] * 4)
+        self.setCogParts([0] * 4)
+        self.setCogMerits([0] * 4)
+        # The rest of what battles, rewards and ToonTasks read from a toon, which a player's toon gets from the database
+        self.trackBonusLevel = [-1] * len(stats['tracks'])
+        self.pinkSlips = 0
+        self.DISLid = 0
+        self.rewardTier = 0
+        self.rewardHistory = []
+        self.questHistory = []
+        self.questCarryLimit = 1
+
+    def getGameAccess(self):
+        return ToontownGlobals.AccessFull
+
+    def sendUpdate(self, fieldName, args=[]):
+        # A walker's network class has only the toon fields its look and its battles need; the rest of DistributedToonAI's
+        # updates (gags, experience, quests...) stay on the server
+        if self.dclass.getFieldByName(fieldName) is None:
+            return
+        DistributedNPCToonBaseAI.DistributedNPCToonBaseAI.sendUpdate(self, fieldName, args)
 
     def placeAt(self, node, hidden=False):
         """Puts the walker on a node before it is generated; a hidden one stays out of sight until it teleports in."""
@@ -53,6 +107,7 @@ class DistributedNPCWalkerAI(DistributedNPCToonBaseAI.DistributedNPCToonBaseAI):
             self.__idle(random.uniform(0, 8))
 
     def delete(self):
+        self.battleDoId = None
         taskMgr.remove(self.uniqueName('walkerNext'))
         taskMgr.remove(self.uniqueName('walkerChat'))
         self.manager = None
@@ -75,6 +130,9 @@ class DistributedNPCWalkerAI(DistributedNPCToonBaseAI.DistributedNPCToonBaseAI):
         return self.walkDuration
 
     def __sendPath(self, points, heading=WG.KEEP_HEADING, flags=0):
+        if self.manager.isStreet and len(points) > 1:
+            # Streets slope and curb: keep to the ground all the way
+            flags |= WG.FLAG_RAYCAST
         duration = self.__setPath(points, heading, flags)
         self.sendUpdate('setWalk', self.getWalk())
         return duration
@@ -109,7 +167,7 @@ class DistributedNPCWalkerAI(DistributedNPCToonBaseAI.DistributedNPCToonBaseAI):
         points = [pos] + remaining
         flags = self.walkFlags & WG.FLAG_RAYCAST if remaining else 0
         for fromNode, toNode in zip(nodes, nodes[1:]):
-            legPoints, raycast = WG.getLegPoints(self.route, fromNode, toNode)
+            legPoints, raycast = self.manager.getLegPoints(fromNode, toNode)
             points += legPoints
             points.append(self.__nodePoint(toNode))
             if raycast:
@@ -124,7 +182,13 @@ class DistributedNPCWalkerAI(DistributedNPCToonBaseAI.DistributedNPCToonBaseAI):
 
     def __run(self, method, extraArgs):
         if self.manager:
-            method(*extraArgs)
+            try:
+                method(*extraArgs)
+            except Exception:
+                # Walkers are decoration: a mistake in one must never stop the district. Send it home instead
+                self.notify.warning('walker %s: %s' % (self.doId, traceback.format_exc()))
+                if self.manager:
+                    self.manager.walkerLeft(self, 60)
         return Task.done
 
     def __arrived(self):
@@ -142,6 +206,9 @@ class DistributedNPCWalkerAI(DistributedNPCToonBaseAI.DistributedNPCToonBaseAI):
         self.__later(duration, self.__decide)
 
     def __decide(self):
+        if self.manager.isStreet:
+            self.__decideOnStreet()
+            return
         roll = random.random()
         if roll < 0.12 and self.manager.claimTrolley(self):
             self.__goToTrolley()
@@ -166,6 +233,119 @@ class DistributedNPCWalkerAI(DistributedNPCToonBaseAI.DistributedNPCToonBaseAI):
             self.__later(duration, self.__idle)
         else:
             self.__later(duration, self.__decide)
+
+    # Streets: fighting Cogs
+
+    def __decideOnStreet(self):
+        battle = self.manager.findBattleToJoin(self)
+        if battle is not None and random.random() < 0.7:
+            self.__goToBattle(battle)
+            return
+        roll = random.random()
+        if roll < 0.35:
+            suit = self.manager.findSuitToFight(self)
+            if suit is not None:
+                self.chases = 0
+                self.__chase(suit)
+                return
+        if roll > 0.95 and self.manager.mayLeave():
+            self.__leave()
+        else:
+            self.__wander()
+
+    def __pathToward(self, target):
+        """The points from where the walker stands along the route to the node nearest target, and on to target."""
+        nodes = self.manager.pathTo(self.node, self.manager.nearestNode(target))
+        points, flags = self.__routePoints(nodes)
+        points.append(Point3(target))
+        self.node = nodes[-1]
+        return points, flags | WG.FLAG_RUN
+
+    def __chase(self, suit):
+        if random.random() < 0.3 and self.chases == 0:
+            self.d_doSpeedChat(random.choice((1102, 1000, 305)))
+        points, flags = self.__pathToward(self.manager.getSuitPos(suit))
+        duration = self.__sendPath(points, flags=flags)
+        self.__later(duration, self.__reachSuit, [suit])
+
+    def __reachSuit(self, suit):
+        self.chases += 1
+        if not self.manager.canFightSuit(suit):
+            self.__idle(random.uniform(1, 3))
+            return
+        pos = self.getCurrentPos()
+        if Vec3(self.manager.getSuitPos(suit) - pos).length() > CATCH_DISTANCE:
+            if self.chases < MAX_CHASES:
+                self.__chase(suit)
+            else:
+                self.__idle(random.uniform(1, 3))
+            return
+        self.__stand()
+        NPCWalkerBattleAI.asToon(self.air, self.doId, suit.requestBattle, pos[0], pos[1], pos[2], 0, 0, 0)
+        battle = self.manager.getBattleInZone(suit.zoneId)
+        if battle is not None and self.doId in battle.toons:
+            self.__enterBattle(battle)
+        else:
+            self.__idle(random.uniform(1, 3))
+
+    def __goToBattle(self, battle):
+        if random.random() < 0.4:
+            self.d_doSpeedChat(random.choice((1000, 513, 508)))
+        toBattle = Vec3(self.getCurrentPos() - battle.pos)
+        toBattle.normalize()
+        points, flags = self.__pathToward(Point3(battle.pos + toBattle * 12))
+        duration = self.__sendPath(points, flags=flags)
+        self.__later(duration, self.__reachBattle, [battle.doId])
+
+    def __reachBattle(self, battleId):
+        battle = self.air.doId2do.get(battleId)
+        if battle is None or not self.manager.canJoinBattle(battle):
+            self.__idle(random.uniform(1, 3))
+            return
+        pos = self.getCurrentPos()
+        self.__stand()
+        NPCWalkerBattleAI.asToon(self.air, self.doId, battle.toonRequestJoin, pos[0], pos[1], pos[2])
+        if self.doId in battle.toons:
+            self.__enterBattle(battle)
+        else:
+            self.__idle(random.uniform(1, 3))
+
+    def __enterBattle(self, battle):
+        taskMgr.remove(self.uniqueName('walkerNext'))
+        self.battleDoId = battle.doId
+        self.battlePos = Point3(battle.pos)
+        self.battleState = None
+        self.joinsSeen = {}
+
+    def driveBattle(self, now):
+        """Called twice a second while the walker is in a battle (see NPCWalkerManagerAI)."""
+        battle = self.air.doId2do.get(self.battleDoId)
+        if battle is None or battle.fsm is None or self.doId not in battle.toons:
+            self.__leaveBattle()
+            return
+        NPCWalkerBattleAI.drive(self, battle, now)
+
+    def __leaveBattle(self):
+        self.battleDoId = None
+        self.b_setBattleId(0)
+        # The battle left the toon standing around its middle; walk on from there
+        self.__setPath([self.battlePos], WG.KEEP_HEADING, 0)
+        self.node = self.manager.nearestNode(self.battlePos)
+        if self.hp <= 0:
+            self.leaving = True
+            self.d_doSpeedChat(random.choice((401, 403, 410)))
+            self.__later(4, self.__teleportOut)
+        elif self.hp < self.maxHp * 0.4 and random.random() < 0.7:
+            # Off to the playground to heal up
+            self.__later(2, self.__leave)
+        else:
+            self.inventory.maxOutInv(1, 0)
+            roll = random.random()
+            if roll < 0.4:
+                self.d_playEmote(6)
+            elif roll < 0.7:
+                self.d_doSpeedChat(random.choice((505, 506, 509, 304, 315)))
+            self.__later(random.uniform(3, 6), self.__decide)
 
     def __goToTrolley(self):
         nodes = self.manager.pathTo(self.node, self.manager.trolleyNode)
@@ -215,13 +395,25 @@ class DistributedNPCWalkerAI(DistributedNPCToonBaseAI.DistributedNPCToonBaseAI):
         self.manager.walkerLeft(self, awayTime)
 
     def command(self, action):
-        """For the ~walkers magic word: go to the trolley or leave now. False when the walker cannot."""
-        if self.leaving or self.atTrolley:
+        """For the ~walkers magic word: go to the trolley, fight a Cog, join a battle or leave now. False when the walker
+        cannot."""
+        if self.leaving or self.atTrolley or self.battleDoId:
             return False
         if action == 'trolley':
             if not self.manager.claimTrolley(self):
                 return False
             self.__goToTrolley()
+        elif action == 'fight':
+            suit = self.manager.findSuitToFight(self) if self.manager.isStreet else None
+            if suit is None:
+                return False
+            self.chases = 0
+            self.__chase(suit)
+        elif action == 'join':
+            battle = self.manager.findBattleToJoin(self) if self.manager.isStreet else None
+            if battle is None:
+                return False
+            self.__goToBattle(battle)
         else:
             self.__leave()
         return True
@@ -231,10 +423,10 @@ class DistributedNPCWalkerAI(DistributedNPCToonBaseAI.DistributedNPCToonBaseAI):
     def avatarEnter(self):
         avId = self.air.getAvatarIdFromSender()
         av = self.air.doId2do.get(avId)
-        if not isinstance(av, DistributedPlayerAI) or av.zoneId != self.zoneId:
+        if not isinstance(av, DistributedPlayerAI) or ZoneUtil.getBranchZone(av.zoneId) != self.zoneId:
             return
         now = globalClock.getRealTime()
-        if self.leaving or self.atTrolley or self.walkFlags & WG.FLAG_HIDDEN or now - self.lastGreet.get(avId, -GREET_COOLDOWN) < GREET_COOLDOWN:
+        if self.battleDoId or self.leaving or self.atTrolley or self.walkFlags & WG.FLAG_HIDDEN or now - self.lastGreet.get(avId, -GREET_COOLDOWN) < GREET_COOLDOWN:
             return
         self.lastGreet[avId] = now
         if random.random() < 0.3:

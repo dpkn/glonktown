@@ -4,13 +4,14 @@ from direct.distributed.ClockDelta import globalClockDelta
 from direct.interval.IntervalGlobal import *
 from direct.controls.ControlManager import CollisionHandlerRayStart
 from direct.showbase.PythonUtil import reduceAngle, closestDestAngle
-from otp.otpbase import OTPLocalizer
+from otp.otpbase import OTPGlobals, OTPLocalizer
 from panda3d.otp import CFSpeech, CFQuicktalker, CFTimeout, NametagGroup
 from toontown.toonbase import ToontownGlobals
 from . import DistributedNPCToonBase
 from . import NPCWalkerGlobals as WG
 
 GREET_RESEND = 20.0
+CATCH_UP_DISTANCE = 15.0
 
 
 class DistributedNPCWalker(DistributedNPCToonBase.DistributedNPCToonBase):
@@ -27,6 +28,8 @@ class DistributedNPCWalker(DistributedNPCToonBase.DistributedNPCToonBase):
             # Name tags like a real toon's (NPCs' are greyed out), but clicking one does nothing: there is no player to befriend
             self.setPickable(1)
             self.setPlayerType(NametagGroup.CCNormal)
+            self.gameAccess = OTPGlobals.AccessFull
+            self.placed = False
             self.walkInfo = None
             self.walkTrack = None
             self.boardTrack = None
@@ -134,12 +137,17 @@ class DistributedNPCWalker(DistributedNPCToonBase.DistributedNPCToonBase):
         elif self.animFSM.getCurrentState().getName() != 'TeleportIn':
             self.show()
         if len(points) == 1:
+            self.placed = True
             self.setPos(points[0])
             if heading != WG.KEEP_HEADING:
                 self.setH(heading)
             if self.animFSM.getCurrentState().getName() in ('walk', 'run'):
                 self.setAnimState('neutral', 1.0)
             return
+        if self.placed and Vec3(self.getPos() - points[0]).length() < CATCH_UP_DISTANCE:
+            # Start from where the toon really stands (a battle leaves it a few feet from where the server thinks), not with a jump
+            points[0] = self.getPos()
+        self.placed = True
         run = flags & WG.FLAG_RUN
         speed = WG.RUN_SPEED if run else WG.WALK_SPEED
         track = Sequence(Func(self.setAnimState, 'run' if run else 'walk', 1.0))

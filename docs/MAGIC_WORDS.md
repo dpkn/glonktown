@@ -37,7 +37,7 @@ You can only use a word on toons with a lower access level than yours.
 
 | Word | Also | Arguments | What it does |
 |---|---|---|---|
-| `~teleport` | `tp`, `goto` | place | Teleports to a playground or Cog HQ: `ttc` (Glonktown Central), `dd` (Donald's Dock), `dg` (Daisy Gardens), `mml` (Minnie's Melodyland), `tb` (The Brrrgh), `ddl` (Donald's Dreamland), `gs` (Goofy Speedway), `oz` or `aa` (Chip 'n Dale's Acorn Acres), `gz` (Chip 'n Dale's MiniGolf), `sbhq`, `factory` (outside the Sellbot Factory), `cbhq`, `lbhq`, `bbhq`. |
+| `~teleport` | `tp`, `goto` | place | Teleports to a playground or Cog HQ: `ttc` (Glonktown Central), `dd` (Donald's Dock), `dg` (Daisy Gardens), `mml` (Minnie's Melodyland), `tb` (The Brrrgh), `ddl` (Donald's Dreamland), `gs` (Goofy Speedway), `oz` or `aa` (Chip 'n Dale's Acorn Acres), `gz` (Chip 'n Dale's MiniGolf), `sbhq`, `factory` (outside the Sellbot Factory), `cbhq`, `lbhq`, `bbhq`, or a street zone number such as `2101` (Glonktown). |
 | `~factory` | | side (`1` for the side entrance, default front) | Starts a Sellbot Factory and takes you in. |
 | `~bossbattle` | `boss` | see below | Starts or controls a boss battle. |
 
@@ -69,7 +69,7 @@ You can only use a word on toons with a lower access level than yours.
 |---|---|---|---|
 | `~fireworks` | `firework` | show [`all`] | Starts a firework show where you are, or in every playground with `all`. Shows: `newyear` (default), `newyears`, `summer`, `combo`, `party`. |
 
-| `~walkers` | `walker`, `npcwalkers` | [`trolley`, `leave` or `reset`] | Shows how many walking toons each playground has. In a playground, `trolley` sends one of them to the trolley, `leave` makes one teleport away and `reset` replaces them all. Added by Glonktown. |
+| `~walkers` | `walker`, `npcwalkers` | [`trolley`, `fight`, `join`, `leave` or `reset`] | Shows how many walking toons each playground and street has, and how many are in battle. Where you are, `trolley` sends one to the trolley, `fight` sends one after the nearest Cog, `join` sends one to a battle, `leave` makes one teleport away and `reset` replaces them all. Added by Glonktown. |
 
 Cog invasions start by themselves; `invasion_minutes` in `gameconfig.json` sets how long they last
 ([server/docker/README.md](../server/docker/README.md#game-settings-no-rebuild)).

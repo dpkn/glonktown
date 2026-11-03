@@ -24,7 +24,7 @@ class HoodDataAI:
         self.redirectingToMe = []
         self.hoodPopulation = 0
         self.pgPopulation = 0
-        self.walkerManager = None
+        self.walkerManagers = []
         return
 
     def startup(self):
@@ -32,13 +32,13 @@ class HoodDataAI:
         self.createPartyPeople()
         self.createBuildingManagers()
         self.createSuitPlanners()
-        self.walkerManager = NPCWalkerManagerAI.create(self)
+        self.walkerManagers = NPCWalkerManagerAI.create(self)
 
     def shutdown(self):
         self.setRedirect(None)
-        if self.walkerManager:
-            self.walkerManager.shutdown()
-            self.walkerManager = None
+        for walkerManager in self.walkerManagers:
+            walkerManager.shutdown()
+        self.walkerManagers = []
         if self.treasurePlanner:
             self.treasurePlanner.stop()
             self.treasurePlanner.deleteAllTreasuresNow()

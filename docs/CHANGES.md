@@ -18,15 +18,23 @@ Open problems are in [TODO.md](TODO.md).
   and the neighborhoods have their original names (Donald's Dock, Minnie's Melodyland, Daisy Gardens, Goofy Speedway, Donald's
   Dreamland, Chip 'n Dale's Acorn Acres). The Donald's Dock boat is back, and Minnie's piano spins again (upstream never created
   it). Toontown: Anywhere had removed the characters and renamed the neighborhoods.
-- **Walking toons make the playgrounds feel busy.** While a real toon is in a playground, six toons with random looks and names
+- **Walking toons make the town feel busy.** While a real toon is in a playground, fifteen toons with random looks and names
   walk its classic character's route, stand around, do emotes, say Speed Chat phrases, wave and say hi to toons who walk up to
   them, teleport away and come back, and now and then run to the trolley and hop in. They hop in only while the trolley is empty
-  and waiting (never with real toons on it or about to leave), and they never join a game. The same few faces turn up again. A
-  playground nobody is in has none (they leave 45 seconds after the last real toon), so they cost nothing there.
-  `walkers` in `gameconfig.json` sets how many (0 turns them off), and `~walkers` shows or moves them. Donald's Dock and Chip 'n
-  Dale's MiniGolf have no character route, so they have no walkers. (`toontown/toon/DistributedNPCWalker*.py`,
-  `NPCWalkerManagerAI.py`, `NPCWalkerGlobals.py`; a new `DistributedNPCWalker` class in `toon.dc`, so the code pack and the image
-  must be updated together.)
+  and waiting (never with real toons on it or about to leave), and they never join a game. The same faces turn up again. A
+  place nobody is in has none (they leave 45 seconds after the last real toon), so they cost nothing there. Donald's Dock and
+  Chip 'n Dale's MiniGolf have no character route, so they have no walkers.
+  - **On the streets** eight walk the Cogs' paths. Each has its own laff (up to about 100) and gags (Throw and Squirt, often
+    Toon-Up, Sound or Drop; never Lure or Trap). They chase Cogs and start battles (at most two battles of walkers alone per
+    street, so most Cogs are left for real toons), and they join battles, real toons' first, leaving a place for one more real
+    toon. In battle they pick a gag in a few seconds, heal friends below half laff, and wait for the real toons before moving
+    on, so they never hurry anyone. A walker who goes sad, or ends a battle low on laff, teleports away and comes back later.
+    The battle cannot tell them from players: `NPCWalkerBattleAI` answers the battle's messages for them through the same calls
+    a player's game makes. Their experience, gags and rewards stay on the server.
+  - `walkers` and `street_walkers` in `gameconfig.json` set how many (0 turns them off); `~walkers` shows or moves them. A
+    mistake in the walker code is logged and sends that walker home; it never stops the district.
+  - Code: `toontown/toon/DistributedNPCWalker*.py`, `NPCWalkerManagerAI.py`, `NPCWalkerBattleAI.py`, `NPCWalkerGlobals.py`;
+    a new `DistributedNPCWalker` class in `toon.dc`, so the code pack and the image must be updated together.
 - **The town is called Glonktown** in the game's own text and window title; the first playground is Glonktown Central.
 - **One district**, Toon Valley, with Cog invasions. Toontown: Anywhere ran three.
 - **Small-group tuning** (from Retrolight): Aoogah and Trunk damage and gag carry limits as on Toontown Rewritten (3 TNT, 7

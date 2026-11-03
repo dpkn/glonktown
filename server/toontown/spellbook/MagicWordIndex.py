@@ -358,8 +358,8 @@ class GiveBeans(MagicWord):
 
 class Walkers(MagicWord):
     aliases = ["walker", "npcwalkers"]
-    desc = "Shows the walking toons in each playground. 'trolley' sends one in your playground to the trolley, 'leave' makes one " \
-           "teleport away, 'reset' replaces them all."
+    desc = "Shows the walking toons in each playground and street. Where you are, 'trolley' sends one to the trolley, 'fight' " \
+           "sends one after a Cog, 'join' sends one to a battle, 'leave' makes one teleport away and 'reset' replaces them all."
     execLocation = MagicWordConfig.EXEC_LOC_SERVER
     arguments = [("action", str, False, "")]
 
@@ -367,17 +367,19 @@ class Walkers(MagicWord):
         from toontown.toon import NPCWalkerManagerAI
         action = args[0].strip().lower()
         if not action:
-            return "Walkers: " + ", ".join(f"{m.zoneId}: {len(m.walkers)}" for m in NPCWalkerManagerAI.getManagers()) + \
-                   f" (want {NPCWalkerManagerAI.getManagers()[0].getCount()} each while someone is there)"
-        manager = NPCWalkerManagerAI._managers.get(invoker.zoneId)
+            busy = [m for m in NPCWalkerManagerAI.getManagers() if m.walkers]
+            fighting = sum(1 for m in busy for w in m.walkers if w.battleDoId)
+            return "Walkers: " + (", ".join(f"{m.zoneId}: {len(m.walkers)}" for m in busy) or "none out") + \
+                   f"; {fighting} in battle."
+        manager = NPCWalkerManagerAI.getManager(invoker.zoneId)
         if not manager:
             return "This zone has no walkers."
         if action == 'reset':
             manager.removeAll()
             manager.update(playerCount=1)
             return f"Replaced the walkers: {len(manager.walkers)} now."
-        if action not in ('trolley', 'leave'):
-            return "Use trolley, leave or reset."
+        if action not in ('trolley', 'fight', 'join', 'leave'):
+            return "Use trolley, fight, join, leave or reset."
         for walker in manager.walkers:
             if walker.command(action):
                 return f"{walker.getName()} is on the way."
@@ -750,10 +752,14 @@ class Teleport(MagicWord):
                        'lbhq': ToontownGlobals.LawbotHQ,
                        'bbhq': ToontownGlobals.BossbotHQ}
         
-        try:
-            zone = zoneName2Id[zoneName]
-        except KeyError:
-            return "Unknown zone name!"
+        if zoneName.isdigit() and int(zoneName) % 100 and ZoneUtil.getHoodId(int(zoneName)) in ToontownGlobals.HoodHierarchy:
+            # A street's zone number, such as 2101 (the street's own number, 2100, is not a place a toon can stand)
+            zone = int(zoneName)
+        else:
+            try:
+                zone = zoneName2Id[zoneName]
+            except KeyError:
+                return "Unknown zone name!"
 
         return f"Requested to teleport {toon.getName()} to zone {zone}.", toon.doId, [ZoneUtil.getBranchLoaderName(zone), ZoneUtil.getToonWhereName(zone), "", ZoneUtil.getHoodId(zone), zone, 0]
 

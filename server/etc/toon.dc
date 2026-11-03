@@ -1886,6 +1886,16 @@ dclass DistributedNPCWalker : DistributedNPCToonBase {
   doSpeedChat(uint16) broadcast;
   doTeleport(uint8, int16) broadcast;
   doBoardTrolley(int16/10, int16/10, int16/10, int16) broadcast;
+  setMaxHp(int16) required broadcast ram;
+  setHp(int16) required broadcast ram;
+  toonUp(uint16) broadcast;
+  takeDamage(uint16) broadcast;
+  setBattleId(uint32) required broadcast ram;
+  setTrackAccess(uint16[]) required broadcast ram;
+  setCogTypes(uint8[]) required broadcast ram;
+  setCogLevels(uint8[]) required broadcast ram;
+  setCogParts(uint32[]) required broadcast ram;
+  setCogMerits(uint16[]) required broadcast ram;
 };
 
 dclass DistributedNPCClerk : DistributedNPCToonBase {
