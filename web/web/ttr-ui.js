@@ -453,12 +453,13 @@
     const user = uField.value.trim().toLowerCase(), pw = pField.value;
     if (!user || !pw) { loginMessage(signUp ? 'Pick a name and a password.' : 'Enter your name and password.', true); return; }
     if (user.includes(':')) { loginMessage("Please don't use colons in your name.", true); return; }
-    if (!standalone) goFull();        // the game plays full screen; a browser only allows that straight after a tap or key press, so ask now
     playBtn.disabled = true; loginMessage('Signing in...', false);
     const cookie = user + ':' + pw;
     const r = await authCall('/auth', cookie);
     playBtn.disabled = false;
     if (!r.ok) { loginMessage(r.text || 'Sign-in failed.', true); loginLayout(); return; }
+    // the game plays full screen; a browser only allows that shortly after a tap or key press, so ask as soon as the sign-in answered
+    if (!standalone) goFull();
     LS.setItem(server.userKey, user); LS.setItem(server.userKey + '.pw', pw);
     signedIn = { cookie, token: r.token };
     fetchGameAndStart();
