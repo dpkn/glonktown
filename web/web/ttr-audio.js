@@ -7,8 +7,6 @@
   const bufs = new Map(), pend = new Map(), voices = new Map(), urls = new Map();
   let bufBytes = 0; const CAP = 90 * 1024 * 1024;
   const pool = [];
-  // One second of real silence. A looping clip with no samples ends and restarts nonstop, and Chrome logs every one of those media events in
-  // its browser process, which grew by gigabytes a minute and crashed the browser.
   function silentWav(samples) {
     const v = new DataView(new ArrayBuffer(44 + samples));
     const tag = (at, s) => { for (let i = 0; i < 4; i++) v.setUint8(at + i, s.charCodeAt(i)); };
