@@ -315,6 +315,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
 
     def enterReward(self):
         self.resetBattles()
+        self.air.communityGoal.bossDefeated(self.dept, self.involvedToons)
         self.barrier = self.beginBarrier('Reward', self.involvedToons, BattleBase.BUILDING_REWARD_TIMEOUT, self.__doneReward)
 
     def __doneReward(self, avIds):

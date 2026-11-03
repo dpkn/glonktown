@@ -899,6 +899,25 @@ class Fireworks(MagicWord):
             del self.fireworkShows[zoneId]
 
 
+class Goal(MagicWord):
+    aliases = ["savetown", "communitygoal"]
+    desc = "Shows how far the town is with Save Glonktown. \"add <points>\" adds points (or takes them away), \"reset\" starts it over."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    affectRange = [MagicWordConfig.AFFECT_SELF]
+    arguments = [("command", str, False, ""), ("points", int, False, 0)]
+
+    def handleWord(self, invoker, avId, toon, *args):
+        command, points = args[0].lower(), args[1]
+        goal = self.air.communityGoal
+        if command == "add":
+            goal.addPoints(points)
+        elif command == "reset":
+            goal.reset()
+        elif command:
+            return "Use ~goal, ~goal add <points> or ~goal reset."
+        return goal.status()
+
+
 # Instantiate all classes defined here to register them.
 # A bit hacky, but better than the old system
 for item in list(globals().values()):

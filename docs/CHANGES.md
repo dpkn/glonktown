@@ -30,7 +30,8 @@ Open problems are in [TODO.md](TODO.md).
     toon. In battle they pick a gag in a few seconds, heal friends below half laff, and wait for the real toons before moving
     on, so they never hurry anyone. A walker who goes sad, or ends a battle low on laff, teleports away and comes back later.
     The battle cannot tell them from players: `NPCWalkerBattleAI` answers the battle's messages for them through the same calls
-    a player's game makes. Their experience, gags and rewards stay on the server.
+    a player's game makes. Their experience, gags and rewards stay on the server, and Save Glonktown counts only Cogs a real
+    toon helped defeat, and names only real toons.
   - `walkers` and `street_walkers` in `gameconfig.json` set how many (0 turns them off); `~walkers` shows or moves them. A
     mistake in the walker code is logged and sends that walker home; it never stops the district.
   - Code: `toontown/toon/DistributedNPCWalker*.py`, `NPCWalkerManagerAI.py`, `NPCWalkerBattleAI.py`, `NPCWalkerGlobals.py`;
@@ -66,6 +67,15 @@ Open problems are in [TODO.md](TODO.md).
     as it starts, and the Valentine jukeboxes silence the party music like the others.
 - **`~beans`**, a new magic word: gives jellybeans, filling the jar first and then the bank. All magic words are in
   [MAGIC_WORDS.md](MAGIC_WORDS.md).
+- **Save Glonktown**, one goal the whole town works on together (`toontown/ai/CommunityGoalAI.py`). Every Cog anyone defeats
+  adds its level in points; taking back a building or a Field Office adds 10 per floor, finishing an invasion 50 and beating a
+  boss 100. At each quarter of `community_goal` (`gameconfig.json`, 1500) every toon hears it and the town gets a reward: 100
+  jellybeans each, then double gag XP for the rest of the party, then full Laff and a full gag bag each, and at the end fireworks
+  in every playground and 500 jellybeans each. A toon gets its gifts when it is not in a battle, a trolley game or an estate, so
+  toons that were busy or arrive later still get them. Kept in `/ot/data/community_goal.json`, which the welcome page shows; `~goal`
+  shows it, adds points or starts it over.
+- **Invasions are party-sized**: 75 Cogs (`invasion_cogs`) instead of 1,000, which a handful of toons never finished, and the next
+  one comes 10 to 25 minutes after the last one *ended* instead of after it started, so there are breaks between them.
 
 ### Fixes from other forks
 
@@ -112,6 +122,8 @@ made each is in the [README's credits](../README.md#credits).
 - **It is called Glonktown**; the server choice card, the community links and the credit line are gone.
 - **It looks like the game**: the loading-screen cloud sky, the game's ImpressBT font, a sign-in dialog like the game's (pale
   yellow, green rim), the game's loading bar, and a title lettered like the game's logo.
+- **The Save Glonktown card** under the welcome card: the town's progress bar, the four rewards (unlocked, or how many points
+  away), what happened lately and the five biggest helpers, from the server's `/community_goal.json`.
 - **Sign-in asks only for a name and a password.** The recovery questions are gone; the host resets a forgotten password
   ([OPERATIONS.md](OPERATIONS.md#accounts)).
 

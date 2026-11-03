@@ -62,7 +62,7 @@ else
   echo "tunnel: off (no token in runtime/data/tunnel_token), so the server is on the home network only" > $L/tunnel.log
 fi
 # nightly backup of the toons, users and planned parties, keeping 14 days
-( while true; do sleep 86400; tar czf /ot/data/backups/auto-$(date +%Y%m%d-%H%M).tgz -C /ot/src/astron databases -C /ot/data users.json parties.json 2>/dev/null; ls -1t /ot/data/backups/auto-*.tgz | tail -n +15 | xargs -r rm -f; done ) &
+( while true; do sleep 86400; tar czf /ot/data/backups/auto-$(date +%Y%m%d-%H%M).tgz -C /ot/src/astron databases -C /ot/data users.json parties.json community_goal.json 2>/dev/null; ls -1t /ot/data/backups/auto-*.tgz | tail -n +15 | xargs -r rm -f; done ) &
 # if the UberDOG or a district dies, exit so Docker restarts everything
 while kill -0 $UD 2>/dev/null && kill -0 $A1 2>/dev/null; do sleep 20; done
 echo "a game process died; exiting so the container restarts" >&2

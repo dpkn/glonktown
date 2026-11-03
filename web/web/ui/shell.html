@@ -45,6 +45,51 @@
         </div>
       </div>
 
+      <template x-if="$store.welcome.goal">
+        <section class="dialog goal" :class="{ saved: $store.welcome.goalSaved }">
+          <h2>Save Glonktown</h2>
+          <p class="summary">The whole town's goal: every Cog anyone defeats brings it closer.</p>
+          <div class="meter">
+            <i :style="{ width: $store.welcome.goalPercent + '%' }"></i>
+            <template x-for="milestone in $store.welcome.goal.milestones">
+              <span class="mark" :class="{ reached: milestone.reached }" :style="{ left: milestone.percent + '%' }"></span>
+            </template>
+          </div>
+          <div class="score">
+            <b x-text="$store.welcome.goalSummary"></b>
+            <span x-show="!$store.welcome.goalSaved" x-text="$store.welcome.goalPercent + '%'"></span>
+          </div>
+          <ol class="rewards">
+            <template x-for="milestone in $store.welcome.goal.milestones">
+              <li :class="{ reached: milestone.reached, next: milestone === $store.welcome.goalNext }">
+                <span class="tick" x-text="milestone.reached ? '✓' : milestone.percent + '%'"></span>
+                <div>
+                  <div class="reward" x-text="milestone.reward"></div>
+                  <div class="at" x-text="milestone.reached ? 'Unlocked' : 'At ' + $store.welcome.milestoneLabel(milestone)"></div>
+                </div>
+              </li>
+            </template>
+          </ol>
+          <div class="news" x-show="$store.welcome.goal.events.length">
+            <h3>Lately</h3>
+            <ul>
+              <template x-for="event in $store.welcome.goal.events">
+                <li><span x-text="event.text"></span> <small x-text="$store.welcome.eventTime(event)"></small></li>
+              </template>
+            </ul>
+          </div>
+          <div class="helpers" x-show="$store.welcome.goalHelpers.length">
+            <h3>Biggest helpers</h3>
+            <div class="chips">
+              <template x-for="helper in $store.welcome.goalHelpers">
+                <span><span x-text="helper.name"></span> <b x-text="$store.welcome.helperPoints(helper)"></b></span>
+              </template>
+            </div>
+          </div>
+          <p class="how">A Cog is worth its level. Taking back a building: 10 per floor. Stopping an invasion: 50. Beating a boss: 100.</p>
+        </section>
+      </template>
+
       <section class="dialog leaderboard" x-show="$store.welcome.toons.length">
         <h2>Who's in town</h2>
         <p class="summary" x-text="$store.welcome.summary"></p>

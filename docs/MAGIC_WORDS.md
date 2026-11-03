@@ -68,10 +68,10 @@ You can only use a word on toons with a lower access level than yours.
 | Word | Also | Arguments | What it does |
 |---|---|---|---|
 | `~fireworks` | `firework` | show [`all`] | Starts a firework show where you are, or in every playground with `all`. Shows: `newyear` (default), `newyears`, `summer`, `combo`, `party`. |
-
+| `~goal` | `savetown`, `communitygoal` | [`add` points \| `reset`] | Shows how far the town is with Save Glonktown. `add` gives the town points (a negative number takes them away), `reset` starts it over. Added by Glonktown. |
 | `~walkers` | `walker`, `npcwalkers` | [`trolley`, `fight`, `join`, `leave` or `reset`] | Shows how many walking toons each playground and street has, and how many are in battle. Where you are, `trolley` sends one to the trolley, `fight` sends one after the nearest Cog, `join` sends one to a battle, `leave` makes one teleport away and `reset` replaces them all. Added by Glonktown. |
 
-Cog invasions start by themselves; `invasion_minutes` in `gameconfig.json` sets how long they last
+Cog invasions start by themselves, 10 to 25 minutes after the last one ended; `invasion_cogs` and `invasion_minutes` in `gameconfig.json` set how big they are and how long they last
 ([server/docker/README.md](../server/docker/README.md#game-settings-no-rebuild)).
 
 ## Staff modes

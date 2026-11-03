@@ -4,29 +4,35 @@ import { shell } from '../shell.js';
 
 // The welcome page: one card on the sky with the title half over its top edge, a bit of Glonktown's story, and the way in. PLAY only
 // shows while the game server answers; a closed server gets a note that says so, and is asked again every half minute. Under it, the
-// leaderboard: every toon on the server, best first (the server's /leaderboard.json), with who is playing right now and when the others
-// last were. It stays hidden on a server without one.
+// Save Glonktown card: the goal the whole town works on together, its rewards and what happened lately (the server's
+// /community_goal.json). Then the leaderboard: every toon on the server, best first (/leaderboard.json), with who is playing right now
+// and when the others last were. Each card stays hidden on a server without its file.
 
 const RECHECK_EVERY = 30000;
 const SPECIES = { dog: '🐶', cat: '🐱', horse: '🐴', mouse: '🐭', rabbit: '🐰', duck: '🦆', pig: '🐷', bear: '🐻', monkey: '🐵' };
 const MEDALS = ['🥇', '🥈', '🥉'];
 const relativeTime = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
 
-function lastSeen(secondsAgo) {
+function ago(secondsAgo) {
   for (const [unit, size] of [['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]]) {
-    if (secondsAgo >= size) return 'Last seen ' + relativeTime.format(-Math.floor(secondsAgo / size), unit);
+    if (secondsAgo >= size) return relativeTime.format(-Math.floor(secondsAgo / size), unit);
   }
-  return 'Last seen just now';
+  return 'just now';
 }
+
+const points = (number) => number.toLocaleString('en');
 
 let recheckTimer = 0;
 let leaderboardTimer = 0;
+let goalTimer = 0;
 
 export const welcome = Alpine.reactive({
   state: 'checking',      // checking | open | closed
   retrying: false,
   toons: [],
   now: 0,
+  goal: null,
+  goalLoadedAt: 0,
 
   get visible() { return shell.screen === 'welcome'; },
   get playingCount() { return this.toons.filter((toon) => toon.online).length; },
@@ -39,14 +45,31 @@ export const welcome = Alpine.reactive({
   face: (toon) => SPECIES[toon.species] || '⭐',
   whereabouts(toon) {
     if (toon.online) return 'Playing now' + (toon.where ? ' in ' + toon.where : '');
-    return lastSeen(this.now - toon.lastSeen);
+    return 'Last seen ' + ago(this.now - toon.lastSeen);
   },
   gagTracks: (toon) => toon.tracks === 1 ? 'gag track' : 'gag tracks',
+
+  get goalPercent() { return Math.min(100, Math.floor(100 * this.goal.points / this.goal.target)); },
+  get goalSaved() { return this.goal.points >= this.goal.target; },
+  get goalSummary() {
+    if (this.goalSaved) return 'Glonktown is saved! Thank you, everyone.';
+    return points(this.goal.points) + ' of ' + points(this.goal.target) + ' points';
+  },
+  get goalNext() { return this.goal.milestones.find((milestone) => !milestone.reached); },
+  get goalHelpers() {
+    return Object.values(this.goal.helpers).filter((helper) => helper.points > 0).sort((a, b) => b.points - a.points).slice(0, 5);
+  },
+  milestoneLabel: (milestone) => points(milestone.at) + ' points',
+  helperPoints: (helper) => points(helper.points),
+  eventTime(event) { return ago(this.goalLoadedAt - event.time); },
 
   setState(state) {
     this.state = state;
     this.retrying = false;
-    if (state === 'open') this.loadLeaderboard();
+    if (state === 'open') {
+      this.loadLeaderboard();
+      this.loadGoal();
+    }
   },
 
   async checkServer() {
@@ -78,5 +101,18 @@ export const welcome = Alpine.reactive({
       }
     } catch {}
     leaderboardTimer = setTimeout(() => this.loadLeaderboard(), RECHECK_EVERY);
+  },
+
+  async loadGoal() {
+    clearTimeout(goalTimer);
+    if (!this.visible) return;
+    try {
+      const response = await fetch(server.url('/community_goal.json'), { cache: 'no-store' });
+      if (response.ok) {
+        this.goal = await response.json();
+        this.goalLoadedAt = Math.floor(Date.now() / 1000);
+      }
+    } catch {}
+    goalTimer = setTimeout(() => this.loadGoal(), RECHECK_EVERY);
   },
 });

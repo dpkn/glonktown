@@ -7,8 +7,8 @@ from toontown.toonbase import ToontownGlobals
 class SuitInvasionManagerAI:
     """One Cog invasion at a time in this district. Summoned by a Toon, or started now and then by itself, like the live game's."""
     notify = DirectNotifyGlobal.directNotify.newCategory('SuitInvasionManagerAI')
-    RandomCogCount = 1000
-    RandomDelay = (10 * 60, 25 * 60)       # seconds between one random invasion ending (or the server starting) and the next
+    RandomCogCount = 75                      # gameconfig.json: invasion_cogs. Sized so a party of 6-8 toons can finish one in time
+    RandomDelay = (10 * 60, 25 * 60)       # seconds between one invasion ending (or the server starting) and the next
     EXCLUDED = ()
     DurationMinutes = 30                     # an invasion also ends by itself after this long (gameconfig.json: invasion_minutes), so one nobody finishes does not run forever
     SAFE_DISTRICTS = ('Silly Meadow',)       # districts that never have an invasion
@@ -40,10 +40,9 @@ class SuitInvasionManagerAI:
         taskMgr.doMethodLater(delay, self.__randomInvasion, 'suitInvasionRandom')
 
     def __randomInvasion(self, task):
-        if not self.getInvading():
-            names = [n for n in SuitDNA.suitHeadTypes if n not in self.EXCLUDED]
-            self.startInvasion(random.choice(names), self.RandomCogCount, random.random() < 0.1)
-        self.scheduleRandom(False)
+        names = [n for n in SuitDNA.suitHeadTypes if n not in self.EXCLUDED]
+        if not self.startInvasion(random.choice(names), GameConfig.get('invasion_cogs', self.RandomCogCount), random.random() < 0.1):
+            self.scheduleRandom(False)
         return task.done
 
     def startInvasion(self, cogType, numSuits, skeleton=False):
@@ -74,12 +73,14 @@ class SuitInvasionManagerAI:
         self.skeleton = 0
         self.numSuits = self.total = 0
         self.__publish()
+        self.scheduleRandom(False)
 
     def handleSuitDefeated(self):
         if not self.getInvading():
             return
         self.numSuits -= 1
         if self.numSuits <= 0:
+            self.air.communityGoal.invasionDefeated(self.cogType)
             self.stopInvasion()
             return
         if self.numSuits <= self.nextUpdate:
