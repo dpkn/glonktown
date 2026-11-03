@@ -33,9 +33,9 @@ Every change to the game is listed in [docs/CHANGES.md](docs/CHANGES.md).
 
 - A Mac with [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [OrbStack](https://orbstack.dev), or a 64-bit
   Linux machine with Docker. Built and tested on Apple Silicon. The server image builds natively for ARM (Apple Silicon, Ampere)
-  and x86_64, and uses about 330 MB of memory.
+  and x86_64.
 - Python 3.12 and Git.
-- About 4 GB of free disk space: about 0.9 GB of resources, 0.8 GB for the server image and about 0.8 GB for the built game files.
+- About 4 GB of free disk space.
 - Internet access for the guests' devices: the page loads its Python runtime from pygbag's CDN.
 
 ### 1. Clone
@@ -56,14 +56,6 @@ The game's art, sound and level files live in a separate
 ```bash
 git clone https://github.com/open-toontown/resources.git server/resources
 ```
-
-If you already have a copy of the resources, a symlink works too, and saves the disk space:
-
-```bash
-ln -s /path/to/resources server/resources
-```
-
-`server/resources` is in `.gitignore`. Never commit it: it is Disney's content.
 
 ### 3. Build the browser client
 
