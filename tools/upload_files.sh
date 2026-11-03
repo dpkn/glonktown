@@ -2,10 +2,10 @@
 # Upload the game files (the packs and the page's art) to the R2 bucket the Pages site serves them from (web/functions/).
 # Only files that changed since the last upload are sent, and packs.json goes last, so players never get a list of packs that
 # are not there yet. Build the packs first with tools/build_client.sh.
-#   tools/upload_files.sh [bucket]      (default: glonktown-files)
+#   tools/upload_files.sh [bucket]      (default: glonkfiles)
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-BUCKET="${1:-glonktown-files}"
+BUCKET="${1:-glonkfiles}"
 FILES="$ROOT/runtime/web/root"
 SENT="$ROOT/runtime/uploaded-$BUCKET.txt"
 if [ ! -f "$FILES/packs.json" ]; then

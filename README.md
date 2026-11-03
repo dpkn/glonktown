@@ -169,7 +169,7 @@ is HTTPS. All of it fits in Cloudflare's free allowances; you need a domain on C
    ```
 
    ```bash
-   npx wrangler r2 bucket create glonktown-files
+   npx wrangler r2 bucket create glonkfiles
    ```
 
    ```bash
@@ -188,7 +188,7 @@ is HTTPS. All of it fits in Cloudflare's free allowances; you need a domain on C
    | Root directory | `web` |
    | Variables | `GLONKTOWN_SERVER` = `https://play.example.com`, `PYTHON_VERSION` = `3.12` |
 
-4. After the first build, in the project's Settings → Bindings, add an R2 bucket binding named `FILES` for `glonktown-files`
+4. After the first build, in the project's Settings → Bindings, add an R2 bucket binding named `FILES` for `glonkfiles`
    (for Production and Preview), then retry the latest deployment so it uses the binding. Give the project your domain
    (`example.com`) under Custom domains.
 
