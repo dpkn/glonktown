@@ -42,13 +42,21 @@ def _cancel_chat_if_open():
             cm.fsm.request("mainMenu")
             ctl = getattr(la, "controlManager", None)
             # only give walking back if typed chat had taken it (never in the middle of a door, mailbox, etc.)
-            if ctl is not None and not getattr(ctl, "isEnabled", 1):
+            if ctl is not None and not getattr(ctl, "isEnabled", 1) and not _held_by_cutscene(ctl):
                 la.enableAvatarControls()
     except BaseException:
         print("chat cancel error", traceback.format_exc(), flush=True)
 
 
 _unstick_last = [0.0]
+
+
+def _held_by_cutscene(ctl):
+    """A cutscene (the tutorial's opening, a quest movie) switches the toon's collisions off while it holds the toon still.
+    Switching walking on then fails half way: Panda asserts collisionsActive after marking the controls enabled, so when the
+    cutscene lets go its own switch-on does nothing and the toon can never walk again."""
+    walker = getattr(ctl, "currentControls", None)
+    return walker is not None and not getattr(walker, "collisionsActive", 1)
 
 
 def _unstick_walking():
@@ -59,7 +67,7 @@ def _unstick_walking():
         import time
         la = getattr(builtins, "localAvatar", None)
         ctl = getattr(la, "controlManager", None)
-        if ctl is None or getattr(ctl, "isEnabled", 1):
+        if ctl is None or getattr(ctl, "isEnabled", 1) or _held_by_cutscene(ctl):
             return
         if _place_state() not in ("walk", "swim") or not _controls_visible():
             return
@@ -405,7 +413,7 @@ def _controls_visible():
             # switches it back on, so the toon would not move until the Shticker Book is opened and closed
             if _chat_prev[0] in _CHAT_OPEN_STATES and cname not in _CHAT_OPEN_STATES:
                 ctl = getattr(la, "controlManager", None)
-                if ctl is not None and not getattr(ctl, "isEnabled", 1) and _place_state() in ("walk", "swim"):
+                if ctl is not None and not getattr(ctl, "isEnabled", 1) and not _held_by_cutscene(ctl) and _place_state() in ("walk", "swim"):
                     la.enableAvatarControls()
                     print("re-enabled walking after typed chat", flush=True)
             _chat_prev[0] = cname
