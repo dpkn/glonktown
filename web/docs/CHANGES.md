@@ -25,6 +25,10 @@ first section). `git log 2b366a2..cc55a23` lists Toontown: Anywhere's server cha
 - **Connection limits for a party.** Docker Desktop on a Mac hides each guest's own address (every connection arrives from its
   gateway), so the bridge's per-address limits would be shared by everyone. They are settings now (`MAX_PER_IP`,
   `MAX_NEW_PER_MIN`, and `CLOG_PER_HOUR` for crash reports), set for the whole party in `docker/docker-compose.yml`.
+- **Ice Slide works in the browser.** Toontown: Anywhere's page replaced Panda3D's ODE physics module (`panda3d.ode`) with an
+  empty stand-in, so Ice Slide crashed while loading (`OdeUtil.getInfinity`) and everyone on the trolley stayed on the
+  loading screen. The browser's Panda3D has ODE built in, and `web/game/main.py` no longer hides it. Golf uses the same
+  module but has not been tested in the browser yet.
 
 ## Server
 
