@@ -4,12 +4,12 @@ What runs on the phone. How it fits together is in [docs/ARCHITECTURE.md](../../
 
 | Path | Job |
 |---|---|
-| `ttr-ui.js`, `ttr-ui.css` | The page shell: welcome (open or closed), sign-in, loading and download, touch controls, rotate and install screens, the in-game full-screen button, test-session logging |
+| `ui/` | The page shell: welcome (open or closed), sign-in, loading and download, touch controls, rotate and install screens, the in-game full-screen button, test-session logging. See below |
 | `ttr-audio.js` | Sound through the Web Audio API |
 | `icon-*.png` | Home Screen icons (drawn by `tools/make_icons.py` at the repository root) |
 | `game/` | The Python glue that starts the game in the browser (`main.py` and helpers) |
 | `make_ot_packs.py` | Builds the download packs and `packs.json` |
-| `patch_web.py` | Adds the shell, manifest and icons to the page pygbag builds |
+| `patch_web.py` | Adds the shell, manifest and icons to the page pygbag builds, and pygbag's Python runtime and Panda3D wheel (`cdn/`) so the page needs no CDN |
 | `ot_server.py`, `bridge_ot.py` | A small local test server and WebSocket bridge for development |
 | `NOTICE.txt` | The licence notice packed into the code pack |
 
@@ -24,9 +24,24 @@ back to it.
 The display settings (picture quality, smooth edges, the FPS counter, on-screen controls, keyboard keys) are hidden: open the
 page once with `?display=1` to show the Display button and the in-game gear on that device, `?display=0` to hide them again.
 
+## The page shell (`ui/`)
+
+Plain ES modules and [Alpine.js](https://alpinejs.dev) (vendored in `ui/vendor/`, no build step). `patch_web.py` puts
+`ui/shell.html` (the markup of every screen) into pygbag's page and loads `ui/js/main.js`.
+
+| Path | Job |
+|---|---|
+| `shell.html` | The screens' markup, each bound to its Alpine store (`$store.login`, `$store.hud`, ...) |
+| `js/main.js` | Starts everything and registers the stores |
+| `js/shell.js`, `js/flow.js` | Which screen is up, and the way through them: welcome, sign in, download, game |
+| `js/screens/` | One store per screen: loading, welcome (and leaderboard), sign-in, settings and keys, install |
+| `js/game/` | Talking to the game: `bridge.js` (`window.ttr`, what the game reads and calls), touch controls, hardware keyboard, typed chat, touch-as-mouse |
+| `js/lib/` | The rest: storage, the game server's address, logging, measuring the window, the downloader, full screen |
+| `ui.css`, `css/` | One stylesheet per screen. Everything is placed from `--screen-w`, `--screen-h` and `--sc`, which `js/lib/viewport.js` measures |
+
 ## Build
 
-1. Install [pygbag](https://github.com/pygame-web/pygbag) (the live site uses CDN version 0.9.3) and `pytz`.
+1. Install [pygbag](https://github.com/pygame-web/pygbag) (0.9.3: the page bundles that version's runtime) and `pytz`.
 2. Build the page from the glue code:
 
    ```

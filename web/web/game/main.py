@@ -3,7 +3,7 @@
 #     "panda3d",
 # ]
 # ///
-# Glonktown in the browser. The page (ttr-ui.js) shows the loading, sign-in and control screens
+# Glonktown in the browser. The page (ui/) shows the loading, sign-in and control screens
 # and downloads the game files into the browser's file system; this script runs the real game once the player has signed in.
 import asyncio
 import builtins

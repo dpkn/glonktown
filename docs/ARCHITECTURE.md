@@ -13,7 +13,7 @@ over the party's home network.
 ```
  phone / tablet (browser or home-screen app)
  ┌──────────────────────────────────────────────┐
- │  page shell  (ttr-ui.js, ttr-ui.css)         │   sign-in, download, touch controls
+ │  page shell  (web/web/ui/, Alpine.js)        │   sign-in, download, touch controls
  │  game        the game's Python + otpy,       │   Panda3D + CPython in WebAssembly (pygbag)
  │              running in the browser          │
  └───────────────┬───────────────┬──────────────┘
@@ -43,8 +43,8 @@ over the party's home network.
 
 Two layers run on the phone.
 
-**The page shell** is plain JavaScript and CSS (`ttr-ui.js`, `ttr-ui.css`, `ttr-audio.js`). It owns everything outside the game
-itself:
+**The page shell** is JavaScript modules, Alpine.js and CSS, with no build step (`web/web/ui/`, laid out in
+[web/web/README.md](../web/web/README.md), and `ttr-audio.js`). It owns everything outside the game itself:
 
 - the welcome screen (which asks the game server for `/gameconfig.json` to tell whether it is open), the sign-in screen, the
   loading screen and its progress bar;
@@ -67,7 +67,9 @@ CPython and Panda3D compiled to WebAssembly, drawing with WebGL. The glue code i
 | `webui.py`, `webui_core.py` | Touch controls and phone-sized versions of some game screens. |
 | `xmlshim.py` | A small stand-in for `xml.sax`, which the browser's Python build lacks; it reads the game's DNA files. |
 
-`web/web/patch_web.py` takes the page that pygbag builds and adds the shell, the Home Screen manifest and icons.
+`web/web/patch_web.py` takes the page that pygbag builds and adds the shell, the Home Screen manifest and icons. It also
+puts pygbag's runtime (CPython, its standard library, the terminal scripts) and the Panda3D wheel into the page's `cdn/`
+folder, pinned by sha256, and points the page and pygbag's package index there, so players' devices never reach pygbag's CDN.
 
 ### 2.2 `otpy`: replacing the compiled libraries
 

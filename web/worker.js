@@ -6,7 +6,13 @@ const GAME_FILES = /^(packs\.json|_packs\/.+|_ui\/.+)$/;
 
 export default {
   async fetch(request, env) {
-    const key = decodeURIComponent(new URL(request.url).pathname.slice(1));
+    const url = new URL(request.url);
+    // pygbag asks for its Panda3D wheel as cdn//cp312/...
+    if (url.pathname.includes('//')) {
+      url.pathname = url.pathname.replace(/\/{2,}/g, '/');
+      return Response.redirect(url.toString(), 301);
+    }
+    const key = decodeURIComponent(url.pathname.slice(1));
     const file = request.method === 'GET' && GAME_FILES.test(key) ? await env.FILES.get(key) : null;
     if (!file) return new Response('Not found', { status: 404 });
     return new Response(file.body, {

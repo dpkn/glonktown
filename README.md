@@ -180,7 +180,7 @@ The game's resources go in `server/resources` (a clone, or a symlink to one). Us
 git clone https://github.com/open-toontown/resources.git server/resources
 ```
 
-Make a virtual environment with pygbag 0.9.3 (the version whose CDN the page uses) and pytz, then build the page and the download
+Make a virtual environment with pygbag 0.9.3 (the version whose runtime the page bundles) and pytz, then build the page and the download
 packs into `runtime/web`:
 
 ```bash
@@ -198,9 +198,8 @@ docker compose -f server/docker/docker-compose.yml up -d --build
 ```
 
 The first build compiles Astron and takes several minutes. This server serves the page itself, at
-**`http://<this computer's address>:7380/play/`** (find the address with `ipconfig getifaddr en0` on a Mac). Use the network
-address, not `localhost`, even on the computer itself: from `localhost` the page tries to load its Python runtime from a local
-address. The page loads its Python runtime from pygbag's CDN, so the devices still need internet access.
+**`http://<this computer's address>:7380/play/`** (find the address with `ipconfig getifaddr en0` on a Mac). The page carries
+its own Python runtime and Panda3D, so the devices only need to reach this server, not the internet.
 
 On the home network:
 

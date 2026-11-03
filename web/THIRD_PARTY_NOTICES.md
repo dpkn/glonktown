@@ -49,8 +49,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 | Component | Used for | Licence |
 |---|---|---|
 | [Panda3D](https://www.panda3d.org) | the 3D engine, on the server and in the browser | Modified BSD (BSD-3-Clause) |
-| [pygbag](https://github.com/pygame-web/pygbag) and the pygame-web project | CPython and Panda3D compiled to WebAssembly, which runs the game in the browser | see the project |
+| [pygbag](https://github.com/pygame-web/pygbag) and the pygame-web project | CPython and Panda3D compiled to WebAssembly, which runs the game in the browser (served with the page, in `cdn/`) | see the project |
+| [xterm.js](https://xtermjs.org) (in pygbag's runtime, `cdn/vt/`) | pygbag's text console | MIT |
 | [Astron](https://github.com/Astron/Astron) | the game's message director, state server, database server and client agent | see the project |
+| [Alpine.js](https://alpinejs.dev) (in `web/web/ui/vendor/`) | the page shell's screens | MIT |
 | [nginx](https://nginx.org), [websockets](https://github.com/python-websockets/websockets), [pytz](https://pythonhosted.org/pytz/) | web server, WebSocket bridge, time zones | their own licences |
 | Python 3.9 | the server and browser language | PSF licence |
 

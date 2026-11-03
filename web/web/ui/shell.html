@@ -24,12 +24,12 @@
       <div class="dialog sheet">
         <div class="title" x-data="title"></div>
         <p class="lore">
-          Way out past the edge of the map lies Glonktown: squeaky trolleys, wobbly lampposts and the creamiest pies in all of Toontown.
+          Welcome to Glonktown: an utopian town where everything was perfect and everyone was happy.
           Or it was, until the Cogs showed up. Now they're stamping paperwork on every street corner and turning our town grey, one
-          building at a time.
+          building at a time. Help us get our glonky paradise back. Please.
         </p>
-        <p class="plea">Glonktown needs you!</p>
 
+      
         <div class="door">
           <div class="state" x-show="$store.welcome.state !== 'closed'" :class="{ open: $store.welcome.state === 'open' }">
             <i></i>
@@ -39,9 +39,8 @@
                   @click="$store.flow.openLogin()">PLAY</button>
           <div class="closed" x-show="$store.welcome.state === 'closed'">
             <div class="heading">Glonktown is closed today 😞</div>
-            <p>The doors are shut for now. Check back later: this page lets you in by itself as soon as they open.</p>
-            <button :disabled="$store.welcome.retrying" @click="$store.welcome.retry()"
-                    x-text="$store.welcome.retrying ? 'Checking...' : 'Try again'"></button>
+            <p>The doors are shut for now. Check back later or nag Daniël to open the doors.</p>
+  
           </div>
         </div>
       </div>

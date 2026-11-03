@@ -1,4 +1,4 @@
-"""Connects the page's touch controls (ttr-ui.js) to the game: reads the control state every frame, drives the game through the
+"""Connects the page's touch controls (ui/js/game/) to the game: reads the control state every frame, drives the game through the
 functions in webui_core.py, and tells the page what to show."""
 import platform
 import time

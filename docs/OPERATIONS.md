@@ -132,7 +132,7 @@ and get the same toons back, because the game account is matched by name (`runti
 
 Every browser sends **crash information** to `runtime/data/logs/client.log`, quietly: Python tracebacks and error lines, page errors,
 lost connections, one line about the device (browser, screen size) and one line with the sign-in name. At most 400 lines per visit;
-nothing else (no passwords, touches or frame timings). The page decides this (`quietLog` in `web/web/ttr-ui.js`).
+nothing else (no passwords, touches or frame timings). The page decides this (`quietLog` in `web/web/ui/js/lib/log.js`).
 
 The file stops growing at 30 MB. How many lines an address may send an hour is `CLOG_PER_HOUR` in
 `server/docker/docker-compose.yml`.
