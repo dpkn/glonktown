@@ -85,6 +85,7 @@ canvas.emscripten {
   width: 100vw !important;
   height: 100vh !important;
   margin: 0 !important;
+  outline: none !important;       /* no focus ring when the game takes keyboard focus */
   touch-action: none;
 }
 

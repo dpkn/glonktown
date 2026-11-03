@@ -721,7 +721,9 @@ class ControlsTabPage(DirectFrame):
         self.__updateKeys()
 
     def exit(self):
-        self.hide()
+        # Already gone when the book is unloaded: ShtikerBook.unload destroys its GUI (this page included) before unloading the pages.
+        if not self.isEmpty():
+            self.hide()
         if not self.entered:
             return
         self.entered = False

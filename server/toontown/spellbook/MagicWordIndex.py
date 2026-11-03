@@ -320,16 +320,41 @@ class SetPinkSlips(MagicWord):
 
 class GiveBeans(MagicWord):
     aliases = ["beans", "jellybeans", "money"]
-    desc = "Gives the target toon jellybeans: the jar fills first, the rest goes to the bank. With no amount, both are filled."
+    desc = "Gives the target toon jellybeans: the jar fills first, the rest goes to the bank. With no amount, both are filled. " \
+           "Add a player name after the amount to give to that toon instead (use 0 to fill them up)."
     execLocation = MagicWordConfig.EXEC_LOC_SERVER
-    arguments = [("amount", int, False, 0)]
+    # The player name is the last argument, so it takes the rest of the line and may contain spaces
+    arguments = [("amount", int, False, 0), ("player", str, False, "")]
 
     def handleWord(self, invoker, avId, toon, *args):
+        if args[1]:
+            toon = self.findToonByName(args[1])
+            if isinstance(toon, str):
+                return toon
+            if toon != invoker and invoker.getAccessLevel() <= toon.getAccessLevel():
+                return f"You don't have a high enough Access Level to give jellybeans to {toon.getName()}!"
+
         amount = args[0] or toon.getMaxMoney() + toon.getMaxBankMoney()
         if amount < 0:
             return "Give a positive number of jellybeans."
         toon.addMoney(amount)
         return f"{toon.getName()} has {toon.getMoney()} jellybeans in the jar and {toon.getBankMoney()} in the bank."
+
+    def findToonByName(self, name):
+        # Returns the online toon called name (exact match first, then a unique partial match), or an error message
+        from toontown.toon.DistributedToonAI import DistributedToonAI
+        name = name.strip().lower()
+        toons = [do for do in list(self.air.doId2do.values())
+                 if isinstance(do, DistributedToonAI) and do.isPlayerControlled()]
+        exact = [t for t in toons if t.getName().lower() == name]
+        if exact:
+            return exact[0]
+        partial = [t for t in toons if name in t.getName().lower()]
+        if len(partial) == 1:
+            return partial[0]
+        if partial:
+            return "More than one toon matches that name: " + ", ".join(t.getName() for t in partial)
+        return f"No toon named {name} is online."
 
 class AbortMinigame(MagicWord):
     aliases = ["exitgame", "exitminigame", "quitgame", "quitminigame", "skipgame", "skipminigame"]

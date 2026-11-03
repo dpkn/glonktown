@@ -12,14 +12,16 @@ from panda3d.core import Datagram, DatagramIterator, ClockObject
 import panda3d.direct as _direct
 
 WS_URL = "ws://localhost:8766"      # set by the page before the game starts
+CLIENT_HEARTBEAT = 5
 CLIENT_OBJECT_SET_FIELD = 120
 STATESERVER_OBJECT_SET_FIELD = 2020
 
 _JS = """
 window.webnet = {
-  ws: null, state: 'idle', rx: [], err: '',
+  ws: null, state: 'idle', rx: [], err: '', hb: false,
   open: function (url) {
     var n = window.webnet;
+    n.hb = false;
     try {
       var ws = new WebSocket(url);
       ws.binaryType = 'arraybuffer';
@@ -51,10 +53,19 @@ window.webnet = {
   },
   close: function () {
     var n = window.webnet;
-    var ws = n.ws; n.ws = null; n.state = 'idle'; n.rx = [];
+    var ws = n.ws; n.ws = null; n.state = 'idle'; n.rx = []; n.hb = false;
     try { if (ws) ws.close(); } catch (x) {}
-  }
+  },
+  armHeartbeat: function () { window.webnet.hb = true; }
 };
+// The game sends its own heartbeats from its frame loop, but the server throws out a client that is silent for a minute, and the
+// loop stops when the browser hides or throttles the page.  So the page sends them too, once the game has sent its first one
+// (before that the server only accepts CLIENT_HELLO).  A whole frame per send, so it never lands inside one of the game's.
+setInterval(function () {
+  var n = window.webnet;
+  if (!n.hb || !n.ws || n.state !== 'open') return;
+  try { n.ws.send(new Uint8Array([2, 0, 5, 0]).buffer); } catch (x) {}   // length 2, CLIENT_HEARTBEAT (5)
+}, 10000);
 """
 platform.window.eval(_JS)
 _wn = platform.window.webnet
@@ -218,6 +229,8 @@ class CConnectionRepository:
         if str(_wn.state) in ("closed", "idle"):
             return False           # the connection is gone: do not queue for the next one
         payload = bytes(dg.getMessage())
+        if self._client_datagram and payload[:2] == struct.pack("<H", CLIENT_HEARTBEAT):
+            _wn.armHeartbeat()      # past the handshake: the page may keep the heartbeats going (see _JS)
         if self._tcp_header_size == 2:
             frame = struct.pack("<H", len(payload)) + payload
         elif self._tcp_header_size == 4:
