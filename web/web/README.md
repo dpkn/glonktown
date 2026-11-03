@@ -4,7 +4,7 @@ What runs on the phone. How it fits together is in [docs/ARCHITECTURE.md](../../
 
 | Path | Job |
 |---|---|
-| `ttr-ui.js`, `ttr-ui.css` | The page shell: sign-in, loading and download, touch controls, rotate and install screens, the in-game full-screen button, test-session logging |
+| `ttr-ui.js`, `ttr-ui.css` | The page shell: welcome (open or closed), sign-in, loading and download, touch controls, rotate and install screens, the in-game full-screen button, test-session logging |
 | `ttr-audio.js` | Sound through the Web Audio API |
 | `icon-*.png` | Home Screen icons (drawn by `tools/make_icons.py` at the repository root) |
 | `game/` | The Python glue that starts the game in the browser (`main.py` and helpers) |

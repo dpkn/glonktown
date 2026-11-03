@@ -26,13 +26,13 @@ HTTPS address without opening a port on your router.
 ### What you need
 
 - A computer that stays on while you play: a Mac with [Docker Desktop](https://www.docker.com/products/docker-desktop/) or
-  [OrbStack](https://orbstack.dev), or a 64-bit Linux machine with Docker (x86_64 or ARM, 2 GB of memory or more).
-- A free Cloudflare account with a domain on it.
+  [OrbStack](https://orbstack.dev), a Windows 10 or 11 PC with [Docker Desktop](https://www.docker.com/products/docker-desktop/), or a 64-bit Linux machine with Docker (x86_64 or ARM, 2 GB of memory or more).
+- A free Cloudflare account with a domain on it
 - About 2 GB of free disk space.
 
 ### 1. Start the server
 
-Make a folder for the server and get its settings file:
+Make a folder for the server and get its settings file. On Windows, run these in PowerShell and type `curl.exe` instead of `curl`:
 
 ```bash
 mkdir glonktown && cd glonktown
@@ -56,6 +56,12 @@ this folder. The server is ready when the district's log ends with `Done.`:
 tail -n 1 runtime/data/logs/ai1.log
 ```
 
+On Windows:
+
+```powershell
+Get-Content runtime\data\logs\ai1.log -Tail 1
+```
+
 ### 2. Connect the tunnel
 
 1. In Cloudflare Zero Trust, under Networks → Tunnels, create a tunnel (Cloudflared) and give it one route (Published application
@@ -66,6 +72,12 @@ tail -n 1 runtime/data/logs/ai1.log
 
    ```bash
    pbpaste > runtime/data/tunnel_token
+   ```
+
+   On Windows, in PowerShell:
+
+   ```powershell
+   Get-Clipboard | Set-Content runtime\data\tunnel_token
    ```
 
 3. Restart the server:
@@ -113,15 +125,20 @@ docker compose up -d
 glonk.town always runs the newest version of the game, so keep your server up to date:
 
 ```bash
-docker compose pull && docker compose up -d
+docker compose pull
+```
+
+```bash
+docker compose up -d
 ```
 
 If every player gets error 125 when signing in, the server and the site are on different versions: update the server.
 
 ### Hosting the party
 
-- Turn on Docker Desktop's "Start Docker Desktop when you sign in". The server is only up while Docker runs.
-- Keep a Mac awake for the evening with `caffeinate -dims`, and use Ethernet if you can.
+- Turn on Docker Desktop's "Start Docker Desktop when you sign in" (Settings → General). The server is only up while Docker runs.
+- Keep the computer awake for the evening, and use Ethernet if you can. On a Mac, run `caffeinate -dims`; on Windows, set
+  Settings → System → Power → Sleep to Never.
 - A player who forgot their password: delete their entry from `runtime/data/users.json`. They sign in again with the same name and
   a new password and get their toons back.
 - The server makes a backup every night in `runtime/data/backups`. Take one by hand before the party:
@@ -137,16 +154,16 @@ Everything below is for changing the game, or for running your own copy of the w
 
 ### Repository layout
 
-| Path | What it is |
-|---|---|
-| [`server/`](server) | The game server: the game's code, `otpy` (a pure-Python replacement for the game's compiled libraries) and the Docker image ([`server/docker/`](server/docker)). |
-| [`web/`](web) | The browser client: the page shell, the Python glue that runs the game in WebAssembly, the scripts that build the download packs. |
-| [`docs/`](docs) | How it works, running it, every change, the magic words and the to-do list. |
-| [`tools/`](tools) | `build_client.sh` builds the page and the packs; `upload_files.sh` uploads them to the website's bucket; `make_icons.py` draws the home-screen icons. |
-| [`docker-compose.yml`](docker-compose.yml) | Runs the published image, for hosts. |
-| [`.github/workflows/server-image.yml`](.github/workflows/server-image.yml) | Builds that image for x86_64 and ARM on every push to `main` that changes `server/`, and publishes it as `ghcr.io/dpkn/glonktown`. |
-| `server/resources` | The game's art, sound and DNA files. **Not in git**: you clone it below. |
-| `runtime/` | The server's data: accounts, toons, logs and the built page. **Not in git**; created on first run. |
+| Path                                                                       | What it is                                                                                                                                                       |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`server/`](server)                                                        | The game server: the game's code, `otpy` (a pure-Python replacement for the game's compiled libraries) and the Docker image ([`server/docker/`](server/docker)). |
+| [`web/`](web)                                                              | The browser client: the page shell, the Python glue that runs the game in WebAssembly, the scripts that build the download packs.                                |
+| [`docs/`](docs)                                                            | How it works, running it, every change, the magic words and the to-do list.                                                                                      |
+| [`tools/`](tools)                                                          | `build_client.sh` builds the page and the packs; `upload_files.sh` uploads them to the website's bucket; `make_icons.py` draws the home-screen icons.            |
+| [`docker-compose.yml`](docker-compose.yml)                                 | Runs the published image, for hosts.                                                                                                                             |
+| [`.github/workflows/server-image.yml`](.github/workflows/server-image.yml) | Builds that image for x86_64 and ARM on every push to `main` that changes `server/`, and publishes it as `ghcr.io/dpkn/glonktown`.                               |
+| `server/resources`                                                         | The game's art, sound and DNA files. **Not in git**: you clone it below.                                                                                         |
+| `runtime/`                                                                 | The server's data: accounts, toons, logs and the built page. **Not in git**; created on first run.                                                               |
 
 ### Run it from source
 
@@ -234,13 +251,13 @@ method.
 
 2. In the Cloudflare dashboard, under Workers & Pages → Create → Import a repository, pick this repository and set:
 
-   | Setting | Value |
-   |---|---|
-   | Project name | `glonktown` (the `name` in `web/wrangler.jsonc`) |
-   | Build command | `sh build_page.sh` |
-   | Deploy command | `npx wrangler deploy` |
-   | Root directory (under advanced settings) | `web` |
-   | Build variables | `GLONKTOWN_SERVER` = `https://play.example.com` (the server devices use when no `?server=` is given), `PYTHON_VERSION` = `3.12` |
+   | Setting                                  | Value                                                                                                                           |
+   | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+   | Project name                             | `glonktown` (the `name` in `web/wrangler.jsonc`)                                                                                |
+   | Build command                            | `sh build_page.sh`                                                                                                              |
+   | Deploy command                           | `npx wrangler deploy`                                                                                                           |
+   | Root directory (under advanced settings) | `web`                                                                                                                           |
+   | Build variables                          | `GLONKTOWN_SERVER` = `https://play.example.com` (the server devices use when no `?server=` is given), `PYTHON_VERSION` = `3.12` |
 
    The bucket binding comes from `web/wrangler.jsonc`; with another bucket name, change it there and pass the name to
    `tools/upload_files.sh`.
@@ -250,7 +267,8 @@ method.
 Every push builds the page again; other branches get preview versions. A push never changes the game files: run
 `tools/upload_files.sh` when the art or the game's code changed.
 
-- The page always opens on the sign-in screen; the game files download after signing in.
+- The page opens on a welcome screen that checks whether the game server answers: only then can players go on to sign in,
+  otherwise it says Glonktown is closed (and asks again every 30 seconds). The game files download after signing in.
 - The server's address must be `https://`: a page on HTTPS cannot reach a plain HTTP server.
 - For a different default server, change `GLONKTOWN_SERVER` in the Worker's build variables and build again (or push).
 
@@ -261,6 +279,7 @@ lost connections, the kind of device and browser, the screen size, and the **sig
 record touches, chat or screenshots. Adding `?log=1` to the page's address turns on a fuller log for that visit.
 
 ## Credits
+
 Glonktown is **[Open Toontown](https://github.com/open-toontown/open-toontown)** (the open-source Toontown Online code), by way of
 **[Toontown: Anywhere](https://github.com/lPuffyy/open-toontown-anywhere)**'s server fork and browser client, with the classic
 characters put back, fixes collected from other Open Toontown forks, and settings for a small group.
@@ -277,14 +296,14 @@ Glonktown is a small layer on top of other people's work.
 
 Fixes and features from other forks
 
-| From | What |
-|---|---|
-| Open Toontown pull request [#115](https://github.com/open-toontown/open-toontown/pull/115) by [demiurgeQuantified](https://github.com/demiurgeQuantified) | Tag game collisions after Toon Escape |
-| Open Toontown pull requests [#148](https://github.com/open-toontown/open-toontown/pull/148) to [#153](https://github.com/open-toontown/open-toontown/pull/153) by [edkimmel](https://github.com/edkimmel) | Saving packed database fields (toons save and reload correctly), the news page, unknown magic words no longer crash the district, the Photo Album page, street branch zones |
-| [Project Retrolight](https://github.com/BrythonLexi/project-retrolight) by [BrythonLexi](https://github.com/BrythonLexi) | Crash fixes for Cashbot HQ ([`a21162e`](https://github.com/BrythonLexi/project-retrolight/commit/a21162e)) and pies in Goofy Speedway races ([`3a9e1c2`](https://github.com/BrythonLexi/project-retrolight/commit/3a9e1c2)); the small-group tuning: TTR-style Aoogah and Trunk damage with 3 TNT and 7 Trapdoor ([`041cede`](https://github.com/BrythonLexi/project-retrolight/commit/041cede)), one side in boss fights below four toons ([`6426b7b`](https://github.com/BrythonLexi/project-retrolight/commit/6426b7b)), no Laff requirement for facilities ([`e419dc9`](https://github.com/BrythonLexi/project-retrolight/commit/e419dc9)) and street Cog levels ([`97b0436`](https://github.com/BrythonLexi/project-retrolight/commit/97b0436)), balanced on Loopy's suggestions. Retrolight also inspired the 100 accuracy cap and x3 invasion XP. |
-| [calebcodesalot's fork](https://github.com/calebcodesalot/open-toontown), changes by flytrapdev | Rebindable controls with a Controls tab, rebindable ToonTasks and gag hotkeys, Smooth Animations |
-| [DarthMDev's fork](https://github.com/DarthMDev/open-toontown) | Entity file fix ([`860d261`](https://github.com/DarthMDev/open-toontown/commit/860d261)) |
-| [maxrdz's fork](https://github.com/maxrdz/toontown) | No GM prefix on GM toons' names ([`c009e51`](https://github.com/maxrdz/toontown/commit/c009e51)) |
+| From                                                                                                                                                                                                      | What                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Open Toontown pull request [#115](https://github.com/open-toontown/open-toontown/pull/115) by [demiurgeQuantified](https://github.com/demiurgeQuantified)                                                 | Tag game collisions after Toon Escape                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Open Toontown pull requests [#148](https://github.com/open-toontown/open-toontown/pull/148) to [#153](https://github.com/open-toontown/open-toontown/pull/153) by [edkimmel](https://github.com/edkimmel) | Saving packed database fields (toons save and reload correctly), the news page, unknown magic words no longer crash the district, the Photo Album page, street branch zones                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| [Project Retrolight](https://github.com/BrythonLexi/project-retrolight) by [BrythonLexi](https://github.com/BrythonLexi)                                                                                  | Crash fixes for Cashbot HQ ([`a21162e`](https://github.com/BrythonLexi/project-retrolight/commit/a21162e)) and pies in Goofy Speedway races ([`3a9e1c2`](https://github.com/BrythonLexi/project-retrolight/commit/3a9e1c2)); the small-group tuning: TTR-style Aoogah and Trunk damage with 3 TNT and 7 Trapdoor ([`041cede`](https://github.com/BrythonLexi/project-retrolight/commit/041cede)), one side in boss fights below four toons ([`6426b7b`](https://github.com/BrythonLexi/project-retrolight/commit/6426b7b)), no Laff requirement for facilities ([`e419dc9`](https://github.com/BrythonLexi/project-retrolight/commit/e419dc9)) and street Cog levels ([`97b0436`](https://github.com/BrythonLexi/project-retrolight/commit/97b0436)), balanced on Loopy's suggestions. Retrolight also inspired the 100 accuracy cap and x3 invasion XP. |
+| [calebcodesalot's fork](https://github.com/calebcodesalot/open-toontown), changes by flytrapdev                                                                                                           | Rebindable controls with a Controls tab, rebindable ToonTasks and gag hotkeys, Smooth Animations                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| [DarthMDev's fork](https://github.com/DarthMDev/open-toontown)                                                                                                                                            | Entity file fix ([`860d261`](https://github.com/DarthMDev/open-toontown/commit/860d261))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| [maxrdz's fork](https://github.com/maxrdz/toontown)                                                                                                                                                       | No GM prefix on GM toons' names ([`c009e51`](https://github.com/maxrdz/toontown/commit/c009e51))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 Built with [Panda3D](https://www.panda3d.org), [pygbag](https://github.com/pygame-web/pygbag) and
 [Astron](https://github.com/Astron/Astron). More in [web/THIRD_PARTY_NOTICES.md](web/THIRD_PARTY_NOTICES.md).

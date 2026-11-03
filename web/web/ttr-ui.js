@@ -204,10 +204,13 @@
     titleTop = titleUp ? Math.max(SAFE.t + 4, H * 0.04) : H * 0.2;
     title.style.top = titleTop + 'px';
     if (!titleAspect) return;
-    let h = Math.min(130 * sc, H * 0.16), w = h * titleAspect;
-    if (w > W * 0.92) { w = W * 0.92; h = w / titleAspect; }
+    const home = title.classList.contains('home');      // the welcome card's header, half over its top edge (--th)
+    let h = home ? Math.min(140, Math.max(H * 0.2, 70)) : Math.min(130 * sc, H * 0.16), w = h * titleAspect;
+    const maxW = home ? Math.min(W * 0.88, 600) : W * 0.92;
+    if (w > maxW) { w = maxW; h = w / titleAspect; }
     titleSvg.style.width = w + 'px'; titleSvg.style.height = h + 'px';
     titleH = h;
+    document.documentElement.style.setProperty('--th', h + 'px');
   });
 
   // ------------------------------------------------------------------ loading screen
@@ -424,11 +427,11 @@
     visualViewport.addEventListener('scroll', () => { if (kbMode) loginLayout(); });
   }
   function loginMessage(m, bad) { lmsg.textContent = m; lmsg.className = bad ? 'bad' : ''; lmsg.id = 'ttr-msg'; }
-  function showLogin() {
-    showLoad(false); login.style.display = ''; titleUp = true;
-    setMode(!LS.getItem(server.userKey));
+  function showLogin(isNew) {
+    showLoad(false); leaveWelcome(); login.style.display = ''; titleUp = true;
+    setMode(isNew);
     sayWhyEnded();
-    relayout();
+    relayout(); checkRotate();
   }
   function sayWhyEnded() {          // the page was started again because the game ended (T.ended)
     let why = null;
@@ -447,7 +450,7 @@
       if (r.status === 404) return { ok: true, tag: 'ok', token: '', text: t };
       const [tag, token] = t.split(' ');          // "ok <play token>": the game logs in with the token, which the server checks
       return { ok: r.ok, tag: r.ok ? tag : '', token: r.ok ? token || '' : '', text: t };
-    } catch (e) { return { ok: false, tag: '', text: "Can't reach the Glonktown server. It may be switched off, or check your internet." }; }
+    } catch (e) { return { ok: false, tag: '', unreachable: true, text: "Can't reach the Glonktown server. It may be switched off, or check your internet." }; }
   }
   async function signIn() {
     const user = uField.value.trim().toLowerCase(), pw = pField.value;
@@ -457,6 +460,7 @@
     const cookie = user + ':' + pw;
     const r = await authCall('/auth', cookie);
     playBtn.disabled = false;
+    if (r.unreachable && !(await serverIsOpen())) { showWelcome('closed'); return; }
     if (!r.ok) { loginMessage(r.text || 'Sign-in failed.', true); loginLayout(); return; }
     // the game plays full screen; a browser only allows that shortly after a tap or key press, so ask as soon as the sign-in answered
     if (!standalone) goFull();
@@ -483,6 +487,106 @@
   }
   onEnter(pField, () => signIn());
   onEnter(uField, () => pField.focus());
+
+  // ------------------------------------------------------------------ the welcome page: one card on the sky with the title half over its top
+  // edge, a bit of Glonktown's story, and the way in. The way in (PLAY) only shows while the game server answers; a closed server gets a note
+  // that says so, and is asked again every half minute.
+  const welcome = el('div', 'on', root);
+  welcome.id = 'ttr-welcome'; welcome.style.display = 'none';
+  const sheet = el('div', 'sheet', el('div', 'page', welcome));
+  el('p', 'lore', sheet).textContent = "Way out past the edge of the map lies Glonktown: squeaky trolleys, wobbly lampposts and the creamiest pies in all " +
+    "of Toontown. Or it was, until the Cogs showed up. Now they're stamping paperwork on every street corner and turning our town grey, one building at a time.";
+  el('p', 'plea', sheet).textContent = 'Glonktown needs you!';
+  const door = el('div', 'door', sheet);
+  const wState = el('div', 'state', door); el('i', null, wState); const wStateText = el('span', null, wState);
+  const wPlay = el('button', 'ttr-btn on', door); wPlay.textContent = 'PLAY';
+  const shut = el('div', 'shut', door);
+  el('div', 'h', shut).textContent = 'Glonktown is closed today 😞';
+  el('p', null, shut).textContent = "The doors are shut for now. Check back later: this page lets you in by itself as soon as they open.";
+  const wRetry = el('button', 'on', shut); wRetry.textContent = 'Try again';
+  // the leaderboard: every toon on the server, best first (the server's /leaderboard.json), with who is playing right now and when the
+  // others last were. It stays hidden on a server without one.
+  const board = el('section', 'board', sheet.parentNode); board.style.display = 'none';
+  el('h2', null, board).textContent = "Who's in town";
+  const boardSummary = el('p', 'sum', board);
+  const boardList = el('ol', null, board);
+  const SPECIES = { dog: '🐶', cat: '🐱', horse: '🐴', mouse: '🐭', rabbit: '🐰', duck: '🦆', pig: '🐷', bear: '🐻', monkey: '🐵' };
+  const MEDALS = ['🥇', '🥈', '🥉'];
+  const ago = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+  function lastSeen(seconds) {
+    for (const [unit, size] of [['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]])
+      if (seconds >= size) return 'Last seen ' + ago.format(-Math.floor(seconds / size), unit);
+    return 'Last seen just now';
+  }
+  function stat(parent, value, label) { const s = el('span', null, parent); el('b', null, s).textContent = value; s.append(' ' + label); }
+  function showBoard({ now, toons }) {
+    board.style.display = toons.length ? '' : 'none';
+    const playing = toons.filter((t) => t.online).length;
+    boardSummary.textContent = playing ? (playing === 1 ? '1 toon is' : playing + ' toons are') + ' playing right now. Come say hi!'
+      : 'Nobody is playing right now.';
+    boardList.textContent = '';
+    toons.forEach((t, i) => {
+      const li = el('li', t.online ? 'online' : null, boardList);
+      el('span', 'rank', li).textContent = MEDALS[i] || i + 1;
+      el('span', 'face', li).textContent = SPECIES[t.species] || '⭐';
+      const who = el('div', 'who', li);
+      el('div', 'name', who).textContent = t.name;
+      el('div', 'seen', who).textContent = t.online ? 'Playing now' + (t.where ? ' in ' + t.where : '') : lastSeen(now - t.lastSeen);
+      const stats = el('div', 'stats', who);
+      stat(stats, t.laff, 'Laff');
+      stat(stats, t.tracks, t.tracks === 1 ? 'gag track' : 'gag tracks');
+      el('span', null, stats).textContent = 'Up to ' + t.playground;
+    });
+  }
+  let boardTimer = 0;
+  async function loadBoard() {
+    clearTimeout(boardTimer);
+    if (welcome.style.display === 'none') return;
+    try {
+      const r = await fetch(server.url('/leaderboard.json'), { cache: 'no-store' });
+      if (r.ok) showBoard(await r.json());
+    } catch (e) {}
+    boardTimer = setTimeout(loadBoard, 30000);
+  }
+  const knownHere = () => !!LS.getItem(server.userKey);
+  function setWelcome(state) {
+    welcome.dataset.state = state;
+    wStateText.textContent = state === 'open' ? 'Open now' : 'Checking if Glonktown is open...';
+    wPlay.disabled = state !== 'open';
+    wRetry.disabled = false; wRetry.textContent = 'Try again';
+    if (state === 'open') loadBoard();
+  }
+  // The game server answers for its settings file (200, or 404 without one) with a header any site may read. A server that is switched
+  // off answers nothing, or only with an error page from in between (the tunnel's), which the page may not read.
+  async function serverIsOpen() {
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 6000);
+    try { return (await fetch(server.url('/gameconfig.json?t=') + Date.now(), { cache: 'no-store', signal: ctl.signal })).status < 500; }
+    catch (e) { return false; }
+    finally { clearTimeout(timer); }
+  }
+  let recheck = 0;
+  async function checkServer() {
+    clearTimeout(recheck);
+    const open = await serverIsOpen();
+    if (welcome.style.display === 'none') return open;
+    setWelcome(open ? 'open' : 'closed');
+    if (!open) recheck = setTimeout(checkServer, 30000);
+    return open;
+  }
+  async function showWelcome(known) {
+    showLoad(false); login.style.display = 'none'; welcome.style.display = ''; welcome.scrollTop = 0;
+    sheet.prepend(title); title.classList.add('home');
+    setWelcome(known || 'checking'); relayout(); checkRotate();
+    if (known) { clearTimeout(recheck); recheck = setTimeout(checkServer, 30000); return; }
+    // back from a game that ended: straight on to the sign-in dialog, which says why
+    let ended = false; try { ended = !!sessionStorage.getItem('ttr.ended'); } catch (e) {}
+    if (await checkServer() && ended) showLogin(!knownHere());
+  }
+  function leaveWelcome() { welcome.style.display = 'none'; bg.after(title); title.classList.remove('home'); clearTimeout(boardTimer); }
+  wPlay.addEventListener('click', () => showLogin(!knownHere()));
+  wRetry.addEventListener('click', () => { wRetry.disabled = true; wRetry.textContent = 'Checking...'; checkServer(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && welcome.dataset.state === 'closed' && welcome.style.display !== 'none') checkServer(); });
+  addEventListener('keydown', (e) => { if (e.key === 'Enter' && welcome.style.display !== 'none' && welcome.dataset.state === 'open') wPlay.click(); });
 
   // ------------------------------------------------------------------ the flow: sign in, then get the game files, then start the game
   let signedIn = null;
@@ -842,7 +946,7 @@
   rot.innerHTML = '<div class="ph"></div><div class="tx">Turn your phone sideways to play</div>';
   function checkRotate() {
     const coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;
-    rot.style.display = (coarse && innerHeight > innerWidth && !installUp) ? '' : 'none';
+    rot.style.display = (coarse && innerHeight > innerWidth && !installUp && welcome.style.display === 'none') ? '' : 'none';
   }
   addEventListener('resize', checkRotate); addEventListener('orientationchange', () => setTimeout(checkRotate, 150));
 
@@ -887,7 +991,7 @@
   let wl = null;
   function keepAwake() { try { if (navigator.wakeLock && !document.hidden) navigator.wakeLock.request('screen').then((l) => { wl = l; }).catch(() => {}); } catch (e) {} }
   document.addEventListener('visibilitychange', () => { if (!document.hidden && hud.style.display !== 'none') keepAwake(); });
-  function begin() { loadArt(); showLogin(); }
+  function begin() { loadArt(); showWelcome(); }
   if (needInstall) {
     installUp = true; checkRotate();
     const ins = el('div', null, root); ins.id = 'ttr-install';

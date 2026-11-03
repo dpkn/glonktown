@@ -2,10 +2,12 @@
 developer channel.   python ot_server.py <port> [bind]
    /            built page (game/build/web)             /packs.json, /_packs/*   game files (build/site/)
    POST /auth   always "ok" (the test server accepts any name)                    /__code   python for the running game (debug_code.py)
-   POST /__log  the page's log lines, printed here"""
+   POST /__log  the page's log lines, printed here                                 /leaderboard.json   a made-up leaderboard"""
+import json
 import mimetypes
 import os
 import sys
+import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -14,6 +16,14 @@ SITE = os.path.join(HERE, "build", "site")
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8002
 BIND = sys.argv[2] if len(sys.argv) > 2 else "0.0.0.0"
 mimetypes.add_type("application/wasm", ".wasm")
+
+
+LEADERBOARD = json.dumps({"now": int(time.time()), "toons": [
+    {"name": "Daantastic", "species": "dog", "laff": 42, "tracks": 4, "playground": "Minnie's Melodyland", "online": True, "where": "Daisy Gardens", "lastSeen": int(time.time())},
+    {"name": "Weird Pickles Paddledoodle", "species": "rabbit", "laff": 37, "tracks": 4, "playground": "Daisy Gardens", "online": False, "where": None, "lastSeen": int(time.time()) - 7200},
+    {"name": "Waldo Wildwhip", "species": "pig", "laff": 25, "tracks": 3, "playground": "Donald's Dock", "online": True, "where": "Toontown Central", "lastSeen": int(time.time())},
+    {"name": "Zippety Crunchyton", "species": "bear", "laff": 15, "tracks": 2, "playground": "Toontown Central", "online": False, "where": None, "lastSeen": int(time.time()) - 3 * 86400},
+]}).encode()
 
 
 class H(BaseHTTPRequestHandler):
@@ -57,6 +67,8 @@ class H(BaseHTTPRequestHandler):
         self._send(200, data, mimetypes.guess_type(f)[0] or "application/octet-stream", head)
 
     def do_GET(self):
+        if self.path.startswith("/leaderboard.json"):
+            return self._send(200, LEADERBOARD, "application/json")
         self._serve()
 
     def do_HEAD(self):

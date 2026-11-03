@@ -12,7 +12,8 @@ class ToonPresenceUD(DistributedObjectGlobalUD):
     a friend coming or going, and the Go To (teleport to a friend) questions and answers. Each district's AI tells it when a
     toon arrives or leaves; a client can only ask it to pass a Go To message on to a friend."""
     notify = DirectNotifyGlobal.directNotify.newCategory('ToonPresenceUD')
-    STATUS_FILE = '/ot/data/online.json'          # how many are playing (counts only)
+    STATUS_FILE = '/ot/data/online.json'          # who is playing, for the website's leaderboard (the sign-in service serves it)
+    LAST_SEEN_FILE = '/ot/data/lastseen.json'     # avId -> when that toon was last playing, kept across restarts
     STATUS_EVERY = 30.0
 
     def __init__(self, air):
@@ -20,20 +21,32 @@ class ToonPresenceUD(DistributedObjectGlobalUD):
         self.online = {}                    # avId -> set of that toon's friends' avIds
         self.district = {}                  # avId -> name of the district the toon is in
         self.detailsAsked = {}              # avId of a client -> when it last asked for a toon's details
+        try:
+            with open(self.LAST_SEEN_FILE) as f:
+                self.lastSeen = {int(avId): when for avId, when in json.load(f).items()}
+        except Exception:
+            self.lastSeen = {}
         taskMgr.doMethodLater(self.STATUS_EVERY, self.__writeStatus, 'toonPresenceStatus')
 
+    @staticmethod
+    def __writeJson(path, data):
+        tmp = path + '.tmp'
+        with open(tmp, 'w') as f:
+            json.dump(data, f)
+        os.replace(tmp, path)
+
     def __writeStatus(self, task):
-        """Write how many toons are playing (in total and in each district). Counts only, no names."""
+        """Write which toons are playing (in total and in each district), and when each toon was last seen playing."""
         try:
+            now = int(time.time())
             counts = {}
             for avId in self.online:
                 name = self.district.get(avId, '') or 'Unknown'
                 counts[name] = counts.get(name, 0) + 1
-            data = {'updated': int(time.time()), 'total': len(self.online), 'districts': counts}
-            tmp = self.STATUS_FILE + '.tmp'
-            with open(tmp, 'w') as f:
-                json.dump(data, f)
-            os.replace(tmp, self.STATUS_FILE)
+                self.lastSeen[avId] = now
+            self.__writeJson(self.STATUS_FILE, {'updated': now, 'total': len(self.online), 'districts': counts,
+                                                'playing': sorted(self.online)})
+            self.__writeJson(self.LAST_SEEN_FILE, self.lastSeen)
         except Exception:
             self.notify.warning('could not write the status file')
         return task.again
@@ -54,6 +67,7 @@ class ToonPresenceUD(DistributedObjectGlobalUD):
         if avId not in self.online or self.district.get(avId) != districtName:
             return                       # the toon already arrived in another district: this is the old district catching up
         self.notify.info('toon %s left %s' % (avId, districtName))
+        self.lastSeen[avId] = int(time.time())
         friends = self.online.pop(avId, set())
         self.district.pop(avId, None)
         for friendId in friends:

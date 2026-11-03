@@ -49,7 +49,7 @@ canvas.emscripten { touch-action: none; position: fixed !important; inset: 0 !im
 
 @media (prefers-reduced-motion: reduce) {
   #ttr-bar i::before { animation-play-state: paused !important; }
-  #ttr-title svg, #ttr-panel { animation: none !important; }
+  #ttr-title svg, #ttr-panel, #ttr-welcome .ttr-btn, #ttr-welcome .shut, #ttr-welcome .state i { animation: none !important; }
 }
 
 /* ---- loading: the game's loading bar (a dark glass track, a yellow fill) under yellow lettering with a blue edge ---- */
@@ -99,6 +99,57 @@ canvas.emscripten { touch-action: none; position: fixed !important; inset: 0 !im
 #ttr-msg { align-self: center; max-width: 100%; text-wrap: balance; padding: .2em .7em; border-radius: 8px; text-align: center; font-size: calc(15px * var(--sc)); color: var(--ink); }
 #ttr-msg.bad { background: #e0302f; color: #fff; }
 #ttr-msg:empty { display: none; }
+
+/* ---- the welcome page: one card like the game's dialogs on the sky, the title half over its top edge (--th, the title's height), a bit of
+   story, then the way in (or a note that it is closed). It scrolls when the window is too short for it ---- */
+#ttr-welcome { position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; color: var(--ink);
+  padding: max(12px, var(--sat)) max(16px, var(--sar)) max(16px, var(--sab)) max(16px, var(--sal)); }
+#ttr-welcome .page { min-height: 100%; display: flex; flex-direction: column; justify-content: center; }
+#ttr-welcome .sheet { width: min(100%, 600px); margin: calc(var(--th, 110px) / 2) auto 0; padding: 0 34px 18px; display: flex; flex-direction: column; align-items: center;
+  gap: 14px; text-align: center; background: var(--dlg); border: 4px solid var(--rim); border-radius: 28px;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .1), -6px 9px 10px rgba(0, 0, 0, .3); }
+#ttr-title.home { position: static; margin: calc(var(--th, 110px) / -2 - 4px) 0 -4px; }
+#ttr-welcome .lore { margin: 0; max-width: 32em; font: 18px/1.5 var(--uf); text-wrap: pretty; }
+#ttr-welcome .plea { margin: 0; font: 30px var(--mf); letter-spacing: .03em; color: #e0302f; text-shadow: 0 2px 0 rgba(94, 16, 0, .2); }
+#ttr-welcome .door { display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(100%, 420px); }
+#ttr-welcome .state { display: flex; align-items: center; gap: .55em; padding: .3em 1em; border-radius: 999px; background: rgba(26, 51, 115, .1); font: 15px var(--uf); }
+#ttr-welcome .state i { width: .7em; height: .7em; border-radius: 50%; background: #f0b400; animation: ttrfade 1.2s ease-in-out infinite; }
+#ttr-welcome[data-state=open] .state i { background: #2fbf45; box-shadow: 0 0 0 3px rgba(47, 191, 69, .25); animation: none; }
+#ttr-welcome .door .ttr-btn { width: min(100%, 280px); animation: ttrpop .45s cubic-bezier(.3, 1.5, .5, 1) both; }
+#ttr-welcome .door .ttr-btn:not(:disabled):hover { filter: brightness(1.07); }
+#ttr-welcome .door .ttr-btn:not(:disabled):active { transform: translateY(calc(3px * var(--sc))); box-shadow: inset 0 calc(3px * var(--sc)) 0 rgba(255, 255, 255, .45), 0 calc(2px * var(--sc)) 0 #0d6b1c; }
+#ttr-welcome .shut { display: none; flex-direction: column; align-items: center; gap: 8px; width: 100%; padding: 14px 20px 18px; background: #fff; border: 2px solid #e4df9c;
+  border-radius: 18px; box-shadow: 0 3px 0 rgba(90, 80, 20, .15); }
+#ttr-welcome .shut .h { font: 24px var(--mf); letter-spacing: .02em; color: var(--navy); text-wrap: balance; }
+#ttr-welcome .shut p { margin: 0; font: 16px/1.45 var(--uf); text-wrap: balance; }
+#ttr-welcome .shut button { margin-top: 6px; height: 38px; padding: 0 1.3em; border-radius: 10px; border: 2px solid var(--navy); background: #3b97ea; color: #fff; font: 16px var(--uf);
+  box-shadow: 0 3px 0 var(--navy); cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+#ttr-welcome .shut button:disabled { opacity: .6; cursor: default; }
+#ttr-welcome[data-state=closed] .shut { display: flex; animation: ttrpop .45s cubic-bezier(.3, 1.5, .5, 1) both; }
+#ttr-welcome[data-state=closed] .state, #ttr-welcome[data-state=closed] .ttr-btn { display: none; }
+#ttr-welcome footer { width: 100%; padding-top: 12px; border-top: 1px solid rgba(31, 77, 166, .15); font: 12px/1.5 var(--uf); color: rgba(26, 51, 115, .65); text-wrap: balance; }
+#ttr-welcome a { color: inherit; text-underline-offset: 3px; }
+/* the leaderboard: a card of its own under the welcome card, a row per toon, best first, with a green ring around the ones playing now */
+#ttr-welcome .board { width: min(100%, 600px); margin: 18px auto 0; padding: 18px 34px 22px; text-align: left; background: var(--dlg); border: 4px solid var(--rim);
+  border-radius: 28px; box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .1), -6px 9px 10px rgba(0, 0, 0, .3); }
+#ttr-welcome .board h2 { margin: 0; text-align: center; font: 26px var(--mf); letter-spacing: .03em; color: var(--navy); }
+#ttr-welcome .board .sum { margin: 2px 0 12px; text-align: center; font: 15px/1.4 var(--uf); }
+#ttr-welcome .board ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+#ttr-welcome .board li { display: grid; grid-template-columns: 1.8em 44px 1fr; align-items: center; gap: 10px; padding: 8px 12px;
+  background: #fff; border: 2px solid #e4df9c; border-radius: 16px; box-shadow: 0 3px 0 rgba(90, 80, 20, .15); }
+#ttr-welcome .board li.online { border-color: #2fbf45; box-shadow: 0 0 0 3px rgba(47, 191, 69, .25), 0 3px 0 rgba(90, 80, 20, .15); }
+#ttr-welcome .board .rank { text-align: center; font: 20px var(--mf); color: var(--navy); }
+#ttr-welcome .board li:nth-child(-n+3) .rank { font: 26px system-ui; }
+#ttr-welcome .board .face { position: relative; width: 44px; height: 44px; border-radius: 50%; background: #dcecff; display: flex; align-items: center; justify-content: center; font-size: 25px; }
+#ttr-welcome .board li.online .face::after { content: ""; position: absolute; right: -1px; bottom: -1px; width: 13px; height: 13px; border-radius: 50%; background: #2fbf45; border: 2px solid #fff; }
+#ttr-welcome .board .who { min-width: 0; }
+#ttr-welcome .board .name { font: 20px var(--mf); letter-spacing: .02em; overflow-wrap: anywhere; }
+#ttr-welcome .board .seen { font: 14px/1.3 var(--uf); color: #5a6a90; }
+#ttr-welcome .board li.online .seen { color: #128a2a; }
+#ttr-welcome .board .stats { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+#ttr-welcome .board .stats span { padding: 1px 9px; border-radius: 999px; background: #fff7c2; border: 1px solid #e4df9c; font: 13px/1.5 var(--uf); white-space: nowrap; }
+#ttr-welcome .board .stats b { font: 15px var(--mf); color: var(--navy); }
+@media (max-width: 520px) { #ttr-welcome .sheet { padding: 0 18px 16px; border-radius: 22px; } #ttr-welcome .board { padding: 16px 14px 18px; border-radius: 22px; } #ttr-welcome .lore { font-size: 16px; } #ttr-welcome .plea { font-size: 26px; } }
 
 /* ---- in-game controls ---- */
 #ttr-hud .pad { position: absolute; touch-action: none; pointer-events: auto; border-radius: 50%; border: 3px solid rgba(255,255,255,.6); color: #fff; display: flex; align-items: center; justify-content: center;

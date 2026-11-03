@@ -46,7 +46,8 @@ Two layers run on the phone.
 **The page shell** is plain JavaScript and CSS (`ttr-ui.js`, `ttr-ui.css`, `ttr-audio.js`). It owns everything outside the game
 itself:
 
-- the sign-in screen, the loading screen and its progress bar;
+- the welcome screen (which asks the game server for `/gameconfig.json` to tell whether it is open), the sign-in screen, the
+  loading screen and its progress bar;
 - the "turn your phone sideways" and "add to Home Screen" screens (iPhone, iPad and Android);
 - downloading and caching the game files (section 4);
 - the touch controls (thumb stick, jump, camera, book) and the on-screen keyboard handling;
@@ -109,7 +110,9 @@ Docker restarts everything together:
 
 1. **nginx** (port 80 inside, 7380 published). Serves the page and game files, and proxies `/ws` and the sign-in paths
    (`nginx.conf`).
-2. **Sign-in service** (`auth_service.py`, port 7381). Checks passwords, collects crash reports and test-session logs.
+2. **Sign-in service** (`auth_service.py`, port 7381). Checks passwords, collects crash reports and test-session logs, and serves
+   the welcome page's leaderboard (`/leaderboard.json`: every toon's laff, gag tracks and furthest playground from the database,
+   and who is playing or when they last were, from the UberDOG's `online.json` and `lastseen.json`).
    Section 5.
 3. **WebSocket bridge** (`wsbridge.py`, port 7390). Copies bytes between a browser WebSocket and Astron's TCP client port. It
    reads nothing and changes nothing. Its connection limits are `MAX_PER_IP` and `MAX_NEW_PER_MIN` in `docker-compose.yml`.
@@ -216,7 +219,8 @@ endpoints, but the page does not use them.
 - **Test sessions:** open the page with `?log=1`. For the rest of that visit the page sends everything the game prints
   (including Python errors), page errors and browser console warnings and errors as well. The file stops at 30 MB; how many
   lines an address may send an hour is `CLOG_PER_HOUR` in `docker-compose.yml`.
-- **Who is online:** `web/tools/who_is_online.py` (run inside the container, see OPERATIONS.md).
+- **Who is online:** the leaderboard on the welcome page, or `runtime/data/online.json` (the toons playing now, written every half
+  minute by ToonPresence). `web/tools/who_is_online.py` counts open connections from the bridge's log.
 
 ## 8. What runs where, in one table
 

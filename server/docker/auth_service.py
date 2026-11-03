@@ -1,4 +1,4 @@
-import http.server, os, json, hashlib, hmac, threading, time
+import http.server, os, json, hashlib, hmac, threading, time, re
 U="/ot/data/users.json"
 SECRET=open("/ot/data/login_secret").read().strip().encode()   # shared with the UberDOG's login manager (otp/login/PlayToken.py)
 TOKEN_SECONDS=24*3600   # long enough for the game's own reconnects after a phone sleeps
@@ -91,7 +91,61 @@ def client_log(ip,text):
             f.write("%s %s %s%s"%(time.strftime("%Y-%m-%d %H:%M:%S",time.gmtime(now)),ip,line,chr(10)))
     except Exception: return False
     return True
+DB="/ot/src/astron/databases"
+SPECIES={"d":"dog","c":"cat","h":"horse","m":"mouse","r":"rabbit","f":"duck","p":"pig","b":"bear","s":"monkey"}
+HEADS="dls dss dsl dll cls css csl cll hls hss hsl hll mls mss rls rss rsl rll fls fss fsl fll pls pss psl pll bls bss bsl bll sls sss ssl sll".split()
+PLAYGROUNDS=[(2000,"Toontown Central"),(1000,"Donald's Dock"),(5000,"Daisy Gardens"),(4000,"Minnie's Melodyland"),(3000,"The Brrrgh"),(9000,"Donald's Dreamland")]
+PLACES={**dict(PLAYGROUNDS),6000:"Chip 'n Dale's Acorn Acres",7000:"Funny Farm",8000:"Goofy Speedway",10000:"Bossbot HQ",11000:"Sellbot HQ",12000:"Cashbot HQ",
+  13000:"Lawbot HQ",15000:"the Toontorial",16000:"their estate",17000:"Chip 'n Dale's MiniGolf",18000:"a party"}
+BOARD={"at":0,"json":b""}
+def db_fields(dbId):
+    path="%s/astrondb/%d.yaml"%(DB,dbId); f={}
+    for ln in open(path,encoding="utf8",errors="replace"):
+        if ln.startswith("  ") and ": " in ln: k,v=ln.strip().split(": ",1); f[k]=v
+    return f,os.path.getmtime(path)
+def ints(v): return [int(n) for n in re.findall(r"-?\d+",v)]
+def toon_entry(avId,playing,lastSeen):
+    f,mtime=db_fields(avId)
+    name=re.match(r'\("(.*)"\)$',f["setName"]).group(1).replace('\\"','"').replace("\\\\","\\")
+    dna=f.get("setDNAString","")[2:-2]
+    head=HEADS[int(dna[6:8],16)] if dna[4:6]=="74" else ""
+    teleports=set(ints(f.get("setTeleportAccess","")))
+    reached=[n for hood,n in PLAYGROUNDS if hood in teleports or hood==2000][-1]
+    hood=ints(f.get("setLastHood","0"))[0]
+    online=avId in playing
+    return {"name":name,"species":SPECIES.get(head[:1],""),"laff":ints(f["setMaxHp"])[0],"tracks":sum(ints(f.get("setTrackAccess",""))),
+            "playground":reached,"online":online,
+            "where":(PLACES.get(2000 if hood>=22000 else hood) if online else None),"lastSeen":int(lastSeen.get(str(avId),mtime))}
+def leaderboard():
+    """every toon on the server, best first: its laff, gag tracks and the furthest playground its Toontasks opened, and whether it is
+    playing now (the UberDOG's online.json, see ToonPresenceUD) or when it last was"""
+    now=time.time()
+    if now-BOARD["at"]<10: return BOARD["json"]
+    try: status=json.load(open("/ot/data/online.json"))
+    except Exception: status={}
+    playing=set(status.get("playing",[])) if now-status.get("updated",0)<120 else set()
+    try: lastSeen=json.load(open("/ot/data/lastseen.json"))
+    except Exception: lastSeen={}
+    toons=[]
+    try: accounts=json.load(open(DB+"/accounts.json")).values()
+    except Exception: accounts=[]
+    for accountId in accounts:
+        try: avIds=ints(json.loads(db_fields(accountId)[0]["ACCOUNT_AV_SET"]))
+        except Exception: continue
+        for avId in avIds:
+            if not avId: continue
+            try: toons.append(toon_entry(avId,playing,lastSeen))
+            except Exception as e: print("leaderboard: could not read toon",avId,repr(e),flush=True)
+    order=[n for _,n in PLAYGROUNDS]
+    toons.sort(key=lambda t:(-t["laff"],-t["tracks"],-order.index(t["playground"]),t["name"].lower()))
+    BOARD.update(at=now,json=json.dumps({"now":int(now),"toons":toons}).encode())
+    return BOARD["json"]
 class H(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path.split("?")[0]!="/leaderboard.json": return self.reply(404,"")
+        body=leaderboard()
+        self.send_response(200); self.send_header("Content-Type","application/json"); self.send_header("Content-Length",str(len(body))); self.end_headers()
+        self.wfile.write(body)
     def reply(self,code,msg):
         self.send_response(code); self.end_headers(); self.wfile.write(msg.encode())
     def do_POST(self):
