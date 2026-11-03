@@ -80,6 +80,9 @@ for path, sha256 in RUNTIME.items():
 s = open(index, encoding="utf-8").read()
 s = re.sub(r'\s*<script src="[^"]*browserfs\.min\.js"></script>', "", s)   # gone from the CDN too; pygbag no longer uses it
 s = s.replace(CDN, "cdn/")
+# vtx.js loads xterm with import(config.cdn + "../vt/xterm.js"), and import() takes a relative "cdn/..." for a package name
+# (failed to resolve module specifier), so the page makes config.cdn a full address
+s = s.replace('cdn : "cdn/0.9.3/"', 'cdn : new URL("cdn/0.9.3/", document.baseURI).href')
 # PYGPI is where pygbag looks for its package index and wheels (Panda3D); without it, the CDN. cpythonrc.py runs before
 # anything else in Python, so it sets it there
 rc = os.path.join(web, "cdn", "0.9.3", "cpythonrc.py")
