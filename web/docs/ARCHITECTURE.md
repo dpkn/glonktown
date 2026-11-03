@@ -121,8 +121,8 @@ district dies, so Docker restarts everything together:
 
 The image is Python 3.9 with:
 
-- **Panda3D 1.11.0** (a development wheel from the Panda3D archive, `1.11.0.dev4085+shaderpipeline.388`), which gives
-  the compiled engine and the DC (network protocol) library;
+- **Panda3D 1.11.0** (a development wheel from the Panda3D archive, `1.11.0.dev4050`, the newest with both x86_64 and ARM
+  Linux builds), which gives the compiled engine and the DC (network protocol) library;
 - the Python side of **Panda3D 1.11.0's `direct` package** copied over the wheel's, because the Astron classes the game
   uses (`AstronInternalRepository` and friends) are missing from the wheel's copy. That folder is in the fork
   (`docker/overlay/direct`, with Panda3D's license);

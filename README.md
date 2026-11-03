@@ -30,9 +30,9 @@ Everything that differs from stock Open Toontown is listed in [web/docs/CHANGES.
 
 ### What you need
 
-- A Mac with [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [OrbStack](https://orbstack.dev). Built and tested
-  on Apple Silicon. The server image is `linux/amd64` (its Panda3D build only exists for x86_64), so Docker emulates it there; with
-  or without Rosetta it is fast enough for a party.
+- A Mac with [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [OrbStack](https://orbstack.dev), or a 64-bit
+  Linux machine with Docker. Built and tested on Apple Silicon. The server image builds natively for ARM (Apple Silicon, Ampere)
+  and x86_64, and uses about 330 MB of memory.
 - Python 3.12 and Git.
 - About 4 GB of free disk space: about 0.9 GB of resources, 0.8 GB for the server image and about 0.8 GB for the built game files.
 - Internet access for the guests' devices: the page loads its Python runtime from pygbag's CDN.
@@ -89,7 +89,7 @@ docker compose -f server/docker/docker-compose.yml up -d --build
 ```
 
 The first build compiles Astron and takes several minutes. The server is ready when the district's log ends with `Done.`, about
-a minute and a half after it starts:
+40 seconds after it starts:
 
 ```bash
 tail -n 1 runtime/data/logs/ai1.log

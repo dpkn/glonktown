@@ -16,9 +16,8 @@ On the Mac, with Docker (Docker Desktop or OrbStack), from the root of the repos
 docker compose -f server/docker/docker-compose.yml up -d --build
 ```
 
-The image is `linux/amd64`, because the server's Panda3D wheel only exists for x86_64 (on Apple Silicon Docker emulates it, with
-Rosetta or QEMU); the first build compiles Astron and takes
-several minutes. The district is open when `runtime/data/logs/ai1.log` ends with `Done.`, about a minute and a half after the start.
+The image builds natively for ARM (Apple Silicon, Ampere) and x86_64; the first build compiles Astron and takes
+several minutes. The district is open when `runtime/data/logs/ai1.log` ends with `Done.`, about 40 seconds after the start.
 
 | Mount (from `docker-compose.yml`) | What it holds |
 |---|---|

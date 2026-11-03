@@ -4,7 +4,6 @@
 services:
   glonktown:
     image: glonktown-server
-    platform: linux/amd64
     build: { context: .., dockerfile: docker/Dockerfile }
     container_name: glonktown
     restart: unless-stopped

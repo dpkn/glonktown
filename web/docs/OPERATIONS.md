@@ -24,9 +24,8 @@ docker compose -f server/docker/docker-compose.yml stop
 docker compose -f server/docker/docker-compose.yml restart
 ```
 
-The image is built for `linux/amd64` (the server's Panda3D wheel exists only for x86_64), so on Apple Silicon Docker emulates it
-(Rosetta if it is switched on, QEMU otherwise; both are fast enough).
-A start takes **about a minute and a half**: the UberDOG, then the one district. Everyone playing is disconnected by a restart,
+The image builds natively for ARM (Apple Silicon, Ampere) and x86_64.
+A start takes **about 40 seconds**: the UberDOG, then the one district. Everyone playing is disconnected by a restart,
 and the browser game reconnects by itself when it can. The container restarts itself if the UberDOG or the district crashes.
 
 ### Is it healthy?
