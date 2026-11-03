@@ -174,7 +174,7 @@ Glonktown is a small layer on top of other people's work.
   `otpy`, the game running in the browser with touch controls and Web Audio sound, the download packs, the sign-in service,
   Astron compatibility, the friend manager, Cog invasions, the Districts page, and many fixes besides.
 
-Fixes and features from other forks. Each commit keeps its original author in the git history.
+Fixes and features from other forks
 
 | From | What |
 |---|---|
