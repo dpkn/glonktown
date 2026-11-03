@@ -1,0 +1,207 @@
+<!-- Glonktown's page shell (ui/): put into pygbag's page by patch_web.py. Each screen is bound to its Alpine store in ui/js/. -->
+<div id="ttr" x-data x-cloak :class="{ 'title-raised': $store.shell.titleRaised }">
+
+  <div class="sky" x-show="!$store.shell.playing" :class="{ loaded: $store.shell.skyUrl }">
+    <img :src="$store.shell.skyUrl || null" alt="">
+  </div>
+
+  <div class="title floating" x-data="title" x-show="$store.shell.showsFloatingTitle"
+       :class="{ faded: $store.login.raisedForKeyboard }"></div>
+
+  <!-- start-up, the download, and the game starting -->
+  <section class="loading" x-show="$store.shell.screen === 'loading'">
+    <div class="status" x-text="$store.loading.status"></div>
+    <div class="bar" x-show="!$store.loading.starting"><i :style="{ width: $store.loading.progress * 100 + '%' }"></i></div>
+    <div class="detail" x-text="$store.loading.detail"></div>
+    <div class="dots" x-show="$store.loading.starting"><i></i><i></i><i></i></div>
+    <div class="error" x-show="$store.loading.error" x-text="$store.loading.error"></div>
+    <button class="pill light retry" x-show="$store.loading.error" @click="$store.flow.downloadAndPlay()">Try again</button>
+  </section>
+
+  <section class="welcome" x-show="$store.shell.screen === 'welcome'"
+           @keydown.enter.window="$store.welcome.visible && $store.welcome.state === 'open' && $store.flow.openLogin()">
+    <div class="page">
+      <div class="dialog sheet">
+        <div class="title" x-data="title"></div>
+        <p class="lore">
+          Way out past the edge of the map lies Glonktown: squeaky trolleys, wobbly lampposts and the creamiest pies in all of Toontown.
+          Or it was, until the Cogs showed up. Now they're stamping paperwork on every street corner and turning our town grey, one
+          building at a time.
+        </p>
+        <p class="plea">Glonktown needs you!</p>
+
+        <div class="door">
+          <div class="state" x-show="$store.welcome.state !== 'closed'" :class="{ open: $store.welcome.state === 'open' }">
+            <i></i>
+            <span x-text="$store.welcome.state === 'open' ? 'Open now' : 'Checking if Glonktown is open...'"></span>
+          </div>
+          <button class="big-button" x-show="$store.welcome.state !== 'closed'" :disabled="$store.welcome.state !== 'open'"
+                  @click="$store.flow.openLogin()">PLAY</button>
+          <div class="closed" x-show="$store.welcome.state === 'closed'">
+            <div class="heading">Glonktown is closed today 😞</div>
+            <p>The doors are shut for now. Check back later: this page lets you in by itself as soon as they open.</p>
+            <button :disabled="$store.welcome.retrying" @click="$store.welcome.retry()"
+                    x-text="$store.welcome.retrying ? 'Checking...' : 'Try again'"></button>
+          </div>
+        </div>
+      </div>
+
+      <section class="dialog leaderboard" x-show="$store.welcome.toons.length">
+        <h2>Who's in town</h2>
+        <p class="summary" x-text="$store.welcome.summary"></p>
+        <ol>
+          <template x-for="(toon, index) in $store.welcome.toons">
+            <li :class="{ online: toon.online }">
+              <span class="rank" x-text="$store.welcome.rank(index)"></span>
+              <span class="face" x-text="$store.welcome.face(toon)"></span>
+              <div class="who">
+                <div class="name" x-text="toon.name"></div>
+                <div class="seen" x-text="$store.welcome.whereabouts(toon)"></div>
+                <div class="stats">
+                  <span><b x-text="toon.laff"></b> Laff</span>
+                  <span><b x-text="toon.tracks"></b> <span x-text="$store.welcome.gagTracks(toon)"></span></span>
+                  <span x-text="'Up to ' + toon.playground"></span>
+                </div>
+              </div>
+            </li>
+          </template>
+        </ol>
+      </section>
+    </div>
+  </section>
+
+  <!-- sign in: a dialog like the game's, under the title -->
+  <section class="login" x-show="$store.shell.screen === 'login'" :class="{ 'keyboard-up': $store.login.raisedForKeyboard }">
+    <div class="dialog sign-in" @pointerdown.self="document.activeElement?.blur()">
+      <div class="tabs">
+        <button :class="{ selected: $store.login.isNew }" @click="$store.login.setMode(true)">I'm new</button>
+        <button :class="{ selected: !$store.login.isNew }" @click="$store.login.setMode(false)">I've played before</button>
+      </div>
+      <div class="message" :class="{ bad: $store.login.messageIsError }" x-text="$store.login.message"
+           @pointerdown="document.activeElement?.blur()"></div>
+      <input class="field" type="text" name="username" autocomplete="username" autocapitalize="none" autocorrect="off"
+             spellcheck="false" enterkeyhint="next"
+             :placeholder="$store.login.isNew ? 'Pick a name' : 'Your name'"
+             x-model="$store.login.username" x-enter="$refs.password.focus()"
+             @focus="$store.login.fieldFocused()" @blur="$store.login.fieldBlurred()">
+      <input class="field" type="password" name="password" x-ref="password" autocapitalize="none" autocorrect="off"
+             spellcheck="false" enterkeyhint="go"
+             :autocomplete="$store.login.isNew ? 'new-password' : 'current-password'"
+             :placeholder="$store.login.isNew ? 'Pick a password' : 'Your password'"
+             x-model="$store.login.password" x-enter="$store.flow.signIn()"
+             @focus="$store.login.fieldFocused()" @blur="$store.login.fieldBlurred()">
+      <button class="big-button" :disabled="$store.login.busy" @click="$store.flow.signIn()"
+              x-text="$store.login.isNew ? 'SIGN UP' : 'PLAY'"></button>
+    </div>
+    <button class="pill light display-button" x-show="$store.settings.showDisplayButtons"
+            @click="$store.shell.dialog = 'display'">Display</button>
+  </section>
+
+  <!-- in game: the touch controls (hud.js) -->
+  <section class="hud" x-show="$store.shell.playing">
+    <div class="pad joystick" x-data="joystick" x-show="$store.hud.showControls">
+      <div class="knob" :style="{ transform: `translate(${$store.hud.knob.x}px, ${$store.hud.knob.y}px)` }"></div>
+    </div>
+    <div class="pad jump" x-show="$store.hud.showControls" x-hold="$store.hud.hold('jump', $pressed)">JUMP</div>
+    <div class="pad camera" x-show="$store.hud.showControls" x-hold="$pressed && $store.hud.turnCamera()">CAM</div>
+    <div class="pad action" x-show="$store.hud.showAction" x-hold="$store.hud.hold('action', $pressed)">ACTION</div>
+    <div class="pad tasks" x-show="$store.hud.showControls" :class="{ open: $store.hud.tasksOpen }"
+         @pointerdown.stop @click.prevent="$store.hud.toggleTasks()">TASKS</div>
+    <div class="pad tug-left" x-show="$store.hud.showTug" x-hold="$store.hud.hold('tugLeft', $pressed)">◀</div>
+    <div class="pad tug-right" x-show="$store.hud.showTug" x-hold="$store.hud.hold('tugRight', $pressed)">▶</div>
+
+    <div class="fps" x-show="$store.settings.showFps" x-text="$store.hud.fps"></div>
+    <button class="gear" x-show="$store.settings.showDisplayButtons"
+            @pointerdown.stop @click.prevent="$store.shell.dialog = 'display'">⚙</button>
+    <!-- a browser tab that has left full screen (Esc, or a swipe on Android): the way back to it -->
+    <button class="fullscreen" x-show="$store.hud.showFullscreenButton" title="Full screen" aria-label="Full screen"
+            :class="{ 'beside-gear': $store.settings.showDisplayButtons || $store.settings.showFps }"
+            @pointerdown.stop @click.prevent="$store.hud.goFullscreen()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>
+    </button>
+  </section>
+
+  <!-- display settings, from the sign-in screen and in game -->
+  <div class="settings" x-show="$store.shell.dialog">
+    <div class="dialog" x-show="$store.shell.dialog === 'display'">
+      <h2>Display</h2>
+      <template x-for="option in $store.settings.options">
+        <div class="row">
+          <div class="label"><span x-text="option.label"></span><small x-text="option.hint"></small></div>
+          <div class="choices">
+            <template x-for="[value, text] in option.choices">
+              <button :class="{ selected: $store.settings.values[option.key] === value }" @click="$store.settings.pick(option, value)"
+                      x-text="text"></button>
+            </template>
+          </div>
+        </div>
+      </template>
+      <div class="note" x-show="$store.settings.needsRestart">Smooth edges changes when the game restarts.</div>
+      <button class="action" @click="$store.keysDialog.stopListening(); $store.shell.dialog = 'keys'">Keyboard keys</button>
+      <button class="action" x-show="$store.settings.needsRestart" @click="$store.settings.restartGame()">Restart game now</button>
+      <button class="action done" @click="$store.shell.dialog = null">Done</button>
+    </div>
+
+    <div class="dialog" x-show="$store.shell.dialog === 'keys'">
+      <h2>Keyboard keys</h2>
+      <div class="tip">Tap an action, then press the key you want for it. The game's own keys keep working too.</div>
+      <template x-for="action in $store.keysDialog.actions">
+        <div class="row">
+          <div class="label"><span x-text="action.label"></span><small x-text="'Game key: ' + $store.keysDialog.gameKeyName(action)"></small></div>
+          <div class="choices">
+            <button :class="{ selected: $store.keysDialog.keysFor(action.id).length, waiting: $store.keysDialog.waitingFor === action.id }"
+                    @click="$store.keysDialog.listen(action)" x-text="$store.keysDialog.buttonText(action)"></button>
+          </div>
+        </div>
+      </template>
+      <button class="action" @click="$store.keysDialog.useGameKeys()">Use the game's keys</button>
+      <button class="action" @click="$store.keysDialog.useWasd()">Use WASD and Space</button>
+      <button class="action done" @click="$store.keysDialog.stopListening(); $store.shell.dialog = 'display'">Back</button>
+    </div>
+  </div>
+
+  <div class="rotate" x-show="$store.shell.asksToRotate">
+    <div class="phone"></div>
+    <div class="text">Turn your phone sideways to play</div>
+  </div>
+
+  <!-- opened in a browser tab on a phone or tablet: how to add it to the Home Screen -->
+  <div class="install" x-show="$store.shell.installing">
+    <div class="dialog">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><use href="#ttr-share-icon"/></svg>
+      </div>
+      <div class="heading">Add Glonktown to your Home Screen</div>
+      <template x-if="$store.install.android">
+        <ol>
+          <li><i>1</i><span>Open this page in your browser app itself (Chrome works best), not inside another app</span></li>
+          <li><i>2</i><span>Tap the &#8942; menu, then &ldquo;Install app&rdquo; (or &ldquo;Add to Home screen&rdquo;)</span></li>
+          <li><i>3</i><span>Open Glonktown from your Home screen. If it still shows a bar at the top, install it again from Chrome</span></li>
+        </ol>
+      </template>
+      <template x-if="!$store.install.android">
+        <ol>
+          <li>
+            <i>1</i>
+            <span>Tap the Share button
+              <svg class="share" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><use href="#ttr-share-icon"/></svg>
+              in Safari (tap &middot;&middot;&middot; first if you do not see it)</span>
+          </li>
+          <li><i>2</i><span>Tap &ldquo;View More&rdquo; if you see it, then scroll down and tap &ldquo;Add to Home Screen&rdquo;</span></li>
+          <li><i>3</i><span>Tap Add, then open Glonktown from your Home Screen</span></li>
+        </ol>
+      </template>
+      <button class="install-now" x-show="$store.install.android && $store.install.canInstallNow" @click="$store.install.installNow()">Install app</button>
+      <button class="link" @click="$store.flow.skipInstall()">Continue in the browser anyway</button>
+    </div>
+    <svg width="0" height="0" aria-hidden="true">
+      <symbol id="ttr-share-icon" viewBox="0 0 24 24">
+        <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              d="M12 3v12M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/>
+      </symbol>
+    </svg>
+  </div>
+
+  <!-- typed chat: brings up the keyboard and passes the keystrokes to the game, whose own text box shows them (chat.js) -->
+  <input id="ttr-textin" type="text" maxlength="120" autocomplete="off" autocapitalize="sentences" autocorrect="off" enterkeyhint="send">
+</div>

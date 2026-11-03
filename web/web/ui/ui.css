@@ -1,0 +1,23 @@
+/* Glonktown (web): the page shell's styles, one file per screen. */
+@import url("css/base.css");
+@import url("css/title.css");
+@import url("css/loading.css");
+@import url("css/welcome.css");
+@import url("css/login.css");
+@import url("css/hud.css");
+@import url("css/settings.css");
+@import url("css/overlays.css");
+
+@media (prefers-reduced-motion: reduce) {
+  #ttr .loading .bar i::before {
+    animation-play-state: paused !important;
+  }
+
+  #ttr .title svg,
+  #ttr .sign-in,
+  #ttr .big-button,
+  #ttr .welcome .closed,
+  #ttr .welcome .state i {
+    animation: none !important;
+  }
+}

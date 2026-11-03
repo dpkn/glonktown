@@ -1,0 +1,281 @@
+/* The welcome page: one card like the game's dialogs on the sky, the title half over its top edge, a bit of story, then the way in
+   (or a note that it is closed). Under it, the leaderboard. It scrolls when the window is too short for it. */
+
+#ttr .welcome {
+  /* the title is a little bigger here: up to 140px, and 20% of the window's height (but at least 70px) */
+  --title-h: min(140px, max(var(--screen-h) * .2, 70px), min(var(--screen-w) * .88, 600px) / var(--title-aspect));
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: max(12px, var(--safe-top)) max(16px, var(--safe-right)) max(16px, var(--safe-bottom)) max(16px, var(--safe-left));
+  color: var(--ink);
+  pointer-events: auto;
+}
+
+#ttr .welcome .page {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#ttr .welcome .sheet {
+  width: min(100%, 600px);
+  margin: calc(var(--title-h) / 2) auto 0;
+  padding: 0 34px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  border-radius: 28px;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .1), -6px 9px 10px rgba(0, 0, 0, .3);
+}
+
+#ttr .welcome .title {
+  margin: calc(var(--title-h) / -2 - 4px) 0 -4px;
+}
+
+#ttr .welcome .lore {
+  margin: 0;
+  max-width: 32em;
+  font: 18px/1.5 var(--text-font);
+  text-wrap: pretty;
+}
+
+#ttr .welcome .plea {
+  margin: 0;
+  font: 30px var(--title-font);
+  letter-spacing: .03em;
+  color: var(--alarm);
+  text-shadow: 0 2px 0 rgba(94, 16, 0, .2);
+}
+
+
+/* ---- the way in ---- */
+
+#ttr .welcome .door {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(100%, 420px);
+}
+
+/* "Checking if Glonktown is open..." with a blinking light, then "Open now" with a green one */
+#ttr .welcome .state {
+  display: flex;
+  align-items: center;
+  gap: .55em;
+  padding: .3em 1em;
+  border-radius: 999px;
+  background: rgba(26, 51, 115, .1);
+  font: 15px var(--text-font);
+}
+
+#ttr .welcome .state i {
+  width: .7em;
+  height: .7em;
+  border-radius: 50%;
+  background: #f0b400;
+  animation: ttr-pulse 1.2s ease-in-out infinite;
+}
+
+#ttr .welcome .state.open i {
+  background: #2fbf45;
+  box-shadow: 0 0 0 3px rgba(47, 191, 69, .25);
+  animation: none;
+}
+
+#ttr .welcome .door .big-button {
+  width: min(100%, 280px);
+  animation: ttr-pop .45s cubic-bezier(.3, 1.5, .5, 1) both;
+}
+
+#ttr .welcome .closed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 20px 18px;
+  background: #fff;
+  border: 2px solid #e4df9c;
+  border-radius: 18px;
+  box-shadow: 0 3px 0 rgba(90, 80, 20, .15);
+  animation: ttr-pop .45s cubic-bezier(.3, 1.5, .5, 1) both;
+}
+
+#ttr .welcome .closed .heading {
+  font: 24px var(--title-font);
+  letter-spacing: .02em;
+  color: var(--navy);
+  text-wrap: balance;
+}
+
+#ttr .welcome .closed p {
+  margin: 0;
+  font: 16px/1.45 var(--text-font);
+  text-wrap: balance;
+}
+
+#ttr .welcome .closed button {
+  margin-top: 6px;
+  height: 38px;
+  padding: 0 1.3em;
+  border-radius: 10px;
+  border: 2px solid var(--navy);
+  background: var(--sky-blue);
+  color: #fff;
+  font: 16px var(--text-font);
+  box-shadow: 0 3px 0 var(--navy);
+}
+
+
+/* ---- the leaderboard: a row per toon, best first, with a green ring around the ones playing now ---- */
+
+#ttr .welcome .leaderboard {
+  width: min(100%, 600px);
+  margin: 18px auto 0;
+  padding: 18px 34px 22px;
+  text-align: left;
+  border-radius: 28px;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .1), -6px 9px 10px rgba(0, 0, 0, .3);
+}
+
+#ttr .leaderboard h2 {
+  margin: 0;
+  text-align: center;
+  font: 26px var(--title-font);
+  letter-spacing: .03em;
+  color: var(--navy);
+}
+
+#ttr .leaderboard .summary {
+  margin: 2px 0 12px;
+  text-align: center;
+  font: 15px/1.4 var(--text-font);
+}
+
+#ttr .leaderboard ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#ttr .leaderboard li {
+  display: grid;
+  grid-template-columns: 1.8em 44px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 2px solid #e4df9c;
+  border-radius: 16px;
+  box-shadow: 0 3px 0 rgba(90, 80, 20, .15);
+}
+
+#ttr .leaderboard li.online {
+  border-color: #2fbf45;
+  box-shadow: 0 0 0 3px rgba(47, 191, 69, .25), 0 3px 0 rgba(90, 80, 20, .15);
+}
+
+#ttr .leaderboard .rank {
+  text-align: center;
+  font: 20px var(--title-font);
+  color: var(--navy);
+}
+
+/* the medals */
+#ttr .leaderboard li:nth-child(-n+3) .rank {
+  font: 26px system-ui;
+}
+
+#ttr .leaderboard .face {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #dcecff;
+  font-size: 25px;
+}
+
+#ttr .leaderboard li.online .face::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #2fbf45;
+  border: 2px solid #fff;
+}
+
+#ttr .leaderboard .who {
+  min-width: 0;
+}
+
+#ttr .leaderboard .name {
+  font: 20px var(--title-font);
+  letter-spacing: .02em;
+  overflow-wrap: anywhere;
+}
+
+#ttr .leaderboard .seen {
+  font: 14px/1.3 var(--text-font);
+  color: #5a6a90;
+}
+
+#ttr .leaderboard li.online .seen {
+  color: #128a2a;
+}
+
+#ttr .leaderboard .stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+#ttr .leaderboard .stats > span {
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: #fff7c2;
+  border: 1px solid #e4df9c;
+  font: 13px/1.5 var(--text-font);
+  white-space: nowrap;
+}
+
+#ttr .leaderboard .stats b {
+  font: 15px var(--title-font);
+  color: var(--navy);
+}
+
+@media (max-width: 520px) {
+  #ttr .welcome .sheet {
+    padding: 0 18px 16px;
+    border-radius: 22px;
+  }
+
+  #ttr .welcome .leaderboard {
+    padding: 16px 14px 18px;
+    border-radius: 22px;
+  }
+
+  #ttr .welcome .lore {
+    font-size: 16px;
+  }
+
+  #ttr .welcome .plea {
+    font-size: 26px;
+  }
+}

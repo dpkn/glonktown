@@ -1,0 +1,126 @@
+/* Loading: the game's loading bar (a dark glass track, a yellow fill) at 72% down the window, under yellow lettering with a blue edge. */
+
+#ttr .loading {
+  --bar-top: calc(var(--screen-h) * .72);
+  --bar-h: calc(14px * var(--sc));
+  position: absolute;
+  inset: 0;
+}
+
+#ttr .loading .status {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--bar-top) - 46px * var(--sc));
+  text-align: center;
+  font: calc(26px * var(--sc)) var(--title-font);
+  letter-spacing: .04em;
+  color: var(--gold);
+  -webkit-text-stroke: calc(5px * var(--sc)) var(--navy);
+  paint-order: stroke fill;
+  text-shadow: 0 calc(3px * var(--sc)) 0 var(--navy);
+}
+
+#ttr .loading .bar {
+  position: absolute;
+  left: 50%;
+  top: var(--bar-top);
+  width: min(var(--screen-w) * .6, 520px * var(--sc));
+  height: var(--bar-h);
+  transform: translateX(-50%);
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(13, 38, 102, .55);
+  box-shadow: inset 0 calc(2px * var(--sc)) calc(3px * var(--sc)) rgba(0, 0, 0, .3), 0 0 0 calc(2px * var(--sc)) rgba(255, 255, 255, .6);
+}
+
+#ttr .loading .bar i {
+  position: relative;
+  display: block;
+  width: 0;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 999px;
+  background: linear-gradient(#fff07a, var(--gold) 45%, #f0b400);
+  transition: width .35s ease-out;
+}
+
+/* a shine running along the fill */
+#ttr .loading .bar i::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .6), rgba(255, 255, 255, 0));
+  animation: ttr-sheen 1.8s ease-in-out infinite;
+}
+
+#ttr .loading .detail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--bar-top) + var(--bar-h) + 12px * var(--sc));
+  text-align: center;
+  font: calc(15px * var(--sc)) var(--text-font);
+  color: #fff;
+  text-shadow: 0 calc(2px * var(--sc)) 0 rgba(12, 40, 110, .75);
+}
+
+/* while the game starts: three bouncing dots where the bar was */
+#ttr .loading .dots {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--bar-top) - 4px * var(--sc));
+  transform: translateX(-50%);
+  display: flex;
+  gap: calc(10px * var(--sc));
+}
+
+#ttr .loading .dots i {
+  width: calc(14px * var(--sc));
+  height: calc(14px * var(--sc));
+  border-radius: 50%;
+  background: var(--gold);
+  border: calc(3px * var(--sc)) solid var(--navy);
+  opacity: .3;
+  animation: ttr-pulse 1.2s ease-in-out infinite;
+}
+
+#ttr .loading .dots i:nth-child(2) { animation-delay: .2s; }
+#ttr .loading .dots i:nth-child(3) { animation-delay: .4s; }
+
+/* what went wrong: between the title and the status line */
+#ttr .loading .error {
+  --error-top: calc(var(--title-top) + var(--title-h) + 10px * var(--sc));
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  top: var(--error-top);
+  height: max(60px, var(--bar-top) - 56px * var(--sc) - var(--error-top));
+  overflow: auto;
+  padding: 12px;
+  background: var(--dialog);
+  color: #8a1616;
+  border: 3px solid var(--rim);
+  border-radius: 14px;
+  font: 12px ui-monospace, Menlo, monospace;
+  white-space: pre-wrap;
+  box-shadow: -4px 6px 8px rgba(0, 0, 0, .3);
+  pointer-events: auto;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+#ttr .loading .retry {
+  left: calc((var(--screen-w) - 170px) / 2);
+  top: calc(var(--screen-h) - max(var(--safe-bottom), 8px) - 48px);
+  width: 170px;
+  height: 40px;
+}
+
+@keyframes ttr-sheen {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}

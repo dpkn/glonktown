@@ -1,0 +1,203 @@
+/* In game: the touch controls, placed as in the iOS app. Every size is in points (times --sc), every edge kept clear of the
+   notch and the home bar (the safe area), and never closer than 24 points to the side or 16 to the bottom. */
+
+#ttr .hud {
+  --left-edge: max(var(--safe-left), 24px);
+  --right-edge: max(var(--safe-right), 24px);
+  --bottom-edge: max(var(--safe-bottom), 16px);
+  --top-edge: max(var(--safe-top), 6px);
+
+  --stick-size: calc(150px * var(--sc));
+  --stick-left: calc(var(--left-edge) + 20px * var(--sc));
+  --stick-top: calc(var(--screen-h) - var(--stick-size) - var(--bottom-edge) - 24px * var(--sc));
+
+  --jump-size: calc(92px * var(--sc));
+  --jump-left: calc(var(--screen-w) - var(--jump-size) - var(--right-edge) - 30px * var(--sc));
+  --jump-top: calc(var(--screen-h) - var(--jump-size) - var(--bottom-edge) - 130px * var(--sc));
+
+  --camera-size: calc(58px * var(--sc));
+  --tasks-size: calc(62px * var(--sc));
+  --tug-size: calc(112px * var(--sc));
+
+  position: absolute;
+  inset: 0;
+}
+
+#ttr .hud .pad {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, .6);
+  color: #fff;
+  font-family: var(--text-font);
+  font-weight: 900;
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* held down */
+#ttr .hud .pad.down {
+  opacity: .7;
+}
+
+/* bottom left: the stick */
+#ttr .hud .joystick {
+  left: var(--stick-left);
+  top: var(--stick-top);
+  width: var(--stick-size);
+  height: var(--stick-size);
+  background: rgba(255, 255, 255, .14);
+  border-color: rgba(255, 255, 255, .45);
+}
+
+#ttr .hud .knob {
+  position: absolute;
+  inset: 0;
+  width: 42%;
+  height: 42%;
+  margin: auto;
+  border-radius: 50%;
+  background: rgba(255, 209, 51, .85);
+  border: 3px solid rgba(0, 0, 0, .35);
+  pointer-events: none;
+}
+
+/* above the stick: TASKS */
+#ttr .hud .tasks {
+  left: calc(var(--stick-left) + (var(--stick-size) - var(--tasks-size)) / 2);
+  top: calc(var(--stick-top) - var(--tasks-size) - 24px * var(--sc));
+  width: var(--tasks-size);
+  height: var(--tasks-size);
+  font-size: calc(var(--tasks-size) * .24);
+  background: rgba(60, 170, 90, .6);
+}
+
+#ttr .hud .tasks.open {
+  background: rgba(60, 170, 90, .95);
+  border-color: #fff;
+}
+
+/* bottom right: JUMP, with CAM above it */
+#ttr .hud .jump {
+  left: var(--jump-left);
+  top: var(--jump-top);
+  width: var(--jump-size);
+  height: var(--jump-size);
+  font-size: 20px;
+  background: rgba(64, 153, 255, .55);
+}
+
+#ttr .hud .camera {
+  left: calc(var(--jump-left) + (var(--jump-size) - var(--camera-size)) / 2);
+  top: calc(var(--jump-top) - var(--camera-size) - 16px * var(--sc));
+  width: var(--camera-size);
+  height: var(--camera-size);
+  font-size: calc(var(--camera-size) * .26);
+}
+
+/* ACTION, left of JUMP and lower, nearer the thumb (players kept missing it when throwing in Field Offices), but clear of the bottom */
+#ttr .hud .action {
+  left: calc(var(--jump-left) - var(--jump-size) - 20px * var(--sc));
+  top: min(var(--jump-top) + 70px * var(--sc), var(--screen-h) - var(--jump-size) - var(--bottom-edge) - 8px * var(--sc));
+  width: var(--jump-size);
+  height: var(--jump-size);
+  font-size: calc(var(--jump-size) * .26);
+}
+
+/* bottom middle: the tug-of-war pads */
+#ttr .hud .tug-left,
+#ttr .hud .tug-right {
+  top: calc(var(--screen-h) - var(--tug-size) - var(--bottom-edge) - 20px * var(--sc));
+  width: var(--tug-size);
+  height: var(--tug-size);
+  font-size: calc(var(--tug-size) * .26);
+}
+
+#ttr .hud .tug-left {
+  left: calc(var(--screen-w) / 2 - var(--tug-size) - 14px * var(--sc));
+}
+
+#ttr .hud .tug-right {
+  left: calc(var(--screen-w) / 2 + 14px * var(--sc));
+}
+
+#ttr .hud .camera,
+#ttr .hud .action,
+#ttr .hud .tug-left,
+#ttr .hud .tug-right {
+  background: rgba(242, 140, 38, .6);
+}
+
+
+/* ---- top middle: the speed counter, the Display gear and the way back to full screen ---- */
+
+#ttr .hud .fps {
+  position: absolute;
+  left: calc(var(--screen-w) / 2 - 40px * var(--sc));
+  top: calc(var(--top-edge) + 4px * var(--sc));
+  width: calc(80px * var(--sc));
+  height: calc(20px * var(--sc));
+  text-align: center;
+  font: 800 calc(13px * var(--sc)) var(--text-font);
+  color: #fff;
+  text-shadow: 0 1px 2px #000;
+  opacity: .75;
+}
+
+#ttr .hud .gear {
+  position: absolute;
+  left: calc(var(--screen-w) / 2 + 46px * var(--sc));
+  top: var(--top-edge);
+  width: calc(30px * var(--sc));
+  height: calc(28px * var(--sc));
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .6);
+  background: rgba(0, 0, 0, .25);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  opacity: .75;
+}
+
+#ttr .hud .fullscreen {
+  --size: calc(34px * var(--sc));
+  position: absolute;
+  left: calc((var(--screen-w) - var(--size)) / 2);
+  top: calc(var(--top-edge) + 2px * var(--sc));
+  width: var(--size);
+  height: var(--size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: calc(10px * var(--sc));
+  border: 2px solid rgba(255, 255, 255, .8);
+  background: rgba(12, 40, 110, .45);
+  color: #fff;
+  opacity: .8;
+  transition: opacity .15s ease, transform .15s ease;
+}
+
+/* next to the gear or the speed counter, when they are up */
+#ttr .hud .fullscreen.beside-gear {
+  left: calc(var(--screen-w) / 2 + 82px * var(--sc));
+}
+
+#ttr .hud .fullscreen:hover {
+  opacity: 1;
+  transform: scale(1.08);
+}
+
+#ttr .hud .fullscreen svg {
+  width: 62%;
+  height: 62%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

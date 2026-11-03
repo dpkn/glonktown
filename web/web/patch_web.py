@@ -16,11 +16,12 @@ s = re.sub(r'<meta name="viewport" content="height=device-height, initial-scale=
 s = s.replace('<meta name="viewport" content="width=device-width, initial-scale=1.0">',
               '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">')
 open(index, "w", encoding="utf-8").write(s)
-if "ttr-ui.js" not in s:
-    s = s.replace('<meta name="viewport" content="width=device-width, initial-scale=1.0">',
-                  '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">', 1)
-    s = s.replace("</head>", '<link rel="stylesheet" href="ttr-ui.css">\n</head>', 1)
-    s = s.replace("</body>", '<script src="server.js"></script>\n<script src="ttr-audio.js"></script>\n<script src="ttr-ui.js"></script>\n</body>', 1)
+# the page shell (ui/): its styles, its markup, and its scripts
+if "ui/js/main.js" not in s:
+    shell = open(os.path.join(HERE, "ui", "shell.html"), encoding="utf-8").read()
+    s = s.replace("</head>", '<link rel="stylesheet" href="ui/ui.css">\n</head>', 1)
+    s = s.replace("</body>", shell + '<script src="server.js"></script>\n<script src="ttr-audio.js"></script>\n'
+                  '<script type="module" src="ui/js/main.js"></script>\n</body>', 1)
     open(index, "w", encoding="utf-8").write(s)
 # the game server the page signs in to and plays on: '' is the site the page came from. web/build_page.sh writes another one for the website
 with open(os.path.join(web, "server.js"), "w") as f:
@@ -44,6 +45,6 @@ if "apple-touch-icon" not in s:
         '<meta name="theme-color" content="#1c4cc4">'))
     s = s.replace("</head>", tags + "</head>", 1)
 open(index, "w", encoding="utf-8").write(s)
-for f in ("ttr-ui.css", "ttr-ui.js", "ttr-audio.js"):
-    shutil.copy(os.path.join(HERE, f), os.path.join(web, f))
+shutil.copy(os.path.join(HERE, "ttr-audio.js"), os.path.join(web, "ttr-audio.js"))
+shutil.copytree(os.path.join(HERE, "ui"), os.path.join(web, "ui"), dirs_exist_ok=True, ignore=shutil.ignore_patterns("shell.html"))
 print("patched", index)

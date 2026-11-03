@@ -1,0 +1,140 @@
+/* Sign in: the dialog in the middle of the space under the title, or, while an on-screen keyboard is up, at the top of what is still
+   visible (--keyboard-top, set by js/screens/login.js). */
+
+#ttr .login {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: var(--screen-h);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: calc(var(--title-top) + var(--title-h) + 6px * var(--sc));
+  padding-bottom: max(var(--safe-bottom), 10px);
+}
+
+#ttr .login.keyboard-up {
+  padding-top: calc(var(--keyboard-top, 0px) + 8px * var(--sc));
+}
+
+#ttr .sign-in {
+  display: flex;
+  flex-direction: column;
+  gap: calc(8px * var(--sc));
+  width: min(var(--screen-w) - 24px, 400px * var(--sc));
+  margin: auto 0;       /* centred in the space left, or at the top when there is none */
+  padding: calc(12px * var(--sc)) calc(20px * var(--sc)) calc(18px * var(--sc));
+  border-width: calc(4px * var(--sc));
+  border-radius: calc(20px * var(--sc));
+  box-shadow: inset 0 0 0 calc(2px * var(--sc)) rgba(0, 0, 0, .1), calc(-5px * var(--sc)) calc(7px * var(--sc)) calc(8px * var(--sc)) rgba(0, 0, 0, .35);
+  animation: ttr-pop .45s cubic-bezier(.3, 1.5, .5, 1) both;
+}
+
+#ttr .login.keyboard-up .sign-in {
+  margin-top: 0;
+}
+
+/* "I'm new" / "I've played before" */
+#ttr .sign-in .tabs {
+  display: flex;
+  gap: calc(4px * var(--sc));
+  padding: calc(3px * var(--sc));
+  border-radius: calc(13px * var(--sc));
+  background: rgba(120, 110, 30, .14);
+}
+
+#ttr .sign-in .tabs button {
+  flex: 1;
+  height: calc(30px * var(--sc));
+  padding: 0 .4em;
+  border: 0;
+  border-radius: calc(10px * var(--sc));
+  background: none;
+  color: #6f6a3c;
+  font: calc(15px * var(--sc)) var(--text-font);
+  white-space: nowrap;
+  transition: background-color .15s, color .15s;
+}
+
+#ttr .sign-in .tabs button:hover {
+  color: var(--ink);
+}
+
+#ttr .sign-in .tabs button.selected {
+  background: var(--sky-blue);
+  color: #fff;
+  box-shadow: 0 calc(3px * var(--sc)) 0 var(--navy);
+}
+
+#ttr .sign-in .message {
+  align-self: center;
+  max-width: 100%;
+  padding: .2em .7em;
+  border-radius: 8px;
+  text-align: center;
+  text-wrap: balance;
+  font-size: calc(15px * var(--sc));
+  color: var(--ink);
+}
+
+#ttr .sign-in .message.bad {
+  background: var(--alarm);
+  color: #fff;
+}
+
+#ttr .sign-in .message:empty {
+  display: none;
+}
+
+/* typing: only the fields, the button and any error */
+#ttr .login.keyboard-up .tabs,
+#ttr .login.keyboard-up .message:not(.bad),
+#ttr .login.keyboard-up .display-button {
+  display: none;
+}
+
+#ttr .sign-in .field {
+  display: block;
+  width: 100%;
+  height: calc(44px * var(--sc));
+  padding: 0 calc(14px * var(--sc));
+  border-radius: calc(12px * var(--sc));
+  border: calc(2px * var(--sc)) solid #cbc78c;
+  background: #fff;
+  box-shadow: inset 0 calc(2px * var(--sc)) calc(3px * var(--sc)) rgba(90, 80, 20, .18);
+  font: calc(19px * var(--sc)) var(--text-font);
+  color: var(--ink);
+  caret-color: var(--navy);
+  text-align: center;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  user-select: text;
+  -webkit-user-select: text;
+  -webkit-touch-callout: default;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+#ttr .sign-in .field::placeholder {
+  color: #a39e72;
+}
+
+#ttr .sign-in .field:focus {
+  border-color: var(--sky-blue);
+  box-shadow: inset 0 calc(2px * var(--sc)) calc(3px * var(--sc)) rgba(90, 80, 20, .18), 0 0 0 3px rgba(59, 151, 234, .3);
+}
+
+/* keep the browser's autofill colour off the field */
+#ttr .sign-in .field:-webkit-autofill {
+  -webkit-text-fill-color: var(--ink);
+  -webkit-box-shadow: 0 0 0 100px #fff inset;
+}
+
+/* top right: the Display settings, on devices that asked for them */
+#ttr .login .display-button {
+  top: calc(max(var(--safe-top), 6px) + 8px);
+  right: calc(14px + var(--safe-right));
+  width: calc(126px * var(--sc));
+  height: calc(30px * var(--sc));
+}

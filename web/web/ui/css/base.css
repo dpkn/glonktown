@@ -1,0 +1,244 @@
+/* The look is the game's own: its loading-screen sky, its interface font (ImpressBT, from _ui/), pale-yellow dialogs with a green rim,
+   and yellow lettering with a blue edge.
+
+   Sizes and places come from a few variables the page measures (js/lib/viewport.js):
+     --screen-w, --screen-h   the window, in px
+     --sc                     the page scale: 1, or 1.45 on a tablet
+   so a size written as calc(14px * var(--sc)) is "14 points", as in the iOS app. */
+
+@font-face {
+  font-family: "Toon Display";
+  src: url("../../_ui/ToonDisplay.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ImpressBT";
+  src: url("../../_ui/ImpressBT.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  --sc: 1;
+  --screen-w: 100vw;
+  --screen-h: 100vh;
+
+  --title-font: "Toon Display", "Luckiest Guy", "Marker Felt", "MarkerFelt-Wide", "Chalkboard SE", "Comic Sans MS", system-ui, sans-serif;
+  --text-font: "ImpressBT", "Nunito", ui-rounded, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --ink: #1a3373;
+  --navy: #1c3f9c;
+  --sky-blue: #3b97ea;
+  --shade: rgba(12, 40, 110, .3);
+  --gold: #ffd926;
+  --dialog: #ffffbf;      /* the game's dialog colour (GlobalDialogColor) */
+  --rim: #00a63d;
+  --alarm: #e0302f;
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+
+/* ---- pygbag's page, which the game runs in: only its canvas shows, filling the window ---- */
+
+html,
+body {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #2f7fdc;
+  touch-action: manipulation;     /* no double-tap zoom */
+}
+
+/* iPhone: let the full-screen pages reach under the bottom toolbar instead of stopping above it */
+@supports (height: 100lvh) {
+  html,
+  body {
+    height: 100lvh;
+  }
+}
+
+#transfer,
+#infobox,
+#crt,
+#dlg,
+#pyconsole,
+#html,
+#box,
+#canvas3d {
+  display: none !important;
+}
+
+canvas.emscripten {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 5 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  touch-action: none;
+}
+
+/* the visible area, not the one with the browser bars hidden (Android Chrome, Safari tabs) */
+@supports (height: 100dvh) {
+  canvas.emscripten {
+    width: 100dvw !important;
+    height: 100dvh !important;
+  }
+}
+
+
+/* ---- the page shell: over the game, and only catching taps where it has something to tap ---- */
+
+[x-cloak] {
+  display: none !important;
+}
+
+#ttr {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  font-family: var(--text-font);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+#ttr * {
+  box-sizing: border-box;
+  touch-action: manipulation;
+}
+
+#ttr button,
+#ttr input {
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#ttr button {
+  cursor: pointer;
+}
+
+#ttr button:disabled {
+  opacity: .6;
+  cursor: default;
+}
+
+
+/* ---- the sky: the game's loading-screen picture (_ui/sky.jpg), faded in over the same blue ---- */
+
+#ttr .sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: radial-gradient(ellipse 70% 70% at 50% 50%, var(--sky-blue), #3586e1 60%, #2f78da);
+}
+
+#ttr .sky img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+
+#ttr .sky.loaded img {
+  opacity: 1;
+}
+
+
+/* ---- shared pieces ---- */
+
+/* a dialog like the game's: pale yellow, a green rim, a shadow down to the left */
+#ttr .dialog {
+  pointer-events: auto;
+  background: var(--dialog);
+  color: var(--ink);
+  border: 4px solid var(--rim);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .1), -5px 7px 8px rgba(0, 0, 0, .35);
+}
+
+/* the big green button (PLAY, SIGN UP) */
+#ttr .big-button {
+  display: block;
+  height: calc(52px * var(--sc));
+  margin-top: calc(3px * var(--sc));
+  padding: calc(4px * var(--sc)) 0 0;
+  border-radius: calc(14px * var(--sc));
+  border: calc(3px * var(--sc)) solid #0d6b1c;
+  background: linear-gradient(#7ee05c, #34b83a 55%, #22982b);
+  color: #fff;
+  font: calc(28px * var(--sc)) var(--title-font);
+  letter-spacing: .1em;
+  text-indent: .1em;
+  -webkit-text-stroke: calc(5px * var(--sc)) #0d5a18;
+  paint-order: stroke fill;
+  box-shadow: inset 0 calc(3px * var(--sc)) 0 rgba(255, 255, 255, .45), 0 calc(5px * var(--sc)) 0 #0d6b1c;
+  transition: transform .1s ease, box-shadow .1s ease, filter .1s ease;
+}
+
+#ttr .big-button:not(:disabled):hover {
+  filter: brightness(1.07);
+}
+
+#ttr .big-button:not(:disabled):active {
+  transform: translateY(calc(3px * var(--sc)));
+  box-shadow: inset 0 calc(3px * var(--sc)) 0 rgba(255, 255, 255, .45), 0 calc(2px * var(--sc)) 0 #0d6b1c;
+}
+
+/* a small rounded button (Try again, Display) */
+#ttr .pill {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, .9);
+  color: #fff;
+  font: calc(14px * var(--sc)) var(--text-font);
+}
+
+#ttr .pill.light {
+  background: var(--dialog);
+  color: var(--ink);
+  border-color: var(--rim);
+  box-shadow: 0 3px 0 var(--shade);
+}
+
+@keyframes ttr-pop {
+  from { transform: scale(.7); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+@keyframes ttr-pulse {
+  0%, 100% { opacity: .3; transform: none; }
+  40% { opacity: 1; transform: translateY(calc(-6px * var(--sc))); }
+}
+
+/* typed chat's hidden input: the game's own text box shows the text */
+#ttr #ttr-textin {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 2px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  font-size: 16px;      /* any smaller and iOS zooms in on it */
+  pointer-events: none;
+}
