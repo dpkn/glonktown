@@ -56,8 +56,8 @@
 #ttr .hud .knob {
   position: absolute;
   inset: 0;
-  width: 42%;
-  height: 42%;
+  width: calc(var(--stick-size) * .42);
+  height: calc(var(--stick-size) * .42);
   margin: auto;
   border-radius: 50%;
   background: rgba(255, 209, 51, .85);
