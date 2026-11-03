@@ -196,4 +196,4 @@ license.
 
 > Glonktown is a non-commercial fan project. It is not affiliated with, endorsed by, or connected to Disney or Toontown
 > Rewritten. Toontown is a trademark of Disney. This repository contains **no game files**: no models, textures, sounds or other
-> Disney content. You download those from Open Toontown yourself (step 2 below).
+> Disney content. You download those from Open Toontown yourself.
