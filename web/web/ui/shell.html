@@ -55,6 +55,7 @@
               <span class="face" x-text="$store.welcome.face(toon)"></span>
               <div class="who">
                 <div class="name" x-text="toon.name"></div>
+                <div class="username" x-show="toon.username" x-text="'@' + toon.username"></div>
                 <div class="seen" x-text="$store.welcome.whereabouts(toon)"></div>
                 <div class="stats">
                   <span><b x-text="toon.laff"></b> Laff</span>

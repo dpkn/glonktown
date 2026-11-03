@@ -104,7 +104,7 @@ def db_fields(dbId):
         if ln.startswith("  ") and ": " in ln: k,v=ln.strip().split(": ",1); f[k]=v
     return f,os.path.getmtime(path)
 def ints(v): return [int(n) for n in re.findall(r"-?\d+",v)]
-def toon_entry(avId,playing,lastSeen):
+def toon_entry(avId,username,playing,lastSeen):
     f,mtime=db_fields(avId)
     name=re.match(r'\("(.*)"\)$',f["setName"]).group(1).replace('\\"','"').replace("\\\\","\\")
     dna=f.get("setDNAString","")[2:-2]
@@ -113,7 +113,7 @@ def toon_entry(avId,playing,lastSeen):
     reached=[n for hood,n in PLAYGROUNDS if hood in teleports or hood==2000][-1]
     hood=ints(f.get("setLastHood","0"))[0]
     online=avId in playing
-    return {"name":name,"species":SPECIES.get(head[:1],""),"laff":ints(f["setMaxHp"])[0],"tracks":sum(ints(f.get("setTrackAccess",""))),
+    return {"name":name,"username":username,"species":SPECIES.get(head[:1],""),"laff":ints(f["setMaxHp"])[0],"tracks":sum(ints(f.get("setTrackAccess",""))),
             "playground":reached,"online":online,
             "where":(PLACES.get(2000 if hood>=22000 else hood) if online else None),"lastSeen":int(lastSeen.get(str(avId),mtime))}
 def leaderboard():
@@ -127,14 +127,14 @@ def leaderboard():
     try: lastSeen=json.load(open("/ot/data/lastseen.json"))
     except Exception: lastSeen={}
     toons=[]
-    try: accounts=json.load(open(DB+"/accounts.json")).values()
+    try: accounts=json.load(open(DB+"/accounts.json")).items()
     except Exception: accounts=[]
-    for accountId in accounts:
+    for username,accountId in accounts:
         try: avIds=ints(json.loads(db_fields(accountId)[0]["ACCOUNT_AV_SET"]))
         except Exception: continue
         for avId in avIds:
             if not avId: continue
-            try: toons.append(toon_entry(avId,playing,lastSeen))
+            try: toons.append(toon_entry(avId,username,playing,lastSeen))
             except Exception as e: print("leaderboard: could not read toon",avId,repr(e),flush=True)
     order=[n for _,n in PLAYGROUNDS]
     toons.sort(key=lambda t:(-t["laff"],-t["tracks"],-order.index(t["playground"]),t["name"].lower()))
