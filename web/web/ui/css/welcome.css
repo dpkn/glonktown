@@ -1,5 +1,5 @@
 /* The welcome page: one card like the game's dialogs on the sky, the title half over its top edge, a bit of story, then the way in
-   (or a note that it is closed). Under it, the leaderboard. It scrolls when the window is too short for it. */
+   (or a note that it is closed). Under it, the Save Glonktown card and the leaderboard. It scrolls when the window is too short for it. */
 
 #ttr .welcome {
   /* the title is a little bigger here: up to 140px, and 20% of the window's height (but at least 70px) */
@@ -266,13 +266,206 @@
   color: var(--navy);
 }
 
+/* ---- Save Glonktown: the town's shared goal, its rewards, what happened lately and who helped most ---- */
+
+#ttr .welcome .goal {
+  width: min(100%, 600px);
+  margin: 18px auto 0;
+  padding: 18px 34px 22px;
+  text-align: left;
+  border-radius: 28px;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .1), -6px 9px 10px rgba(0, 0, 0, .3);
+}
+
+#ttr .goal h2 {
+  margin: 0;
+  text-align: center;
+  font: 26px var(--title-font);
+  letter-spacing: .03em;
+  color: var(--navy);
+}
+
+#ttr .goal h3 {
+  margin: 16px 0 6px;
+  font: 18px var(--title-font);
+  letter-spacing: .02em;
+  color: var(--navy);
+}
+
+#ttr .goal .summary {
+  margin: 2px 0 12px;
+  text-align: center;
+  font: 15px/1.4 var(--text-font);
+}
+
+#ttr .goal .meter {
+  position: relative;
+  height: 26px;
+  overflow: hidden;
+  background: #fff;
+  border: 2px solid #e4df9c;
+  border-radius: 999px;
+  box-shadow: inset 0 3px 0 rgba(90, 80, 20, .1);
+}
+
+#ttr .goal .meter i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: linear-gradient(#6ee27c, #2fbf45);
+  transition: width .8s cubic-bezier(.3, 1.3, .5, 1);
+}
+
+#ttr .goal .meter .mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  margin-left: -1.5px;
+  background: rgba(26, 51, 115, .25);
+}
+
+#ttr .goal .meter .mark.reached {
+  background: rgba(255, 255, 255, .7);
+}
+
+#ttr .goal .meter .mark:last-of-type {
+  display: none;
+}
+
+#ttr .goal .score {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin: 6px 2px 12px;
+  font: 15px var(--text-font);
+}
+
+#ttr .goal .score b {
+  font: 20px var(--title-font);
+  letter-spacing: .02em;
+  color: var(--navy);
+}
+
+#ttr .goal.saved .score b {
+  color: #128a2a;
+}
+
+#ttr .goal .rewards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#ttr .goal .rewards li {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  background: #fff;
+  border: 2px solid #e4df9c;
+  border-radius: 16px;
+  box-shadow: 0 3px 0 rgba(90, 80, 20, .15);
+}
+
+#ttr .goal .rewards li.next {
+  border-color: #f0b400;
+  box-shadow: 0 0 0 3px rgba(240, 180, 0, .25), 0 3px 0 rgba(90, 80, 20, .15);
+}
+
+#ttr .goal .rewards li.reached {
+  border-color: #2fbf45;
+}
+
+#ttr .goal .tick {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #dcecff;
+  font: 16px var(--title-font);
+  color: var(--navy);
+}
+
+#ttr .goal li.reached .tick {
+  background: #2fbf45;
+  color: #fff;
+  font-size: 22px;
+}
+
+#ttr .goal .reward {
+  font: 16px/1.3 var(--text-font);
+  font-weight: 800;
+}
+
+#ttr .goal .at {
+  font: 14px/1.3 var(--text-font);
+  color: #5a6a90;
+}
+
+#ttr .goal li.reached .at {
+  color: #128a2a;
+}
+
+#ttr .goal .news ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font: 15px/1.4 var(--text-font);
+}
+
+#ttr .goal .news small {
+  color: #5a6a90;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+#ttr .goal .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+#ttr .goal .chips > span {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #fff7c2;
+  border: 1px solid #e4df9c;
+  font: 14px/1.5 var(--text-font);
+  overflow-wrap: anywhere;
+}
+
+#ttr .goal .chips b {
+  font: 15px var(--title-font);
+  color: var(--navy);
+}
+
+#ttr .goal .how {
+  margin: 14px 0 0;
+  font: 13px/1.4 var(--text-font);
+  color: #5a6a90;
+  text-align: center;
+  text-wrap: balance;
+}
+
 @media (max-width: 520px) {
   #ttr .welcome .sheet {
     padding: 0 18px 16px;
     border-radius: 22px;
   }
 
-  #ttr .welcome .leaderboard {
+  #ttr .welcome .leaderboard,
+  #ttr .welcome .goal {
     padding: 16px 14px 18px;
     border-radius: 22px;
   }

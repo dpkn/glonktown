@@ -1551,6 +1551,7 @@ class DistributedBattleBaseAI(DistributedObjectAI.DistributedObjectAI, BattleBas
                 self.suitsKilled.append(encounter)
                 self.suitsKilledThisBattle.append(encounter)
                 self.air.suitInvasionManager.handleSuitDefeated()
+                self.air.communityGoal.cogDefeated(encounter['level'], encounter['activeToons'])
             self.__removeSuit(suit)
             needUpdate = 1
             suit.resume()

@@ -69,7 +69,9 @@ Settings the person running the server may want to change live in one small file
 | `winter` | `"auto"` | Winter street decorations, the winter Speed Chat menu and the carol menu. `"auto"`: December 1 to January 3. `"on"` or `"off"` forces it. |
 | `valentines` | `"auto"` | Valentine's Day: double Toon-up from safe-zone hearts. `"auto"`: February 7 to 15. `"on"` or `"off"` forces it. |
 | `jellybean_days` | `"off"` | Extra jellybeans from trolley games and fishing. `"auto"`: every Saturday and Sunday. `"on"` forces it. Off unless you set it, because it changes the economy. |
-| `invasion_minutes` | `30` | A Cog invasion also ends by itself after this many minutes (it otherwise ends when 1000 Cogs are defeated). |
+| `invasion_cogs` | `75` | How many Cogs an invasion has. It ends when they are all defeated, and the next one starts 10 to 25 minutes later. 75 is about what 6 to 8 toons can defeat in the time an invasion lasts. |
+| `invasion_minutes` | `30` | A Cog invasion also ends by itself after this many minutes, when the town has not defeated them all. |
+| `community_goal` | `1500` | The points the town needs to save Glonktown (`toontown/ai/CommunityGoalAI.py`): a Cog is worth its level, a building taken back 10 per floor, a finished invasion 50, a boss 100. Rewards come at each quarter. 1500 is about three hours for 6 to 8 new toons; lower it during the party if it goes slowly. The progress is kept in `community_goal.json` in the data folder: start it over with `~goal reset` before the party. |
 | `walkers` | `6` | Walking toons in each playground while a real toon is there (0 to 12; `0` turns them off). A change takes effect within a few seconds: extra walkers leave and missing ones arrive. |
 
 The server looks at the file again every few seconds, so a change reaches the next battle without a restart (a holiday change takes up to a minute, and players already in the game see it at once). The browser game reads the same file

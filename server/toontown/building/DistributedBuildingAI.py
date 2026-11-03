@@ -319,6 +319,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
             if toon != None:
                 self.air.questManager.toonKilledBuilding(toon, self.track, self.difficulty, self.numFloors, self.zoneId, activeToons)
 
+        self.air.communityGoal.buildingRescued(self.numFloors, [toon.doId for toon in activeToons])
         for i in range(0, 4):
             victor = victorList[i]
             if victor == None or victor not in self.air.doId2do:
@@ -360,6 +361,8 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
                     self.air.writeServerEvent('buildingDefeated', t, '%s|%s|%s|%s' % (self.track, self.numFloors, self.zoneId, victorList))
                 if toon != None:
                     self.air.questManager.toonKilledCogdo(toon, self.difficulty, self.numFloors, self.zoneId, activeToons)
+
+            self.air.communityGoal.buildingRescued(self.numFloors, [toon.doId for toon in activeToons], fieldOffice=True)
 
         for i in range(0, 4):
             victor = victorList[i]

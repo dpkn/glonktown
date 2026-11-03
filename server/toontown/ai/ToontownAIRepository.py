@@ -7,6 +7,7 @@ from otp.ai.TimeManagerAI import TimeManagerAI
 from otp.friends.FriendManagerAI import FriendManagerAI
 from otp.distributed.OtpDoGlobals import *
 from toontown.ai.HolidayManagerAI import HolidayManagerAI
+from toontown.ai.CommunityGoalAI import CommunityGoalAI
 from toontown.ai.HalloweenTreatsAI import HalloweenTreatsAI
 from toontown.ai.NewsManagerAI import NewsManagerAI
 from toontown.ai.WelcomeValleyManagerAI import WelcomeValleyManagerAI
@@ -82,6 +83,7 @@ class ToontownAIRepository(ToontownInternalRepository):
         self.zoneDataStore = None
         self.petMgr = None
         self.suitInvasionManager = None
+        self.communityGoal = None
         self.zoneAllocator = None
         self.zoneId2owner = {}
         self.estateMgr = None
@@ -170,6 +172,9 @@ class ToontownAIRepository(ToontownInternalRepository):
         from toontown.fishing.FishBingoScheduleAI import FishBingoScheduleAI
         self.fishBingoSchedule = FishBingoScheduleAI(self)
 
+        # Save Glonktown, the goal the whole town works on together...
+        self.communityGoal = CommunityGoalAI(self)
+
         # Create our zone allocator...
         self.zoneAllocator = UniqueIdAllocator(ToontownGlobals.DynamicZonesBegin, ToontownGlobals.DynamicZonesEnd)
 
@@ -237,6 +242,7 @@ class ToontownAIRepository(ToontownInternalRepository):
         self.newsManager.generateWithRequired(OTP_ZONE_ID_MANAGEMENT)
         self.holidayManager.start()
         self.suitInvasionManager.scheduleRandom()
+        self.communityGoal.start()
 
         # Generate our Welcome Valley manager...
         self.welcomeValleyManager = WelcomeValleyManagerAI(self)
