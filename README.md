@@ -3,14 +3,6 @@
 A private Toontown for a LAN party. Guests play **in a web browser** on a laptop, phone or tablet, against a server running in
 Docker on the host's Mac. Nobody installs anything.
 
-Glonktown is **[Open Toontown](https://github.com/open-toontown/open-toontown)** (the open-source Toontown Online code), by way of
-**[Toontown: Anywhere](https://github.com/lPuffyy/open-toontown-anywhere)**'s server fork and browser client, with the classic
-characters put back, fixes collected from other Open Toontown forks, and settings for a small group.
-
-> Glonktown is a non-commercial fan project. It is not affiliated with, endorsed by, or connected to Disney or Toontown
-> Rewritten. Toontown is a trademark of Disney. This repository contains **no game files**: no models, textures, sounds or other
-> Disney content. You download those from Open Toontown yourself (step 2 below).
-
 ## What's in it
 
 - **Plays in the browser** (from Toontown: Anywhere): CPython and Panda3D compiled to WebAssembly, touch controls for phones,
@@ -170,6 +162,9 @@ lost connections, the kind of device and browser, the screen size, and the **sig
 record touches, chat or screenshots. Adding `?log=1` to the page's address turns on a fuller log for that visit.
 
 ## Credits
+Glonktown is **[Open Toontown](https://github.com/open-toontown/open-toontown)** (the open-source Toontown Online code), by way of
+**[Toontown: Anywhere](https://github.com/lPuffyy/open-toontown-anywhere)**'s server fork and browser client, with the classic
+characters put back, fixes collected from other Open Toontown forks, and settings for a small group.
 
 Glonktown is a small layer on top of other people's work.
 
@@ -200,3 +195,7 @@ Built with [Panda3D](https://www.panda3d.org), [pygbag](https://github.com/pygam
 BSD 3-Clause, see [LICENSE](LICENSE). The server and client folders carry the licenses they came with
 ([server/LICENSE](server/LICENSE), [web/LICENSE](web/LICENSE)), and Panda3D's files in `server/docker/overlay` keep Panda3D's
 license.
+
+> Glonktown is a non-commercial fan project. It is not affiliated with, endorsed by, or connected to Disney or Toontown
+> Rewritten. Toontown is a trademark of Disney. This repository contains **no game files**: no models, textures, sounds or other
+> Disney content. You download those from Open Toontown yourself (step 2 below).
