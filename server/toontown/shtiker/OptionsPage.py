@@ -691,7 +691,7 @@ class ControlsTabPage(DirectFrame):
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         buttonImage = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
         textStartHeight = 0.45
-        textRowHeight = 0.09
+        textRowHeight = 0.08
         leftMargin = -0.72
         buttonbase_xcoord = 0.35
         button_textpos = (0, -0.02)

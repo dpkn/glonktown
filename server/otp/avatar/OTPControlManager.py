@@ -58,6 +58,9 @@ class OTPControlManager(ControlManager):
             return
         jumpEvent = KeyBindings.getEvent(KeyBindings.Jump)
         ist.append(inputState.watch('jump', jumpEvent, jumpEvent + '-up', inputSource=self.InputSource))
+        # Holding the Run key gives the ~run Magic Word's speed while it's held.
+        runEvent = KeyBindings.getEvent(KeyBindings.Run)
+        ist.append(inputState.watch('debugRunning', runEvent, runEvent + '-up', inputSource=self.InputSource))
         ist.append(inputState.watch('run', 'runningEvent', 'running-on', 'running-off'))
         ist.append(inputState.watch('forward', 'force-forward', 'force-forward-stop'))
         ist.append(inputState.watchWithModifiers('reverse', 'mouse4', inputSource=inputState.Mouse))

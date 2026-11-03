@@ -1,6 +1,6 @@
 import Alpine from '../../vendor/alpine-3.17.4.min.js';
 import { bridge } from '../game/bridge.js';
-import { GAME_ACTIONS, captureKey, keyName, keysFor, remap, useGameKeys, useWasd } from '../game/keyboard.js';
+import { GAME_ACTIONS, captureKey, keyName, keysFor, remap, useArrowKeys, useGameKeys } from '../game/keyboard.js';
 import { saved } from '../lib/storage.js';
 import { relayout } from '../lib/viewport.js';
 
@@ -74,5 +74,5 @@ export const keysDialog = Alpine.reactive({
     captureKey(null);
   },
   useGameKeys() { this.stopListening(); useGameKeys(); },
-  useWasd() { this.stopListening(); useWasd(); },
+  useArrowKeys() { this.stopListening(); useArrowKeys(); },
 });

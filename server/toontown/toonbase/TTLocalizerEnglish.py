@@ -4711,6 +4711,7 @@ ControlsPageActionNames = {'forward': 'Walk Forward',
  'turnLeft': 'Turn Left',
  'turnRight': 'Turn Right',
  'jump': 'Jump / Action',
+ 'run': 'Run (hold)',
  'quests': 'Show ToonTasks',
  'inventory': 'Show Gags',
  'chat': 'Open Chat'}

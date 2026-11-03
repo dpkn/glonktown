@@ -153,8 +153,8 @@
           </div>
         </div>
       </template>
-      <button class="action" @click="$store.keysDialog.useGameKeys()">Use the game's keys</button>
-      <button class="action" @click="$store.keysDialog.useWasd()">Use WASD and Space</button>
+      <button class="action" @click="$store.keysDialog.useGameKeys()">Use the game's keys (WASD)</button>
+      <button class="action" @click="$store.keysDialog.useArrowKeys()">Use the arrow keys</button>
       <button class="action done" @click="$store.keysDialog.stopListening(); $store.shell.dialog = 'display'">Back</button>
     </div>
   </div>

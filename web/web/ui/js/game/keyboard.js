@@ -9,11 +9,12 @@ import { chat } from './chat.js';
 // Keys can be remapped: a remapped key is swallowed and the game's own key is sent instead, so the game's keys keep working too.
 
 export const GAME_ACTIONS = [
-  { id: 'fwd', label: 'Walk forward', gameKey: 'ArrowUp' },
-  { id: 'back', label: 'Walk back', gameKey: 'ArrowDown' },
-  { id: 'left', label: 'Turn left', gameKey: 'ArrowLeft' },
-  { id: 'right', label: 'Turn right', gameKey: 'ArrowRight' },
-  { id: 'jump', label: 'Jump', gameKey: 'ControlLeft' },
+  { id: 'fwd', label: 'Walk forward', gameKey: 'KeyW' },
+  { id: 'back', label: 'Walk back', gameKey: 'KeyS' },
+  { id: 'left', label: 'Turn left', gameKey: 'KeyA' },
+  { id: 'right', label: 'Turn right', gameKey: 'KeyD' },
+  { id: 'jump', label: 'Jump', gameKey: 'Space' },
+  { id: 'run', label: 'Run (hold)', gameKey: 'ShiftLeft' },
   { id: 'pie', label: 'Throw pie', gameKey: 'Delete' },
   { id: 'tasks', label: 'Tasks', gameKey: 'End' },
   { id: 'gags', label: 'Gags', gameKey: 'Home' },
@@ -23,7 +24,14 @@ export const GAME_ACTIONS = [
   { id: 'camera', label: 'Camera view', gameKey: 'Tab' },
 ];
 
+// the game's default keys (the WASD preset of the game's Controls tab)
 const GAME_KEYS = {
+  KeyW: { key: 'w', keyCode: 87 },
+  KeyS: { key: 's', keyCode: 83 },
+  KeyA: { key: 'a', keyCode: 65 },
+  KeyD: { key: 'd', keyCode: 68 },
+  Space: { key: ' ', keyCode: 32 },
+  ShiftLeft: { key: 'Shift', keyCode: 16 },
   ArrowUp: { key: 'ArrowUp', keyCode: 38 },
   ArrowDown: { key: 'ArrowDown', keyCode: 40 },
   ArrowLeft: { key: 'ArrowLeft', keyCode: 37 },
@@ -54,8 +62,11 @@ export function sendGameKey(type, code, modifiers) {
   sendKeyToGame(type, { code, ...GAME_KEYS[code] }, modifiers);
 }
 
+// A saved key that is now the game's own key needs no remap (the game's keys were the arrow keys before they became WASD).
 function loadKeyMap() {
-  try { return JSON.parse(saved.get('ttr_keys', '{}')) || {}; } catch { return {}; }
+  let entries;
+  try { entries = JSON.parse(saved.get('ttr_keys', '{}')) || {}; } catch { return {}; }
+  return Object.fromEntries(Object.entries(entries).filter(([code, id]) => gameKeyOf[id] && code !== gameKeyOf[id]));
 }
 
 // the player's keys (event codes) -> action ids
@@ -82,7 +93,7 @@ export function remap(actionId, code) {
 }
 
 export const useGameKeys = () => replaceKeyMap({});
-export const useWasd = () => replaceKeyMap({ KeyW: 'fwd', KeyS: 'back', KeyA: 'left', KeyD: 'right', Space: 'jump' });
+export const useArrowKeys = () => replaceKeyMap({ ArrowUp: 'fwd', ArrowDown: 'back', ArrowLeft: 'left', ArrowRight: 'right', ControlLeft: 'jump' });
 
 // the next key pressed goes to this instead (the Keyboard keys dialog, choosing a key)
 let captureNextKey = null;
@@ -136,7 +147,7 @@ export function watchKeyboard({ isPlaying }) {
       repeat: e.repeat,
       ctrlKey: (gameKey === 'ControlLeft' && down) || e.ctrlKey,
       altKey: (gameKey === 'AltLeft' && down) || e.altKey,
-      shiftKey: e.shiftKey,
+      shiftKey: (gameKey === 'ShiftLeft' && down) || e.shiftKey,
     });
   }
   addEventListener('keydown', onKey, true);

@@ -94,12 +94,8 @@ class CatalogScreen(DirectFrame):
 
         taskMgr.doMethodLater(1.0, clarabelleGreeting, 'clarabelleGreeting')
         taskMgr.doMethodLater(12.0, clarabelleHelpText1, 'clarabelleHelpText1')
-        if hasattr(self, 'giftToggle'):
-            self.giftToggle['state'] = DGG.DISABLED
-            self.giftToggle['text'] = TTLocalizer.CatalogGiftToggleWait
-        base.cr.deliveryManager.sendAck()
-        self.accept('DeliveryManagerAck', self.__handleUDack)
-        taskMgr.doMethodLater(10.0, self.__handleNoAck, 'ackTimeOut')
+        # the original pinged the UberDOG delivery manager before allowing gifts; gifts go through the phone AI here, so allow them straight away
+        self.__handleUDack()
 
     def hide(self):
         self.ignore('aspectRatioChanged')

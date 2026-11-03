@@ -22,9 +22,18 @@ export function goFullscreen() {
   if (!request || isFullscreen()) return;
   try {
     request.call(html, { navigationUI: 'hide' })
-      ?.then(() => screen.orientation.lock('landscape').catch(() => {}))
+      ?.then(() => {
+        screen.orientation.lock('landscape').catch(() => {});
+        keepEscapeKey();
+      })
       .catch(() => {});
   } catch {}
+}
+
+// Escape leaves full screen, but some minigames (Ice Slide) use it. Chrome and Edge let a full-screen page keep Escape: a tap goes to
+// the game and holding it down leaves full screen. Safari and Firefox always leave full screen on Escape.
+function keepEscapeKey() {
+  try { navigator.keyboard?.lock?.(['Escape'])?.catch(() => {}); } catch {}
 }
 
 // the next tap or key press (but not Escape, which is how full screen is left) goes full screen

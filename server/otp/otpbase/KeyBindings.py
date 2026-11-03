@@ -5,6 +5,7 @@ Reverse = 'reverse'
 TurnLeft = 'turnLeft'
 TurnRight = 'turnRight'
 Jump = 'jump'
+Run = 'run'
 Quests = 'quests'
 Inventory = 'inventory'
 Chat = 'chat'
@@ -13,16 +14,19 @@ Actions = (Forward,
  TurnLeft,
  TurnRight,
  Jump,
+ Run,
  Quests,
  Inventory,
  Chat)
 ArrowKeysPreset = 'arrows'
 WASDPreset = 'wasd'
+DefaultPreset = WASDPreset
 Presets = {ArrowKeysPreset: {Forward: 'arrow_up',
                    Reverse: 'arrow_down',
                    TurnLeft: 'arrow_left',
                    TurnRight: 'arrow_right',
                    Jump: 'control',
+                   Run: 'shift',
                    Quests: 'end',
                    Inventory: 'home',
                    Chat: 'enter'},
@@ -31,6 +35,7 @@ Presets = {ArrowKeysPreset: {Forward: 'arrow_up',
               TurnLeft: 'a',
               TurnRight: 'd',
               Jump: 'space',
+              Run: 'shift',
               Quests: 'end',
               Inventory: 'home',
               Chat: 'enter'}}
@@ -49,6 +54,7 @@ ReverseEvent = getEvent(Reverse)
 TurnLeftEvent = getEvent(TurnLeft)
 TurnRightEvent = getEvent(TurnRight)
 JumpEvent = getEvent(Jump)
+RunEvent = getEvent(Run)
 QuestsEvent = getEvent(Quests)
 InventoryEvent = getEvent(Inventory)
 ChatEvent = getEvent(Chat)
@@ -75,7 +81,7 @@ class KeyBindings(DirectObject):
         self.ignoreAll()
 
     def __loadKeys(self):
-        keys = dict(Presets[ArrowKeysPreset])
+        keys = dict(Presets[DefaultPreset])
         saved = base.settings.getSetting(self.SettingName, {})
         if isinstance(saved, dict):
             for action, key in saved.items():
@@ -84,7 +90,7 @@ class KeyBindings(DirectObject):
 
         if len(set(keys.values())) != len(keys):
             self.notify.warning('Saved key bindings share a key; using the defaults.')
-            keys = dict(Presets[ArrowKeysPreset])
+            keys = dict(Presets[DefaultPreset])
         return keys
 
     def getKey(self, action):
