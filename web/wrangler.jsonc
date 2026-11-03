@@ -1,0 +1,9 @@
+// The website on Cloudflare Workers. Workers Builds runs "sh build_page.sh" in this folder, then "npx wrangler deploy". The page is
+// static (assets); worker.js serves the game files from the R2 bucket.
+{
+  "name": "glonktown",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "web/game/build/web" },
+  "r2_buckets": [{ "binding": "FILES", "bucket_name": "glonkfiles" }]
+}

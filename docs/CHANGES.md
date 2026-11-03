@@ -72,6 +72,12 @@ made each is in the [README's credits](../README.md#credits).
 - **Full screen stays on when the game window opens.** The game's options ask for a window, and Panda3D's WebGL window left full
   screen when its startup properties said so. The page owns full screen now. A tab that has left full screen (Esc, or a swipe on
   Android) gets a button at the top of the game that goes back to it.
+- **Quitting, or losing the server, goes back to the sign-in screen.** pygbag's own `sys.exit` stops the page's Python without
+  raising, so Exit (or Cancel on "connection lost") froze the game on a grey screen, still in full screen. In the game `sys.exit`
+  raises again, `main.py` hands the quit to the page, and the page starts again at the sign-in screen, which says why: logged out,
+  the connection was lost, or the server's reason for throwing the player out. Reconnecting by itself now stops after three tries
+  (closing the box used to reset the count, so it went on forever) and then goes back the same way, and a box with only OK
+  (thrown out on purpose) no longer reconnects into the same error.
 - **Chrome no longer runs out of memory** on the silent keep-alive sound: it is one second of real silence instead of an empty
   looping clip.
 - The loading and pick-a-toon screens use the stock cloud sky (`loading_bg_clouds.jpg`).

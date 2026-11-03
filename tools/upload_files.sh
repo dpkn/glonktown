@@ -1,5 +1,5 @@
 #!/bin/sh
-# Upload the game files (the packs and the page's art) to the R2 bucket the Pages site serves them from (web/functions/).
+# Upload the game files (the packs and the page's art) to the R2 bucket the website serves them from (web/worker.js).
 # Only files that changed since the last upload are sent, and packs.json goes last, so players never get a list of packs that
 # are not there yet. Build the packs first with tools/build_client.sh.
 #   tools/upload_files.sh [bucket]      (default: glonkfiles)

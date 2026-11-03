@@ -22,7 +22,7 @@ if "ttr-ui.js" not in s:
     s = s.replace("</head>", '<link rel="stylesheet" href="ttr-ui.css">\n</head>', 1)
     s = s.replace("</body>", '<script src="server.js"></script>\n<script src="ttr-audio.js"></script>\n<script src="ttr-ui.js"></script>\n</body>', 1)
     open(index, "w", encoding="utf-8").write(s)
-# the game server the page signs in to and plays on: '' is the site the page came from. web/build_pages.sh writes another one for Cloudflare Pages
+# the game server the page signs in to and plays on: '' is the site the page came from. web/build_page.sh writes another one for the website
 with open(os.path.join(web, "server.js"), "w") as f:
     f.write("window.TTR_SERVER = '';\n")
 # home-screen app: manifest, icons, iOS app tags

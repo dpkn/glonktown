@@ -35,7 +35,7 @@ page once with `?display=1` to show the Display button and the in-game gear on t
    ```
 
    The page signs in and plays on the site it came from (on the local test server, port 8002, it uses the bridge on 8766).
-   `server.js` (`window.TTR_SERVER`) can name another game server, which `../build_pages.sh` does for Cloudflare Pages.
+   `server.js` (`window.TTR_SERVER`) can name another game server, which `../build_page.sh` does for the website on Cloudflare.
 3. Build the packs from the server's code and resources:
 
    ```

@@ -94,9 +94,9 @@ Desktop hides each guest's own address (every connection arrives from its gatewa
 per-address limits count all guests together; `server/docker/docker-compose.yml` sets them for the whole party.
 
 For friends elsewhere the page can also be a website of its own, while the game server stays in the container, reached over HTTPS
-through a tunnel. Cloudflare Pages builds the page from GitHub (`web/build_pages.sh`). The packs and the page's art are Disney's
-files and not in git: `tools/upload_files.sh` puts them in an R2 bucket, and a Pages Function (`web/functions/`) serves them at
-the same addresses nginx uses (`/packs.json`, `/_packs/`, `/_ui/`). The page loads `server.js`, which names the game server (`window.TTR_SERVER`; empty means the page's own site): sign-in
+through a tunnel. Cloudflare Workers builds the page from GitHub (`web/build_page.sh`) and serves it as static assets
+(`web/wrangler.jsonc`). The packs and the page's art are Disney's files and not in git: `tools/upload_files.sh` puts them in an R2
+bucket, and the Worker (`web/worker.js`) serves them at the same addresses nginx uses (`/packs.json`, `/_packs/`, `/_ui/`). The page loads `server.js`, which names the game server (`window.TTR_SERVER`; empty means the page's own site): sign-in
 (`/auth`), the game settings (`/gameconfig.json`), the logs and the WebSocket go there, and the game files always come from the
 page's own site. nginx lets other sites call `/auth` and read `/gameconfig.json` (CORS); sign-in uses no cookies. A device can
 switch servers with `?server=<address>`, and keeps a separate saved login for each server it switched to.

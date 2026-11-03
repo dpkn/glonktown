@@ -138,9 +138,9 @@ listed in [docs/MAGIC_WORDS.md](docs/MAGIC_WORDS.md).
 
 ## Playing over the internet
 
-Friends who are not on your network can play on a website of your own. Cloudflare Pages builds the page from this repository on
+Friends who are not on your network can play on a website of your own. Cloudflare Workers builds the page from this repository on
 GitHub, so a push updates it. The game files are Disney's, so they stay out of git: they go in an R2 bucket, which the site serves
-them from. The game server stays on the Mac, or on a VPS, reached through a Cloudflare Tunnel, so no port is opened and everything
+them from (`web/worker.js`, set up in `web/wrangler.jsonc`). The game server stays on the Mac, or on a VPS, reached through a Cloudflare Tunnel, so no port is opened and everything
 is HTTPS. All of it fits in Cloudflare's free allowances; you need a domain on Cloudflare, and R2 asks for a payment method.
 
 1. In Cloudflare Zero Trust, under Networks → Tunnels, create a tunnel with a public hostname such as `play.example.com` pointing to
@@ -170,21 +170,22 @@ is HTTPS. All of it fits in Cloudflare's free allowances; you need a domain on C
 
    The first upload sends about 380 MB; later runs send only the files that changed.
 
-3. In the Cloudflare dashboard, under Workers & Pages → Create → Pages → Connect to Git, pick this repository and set:
+3. In the Cloudflare dashboard, under Workers & Pages → Create → Import a repository, pick this repository and set:
 
    | Setting | Value |
    |---|---|
-   | Framework preset | None |
-   | Build command | `sh build_pages.sh` |
-   | Build output directory | `web/game/build/web` |
-   | Root directory | `web` |
-   | Variables | `GLONKTOWN_SERVER` = `https://play.example.com`, `PYTHON_VERSION` = `3.12` |
+   | Project name | `glonktown` (the `name` in `web/wrangler.jsonc`) |
+   | Build command | `sh build_page.sh` |
+   | Deploy command | `npx wrangler deploy` |
+   | Root directory (under advanced settings) | `web` |
+   | Build variables | `GLONKTOWN_SERVER` = `https://play.example.com`, `PYTHON_VERSION` = `3.12` |
 
-4. After the first build, in the project's Settings → Bindings, add an R2 bucket binding named `FILES` for `glonkfiles`
-   (for Production and Preview), then retry the latest deployment so it uses the binding. Give the project your domain
-   (`example.com`) under Custom domains.
+   The bucket binding comes from `web/wrangler.jsonc`; with another bucket name, change it there and pass the name to
+   `tools/upload_files.sh`.
 
-Every push builds the page again, and every branch gets a preview address of its own. A push never changes the game files: run
+4. Give the Worker your domain (`example.com`) under its Settings → Domains & Routes → Add → Custom domain.
+
+Every push builds the page again; other branches get preview versions. A push never changes the game files: run
 `tools/upload_files.sh` when the art or the game's code changed.
 
 - The page always opens on the sign-in screen; the game files download after signing in.
@@ -194,7 +195,7 @@ Every push builds the page again, and every branch gets a preview address of its
   with 2 GB of memory or more (Oracle Cloud's free Ampere VM, for example). On a VPS, change the port in `docker-compose.yml` to
   `127.0.0.1:7380:80`: Docker's published ports skip the server's firewall, so otherwise anyone could reach the plain HTTP site
   on the server's public address.
-- For a different server address, change `GLONKTOWN_SERVER` in the Pages project's settings and retry the latest deployment.
+- For a different server address, change `GLONKTOWN_SERVER` in the Worker's build variables and build again (or push).
 - One device can try another server by adding `?server=<address>` to the site's address; `?server=` switches it back.
 - While registration is open, anyone who finds the site can make an account. Once your friends have signed up, set
   `"open_registration": false` in `runtime/data/users.json`.
