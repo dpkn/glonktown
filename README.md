@@ -1,20 +1,17 @@
 # Glonktown
 
-A private Toontown for a LAN party. Guests play **in a web browser** on a laptop, phone or tablet, against a server running in
+An easy-to-use, private Toontown server and client. Guests play **in a web browser** on a laptop, phone or tablet, against a server running in
 Docker on the host's Mac. Nobody installs anything.
 
 ## What's in it
 
 - **Plays in the browser** (from Toontown: Anywhere): CPython and Panda3D compiled to WebAssembly, touch controls for phones,
   sound through Web Audio, sign-in with a name and password, and game files cached on the device after the first load.
-- **The classic characters are back**: Mickey, Minnie, Goofy, Donald, Daisy, Pluto, Chip and Dale, and the neighborhoods have their
-  original names again (Donald's Dock, Minnie's Melodyland, Daisy Gardens, Goofy Speedway, Donald's Dreamland). The Donald's Dock
-  boat and Minnie's spinning piano are back too.
-- **One district with Cog invasions**, tuned for a few friends: boosted gag XP, accuracy up to 100, x3 invasion XP, TTR-style gag
+- **One district with Cog invasions**, the game is tuned for a few friends: boosted gag XP, accuracy up to 100, x3 invasion XP, TTR-style gag
   balance, no Laff requirement for facilities, street Cog levels per neighborhood, and toons on one side of a boss fight when
   there are fewer than four.
 - **Rebindable controls**: a Controls tab in the Shticker Book, plus a Smooth Animations option.
-- **Crash fixes** from Open Toontown's open pull requests and from other forks (see [Credits](#credits)).
+- **Crash fixes and polish** from Open Toontown's open pull requests and from other forks (see [Credits](#credits)).
 
 Everything that differs from stock Open Toontown is listed in [web/docs/CHANGES.md](web/docs/CHANGES.md).
 
