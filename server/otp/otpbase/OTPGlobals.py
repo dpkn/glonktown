@@ -1,5 +1,6 @@
 from panda3d.core import *
 from panda3d.otp import *
+from otp.otpbase import KeyBindings
 QuietZone = 1
 UberZone = 2
 WallBitmask = BitMask32(1)
@@ -204,8 +205,9 @@ GoofySpeed = 5.2
 PlutoSpeed = 5.5
 ThinkPosHotkey = 'shift-f1'
 PlaceMarkerHotkey = 'f2'
-FriendsListHotkey = 'f7'
-StickerBookHotkey = 'f8'
+# These follow the player's key bindings (the Controls tab).
+FriendsListHotkey = KeyBindings.FriendsEvent
+StickerBookHotkey = KeyBindings.BookEvent
 OptionsPageHotkey = 'escape'
 ScreenshotHotkey = 'f9'
 SynchronizeHotkey = 'shift-f6'
@@ -213,8 +215,8 @@ QuestsHotkeyOn = 'end'
 QuestsHotkeyOff = 'end-up'
 InventoryHotkeyOn = 'home'
 InventoryHotkeyOff = 'home-up'
-MapHotkeyOn = 'delete'
-MapHotkeyOff = 'delete-up'
+MapHotkeyOn = KeyBindings.MapEvent
+MapHotkeyOff = KeyBindings.MapEvent + '-up'
 DetectGarbageHotkey = 'shift-f11'
 PrintCamPosHotkey = 'f12'
 GlobalDialogColor = (1,

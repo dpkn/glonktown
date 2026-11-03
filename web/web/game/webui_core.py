@@ -11,8 +11,15 @@ def _input_state():
 
 
 _dirs = {"forward": False, "reverse": False, "turnLeft": False, "turnRight": False}
-_dir_keys = {"forward": ("arrow_up", "w"), "reverse": ("arrow_down", "s"),
-             "turnLeft": ("arrow_left", "a"), "turnRight": ("arrow_right", "d")}
+
+
+def _bound(action):
+    """The event the game sends for an action of the player's key bindings (otp/otpbase/KeyBindings.py's getEvent), whatever key
+    it is on. The touch controls send these, so they keep working however the keys are set in the Controls tab."""
+    return "keybind-" + action
+
+
+_dir_keys = {name: (_bound(name),) for name in _dirs}
 
 
 def _send_keys(names, down):
@@ -106,7 +113,7 @@ def ui_jump(down):
         if down:
             _cancel_chat_if_open()
         _input_state().set("jump", bool(down), "touch")
-        _send_keys(("space",), bool(down))
+        _send_keys((_bound("jump"),), bool(down))
     except BaseException:
         print("ui_jump error", traceback.format_exc(), flush=True)
 
@@ -212,20 +219,20 @@ def ui_camera():
         print("ui_camera error", traceback.format_exc(), flush=True)
 
 
-_ACTION_NAMES = ("control", "delete", "insert", "alt")
+_ACTION_NAMES = (_bound("jump"), "delete", "insert", "alt")
 _ACTION_OWNERS = {
     "DistributedCashbotBossCrane", "DistCogdoCrane", "DistributedBanquetTable", "DistributedGolfSpot",
     "DistributedVehicle", "DistributedCannonGame", "DistributedCogThiefGame", "DistributedPairingGame",
     "CogdoMazeLocalPlayer", "CogdoFlyingLocalPlayer", "DistributedPartyTrampolineActivity",
     "DistributedToonfestTrampolineActivity", "DistributedIceGame",
-    "ArrowKeys",            # minigames that read the arrow keys and Control (vine swinging jumps with Control)
+    "ArrowKeys",            # minigames that read the walking and jump keys (vine swinging jumps with the jump key)
 }
 _action_down = [None]
 
 
 def _action_key():
     """The key some game object (crane, banquet table, minigame...) is listening for, ignoring the plain
-    movement/jump input that always listens to Control."""
+    movement/jump input that always listens to the jump key."""
     import builtins
     m = getattr(builtins, "messenger", None)
     if m is None:
@@ -262,13 +269,13 @@ def _slingshot_active():
 
 
 def ui_action(down):
-    """ACTION button: press the key the current game is waiting for (Control, Delete, Insert or Alt)."""
+    """ACTION button: press the key the current game is waiting for (Jump, Delete, Insert or Alt)."""
     try:
         if down:
-            _action_down[0] = "arrow_down" if _slingshot_active() else (_action_key() or "control")
+            _action_down[0] = _bound("reverse") if _slingshot_active() else (_action_key() or _bound("jump"))
             _send_keys((_action_down[0],), True)
         else:
-            _send_keys((_action_down[0] or "control",), False)
+            _send_keys((_action_down[0] or _bound("jump"),), False)
             _action_down[0] = None
     except BaseException:
         print("ui_action error", traceback.format_exc(), flush=True)
@@ -289,10 +296,18 @@ def ui_tug_active():
     return 0
 
 
+def ui_tasks(down):
+    """TASKS button: held down like the ToonTasks key, so the task list shows while it is down."""
+    try:
+        _send_keys((_bound("quests"),), bool(down))
+    except BaseException:
+        print("ui_tasks error", traceback.format_exc(), flush=True)
+
+
 def ui_pad(side, down):
     """Tug-of-war buttons: side 0 = left (A), 1 = right (D)."""
     try:
-        _send_keys(("a", "arrow_left") if side == 0 else ("d", "arrow_right"), bool(down))
+        _send_keys((_bound("turnLeft" if side == 0 else "turnRight"),), bool(down))
     except BaseException:
         print("ui_pad error", traceback.format_exc(), flush=True)
 
@@ -302,7 +317,7 @@ def _arrowkeys_active():
     m = getattr(builtins, "messenger", None)
     if m is None:
         return False
-    for name in ("a", "d", "w", "s", "arrow_left", "arrow_right", "arrow_up", "arrow_down"):       # (Open Toontown's helper listens to the arrow keys)
+    for name in map(_bound, _dirs):
         who = m.whoAccepts(name)
         if not who:
             continue

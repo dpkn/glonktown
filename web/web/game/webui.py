@@ -7,7 +7,7 @@ import traceback
 import webui_core as core
 
 T = platform.window.ttr
-_state = {"vals": (0, 0, 0, 0, 0, 0, 0, 0), "cam": 0, "ui_at": 0.0, "ui": None, "tx_at": 0.0, "tx_on": False, "tx_in": 0, "tx_sub": 0}
+_state = {"vals": (0, 0, 0, 0, 0, 0, 0, 0, 0), "cam": 0, "ui_at": 0.0, "ui": None, "tx_at": 0.0, "tx_on": False, "tx_in": 0, "tx_sub": 0}
 try:
     core._hook_entries()            # remember the game's text boxes so the page's text bar can fill the focused one
 except BaseException:
@@ -61,7 +61,7 @@ def poll():
     _auto_reconnect()
     try:
         vals = tuple(int(x) for x in str(T.inp).split(","))
-        if len(vals) == 8 and vals != _state["vals"]:
+        if len(vals) == 9 and vals != _state["vals"]:
             old = _state["vals"]
             if vals[0:4] != old[0:4]:
                 core.ui_move(*vals[0:4])
@@ -73,6 +73,8 @@ def poll():
                 core.ui_pad(0, vals[6])
             if vals[7] != old[7]:
                 core.ui_pad(1, vals[7])
+            if vals[8] != old[8]:
+                core.ui_tasks(vals[8])
             _state["vals"] = vals
         cam = int(T.camN)
         while _state["cam"] < cam:

@@ -402,14 +402,12 @@ class LocalAvatar(DistributedAvatar.DistributedAvatar, DistributedSmoothNode.Dis
         return not self.sleepFlag and self.hp > 0
 
     def enableSmartCameraViews(self):
-        self.accept('tab', self.nextCameraPos, [1])
-        self.accept('shift-tab', self.nextCameraPos, [0])
+        self.accept(KeyBindings.CameraEvent, self.nextCameraPos, [1])
         self.accept('page_up', self.pageUp)
         self.accept('page_down', self.pageDown)
 
     def disableSmartCameraViews(self):
-        self.ignore('tab')
-        self.ignore('shift-tab')
+        self.ignore(KeyBindings.CameraEvent)
         self.ignore('page_up')
         self.ignore('page_down')
         self.ignore('page_down-up')

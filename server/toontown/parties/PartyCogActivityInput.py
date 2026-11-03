@@ -5,7 +5,7 @@ ROTATE_LEFT_KEY = KeyBindings.TurnLeftEvent
 ROTATE_RIGHT_KEY = KeyBindings.TurnRightEvent
 FORWARD_KEY = KeyBindings.ForwardEvent
 BACKWARDS_KEY = KeyBindings.ReverseEvent
-THROW_PIE_KEYS = [KeyBindings.JumpEvent, 'delete', 'insert']
+THROW_PIE_KEYS = [KeyBindings.JumpEvent, KeyBindings.ThrowPieEvent, 'insert']
 
 class PartyCogActivityInput(DirectObject):
     notify = directNotify.newCategory('PartyCogActivityInput')

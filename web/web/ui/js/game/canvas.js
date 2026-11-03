@@ -8,18 +8,6 @@ export function sendToGame(event) {
   try { (gameCanvas() || document).dispatchEvent(event); } catch (e) { log('JS| sending ' + event.type + ' failed ' + e); }
 }
 
-// A key event for the game. `made` marks it as the page's own, so the keyboard handling (keyboard.js) lets it through.
-export function sendKeyToGame(type, { key, code, keyCode }, modifiers = {}) {
-  const event = new KeyboardEvent(type, { key, code, keyCode, which: keyCode, bubbles: true, cancelable: true, ...modifiers });
-  // some browsers leave keyCode at 0 on made events; the game reads it
-  try {
-    Object.defineProperty(event, 'keyCode', { get: () => keyCode });
-    Object.defineProperty(event, 'which', { get: () => keyCode });
-  } catch {}
-  event.ttrMade = true;
-  sendToGame(event);
-}
-
 // After a chat is sent nothing is left focused, so a hardware keyboard (iPad Magic Keyboard, a desktop) stops reaching the game.
 export function focusGame() {
   const canvas = gameCanvas();

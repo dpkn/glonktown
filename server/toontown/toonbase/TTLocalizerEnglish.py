@@ -3271,7 +3271,7 @@ SharedChatterComments = ["That's a great name, %.",
  'If you press the Page Up key, you can look up!',
  'If you help take over Cog buildings, you can earn a bronze star!',
  'If you press the Tab key, you can see different views of your surroundings!',
- 'If you press the Ctrl key, you can jump!']
+ 'If you press the Space bar, you can jump!']
 SharedChatterGoodbyes = ['I have to go now, bye!',
  "I think I'll go play a trolley game.",
  "Well, so long. I'll be seeing you, %!",
@@ -4562,9 +4562,9 @@ PartyCatchRewardMessage = 'Pieces of fruit caught: %s\n\nJellybeans earned: %d'
 WinterPartyCatchActivityInstructions = "Catch as many presents as you can. Try not to 'catch' any %(badThing)s!"
 WinterPartyCatchRewardMessage = 'Presents caught: %s\n\nJellybeans earned: %s'
 PartyDanceActivityTitle = 'Party Dance Floor'
-PartyDanceActivityInstructions = 'Combine 3 or more ARROW KEY patterns to do dance moves! There are 10 dance moves available. Can you find them all?'
+PartyDanceActivityInstructions = 'Combine 3 or more W/A/S/D KEY patterns to do dance moves! There are 10 dance moves available. Can you find them all?'
 PartyDanceActivity20Title = 'Party Dance Floor'
-PartyDanceActivity20Instructions = 'Combine 3 or more ARROW KEY patterns to do dance moves! There are 20 dance moves available. Can you find them all?'
+PartyDanceActivity20Instructions = 'Combine 3 or more W/A/S/D KEY patterns to do dance moves! There are 20 dance moves available. Can you find them all?'
 DanceAnimRight = 'Right'
 DanceAnimReelNeutral = 'The Fishertoon'
 DanceAnimConked = 'The Headbob'
@@ -4588,7 +4588,7 @@ DanceAnimPush = 'The Mimetoon'
 DanceAnimAngry = "Rock n' Roll"
 DanceAnimLeft = 'Left'
 PartyCannonActivityTitle = 'Party Cannons'
-PartyCannonActivityInstructions = 'Hit the clouds to change their color and bounce in the air! While IN THE AIR, you can USE THE ARROW KEYS to GLIDE.'
+PartyCannonActivityInstructions = 'Hit the clouds to change their color and bounce in the air! While IN THE AIR, you can USE W/A/S/D to GLIDE.'
 PartyCannonResults = 'You collected %d jelly beans!\n\nNumber of Clouds Hit: %d'
 FireworksActivityInstructions = 'Hit the "Page Up" key to see better.'
 FireworksActivityBeginning = 'Party fireworks are about to start! Enjoy the show!'
@@ -4597,7 +4597,7 @@ PartyFireworksAlreadyActive = 'The fireworks show has already started.'
 PartyFireworksAlreadyDone = 'The fireworks show is over.'
 PartyTrampolineJellyBeanTitle = 'Jelly Beans Trampoline'
 PartyTrampolineTricksTitle = 'Tricks Trampoline'
-PartyTrampolineActivityInstructions = 'Use the Control key to jump.\n\nJump when your Toon is at its lowest point on the trampoline to jump higher.'
+PartyTrampolineActivityInstructions = 'Use the Space bar to jump.\n\nJump when your Toon is at its lowest point on the trampoline to jump higher.'
 PartyTrampolineActivityOccupied = 'Trampoline in use.'
 PartyTrampolineQuitEarlyButton = 'Hop Off'
 PartyTrampolineBeanResults = 'You collected %d jelly beans.'
@@ -4630,7 +4630,7 @@ PartyCogRewardBonus = '\nYou got %d additional jellybean%s because your team won
 PartyCogJellybeanPlural = 's'
 PartyCogSignNote = 'HI-SCORE\n%s\n%d'
 PartyCogTitle = 'Cog-O-War'
-PartyCogInstructions = 'Throw pies at cogs to push them away from your team. ' + "When time's up, the team with most cogs on the other side wins!" + '\n\nThrow with the CONTROL KEY. Move with the ARROW KEYS.'
+PartyCogInstructions = 'Throw pies at cogs to push them away from your team. ' + "When time's up, the team with most cogs on the other side wins!" + '\n\nThrow with the SPACE BAR. Move with W/A/S/D.'
 PartyCogDistance = '%d ft'
 PartyCogTimeUp = "Time's up!"
 PartyCogGuiScoreLabel = 'SCORE'
@@ -4714,7 +4714,12 @@ ControlsPageActionNames = {'forward': 'Walk Forward',
  'run': 'Run (hold)',
  'quests': 'Show ToonTasks',
  'inventory': 'Show Gags',
- 'chat': 'Open Chat'}
+ 'chat': 'Open Chat',
+ 'throwPie': 'Throw Pie',
+ 'map': 'Map',
+ 'book': 'Shticker Book',
+ 'friends': 'Friends',
+ 'camera': 'Camera View'}
 ControlsPageKeyNames = {'arrow_up': 'Up Arrow',
  'arrow_down': 'Down Arrow',
  'arrow_left': 'Left Arrow',
@@ -5185,7 +5190,7 @@ FishPoker2Pair = '2 Pair'
 FishPokerPair = 'Pair'
 TutorialGreeting1 = 'Hi %s!'
 TutorialGreeting2 = 'Hi %s!\nCome over here!'
-TutorialGreeting3 = 'Hi %s!\nCome over here!\nUse the arrow keys!'
+TutorialGreeting3 = 'Hi %s!\nCome over here!\nUse W, A, S and D!'
 TutorialMickeyWelcome = 'Welcome to Glonktown!'
 TutorialFlippyIntro = 'Let me introduce you to my friend %s...' % Flippy
 TutorialFlippyHi = 'Hi, %s!'
@@ -5282,20 +5287,20 @@ MinigamePowerMeterTooFast = 'Too\nfast'
 MinigameTemplateTitle = 'Minigame Template'
 MinigameTemplateInstructions = 'This is a template minigame. Use it to create new minigames.'
 CannonGameTitle = 'Cannon Game'
-CannonGameInstructions = 'Shoot your toon into the water tower as quickly as you can. Use the mouse or the arrow keys to aim the cannon. Be quick and win a big reward for everyone!'
+CannonGameInstructions = 'Shoot your toon into the water tower as quickly as you can. Use the mouse or W/A/S/D to aim the cannon. Be quick and win a big reward for everyone!'
 CannonGameReward = 'REWARD'
 TwoDGameTitle = 'Toon Escape'
-TwoDGameInstructions = 'Escape from the ' + Cog + ' den as soon as you can. Use arrow keys to run/jump and Ctrl to squirt a ' + Cog + '. Collect ' + Cog + ' treasures to gain even more points.'
+TwoDGameInstructions = 'Escape from the ' + Cog + ' den as soon as you can. Use W/A/S/D to run/jump and Space to squirt a ' + Cog + '. Collect ' + Cog + ' treasures to gain even more points.'
 TwoDGameElevatorExit = 'EXIT'
 TugOfWarGameTitle = 'Tug-of-War'
-TugOfWarInstructions = "Alternately tap the left and right arrow keys just fast enough to line up the green bar with the red line. Don't tap them too slow or too fast, or you'll end up in the water!"
+TugOfWarInstructions = "Alternately tap the A and D keys just fast enough to line up the green bar with the red line. Don't tap them too slow or too fast, or you'll end up in the water!"
 TugOfWarGameGo = 'GO!'
 TugOfWarGameReady = 'Ready...'
 TugOfWarGameEnd = 'Good game!'
 TugOfWarGameTie = 'You tied!'
 TugOfWarPowerMeter = 'Power meter'
 PatternGameTitle = 'Match %s' % Minnie
-PatternGameInstructions = Minnie + ' will show you a dance sequence. ' + 'Try to repeat ' + Minnie + "'s dance just the way you see it using the arrow keys!"
+PatternGameInstructions = Minnie + ' will show you a dance sequence. ' + 'Try to repeat ' + Minnie + "'s dance just the way you see it using W, A, S and D!"
 PatternGameWatch = 'Watch these dance steps...'
 PatternGameGo = 'GO!'
 PatternGameRight = 'Good, %s!'
@@ -5331,8 +5336,8 @@ RaceGameJellybeans2 = '2 jellybeans'
 RaceGameJellybeans4 = '4 jellybeans'
 RaceGameJellybeans10 = '10 jellybeans!'
 RingGameTitle = 'Ring Game'
-RingGameInstructionsSinglePlayer = 'Try to swim through as many of the %s rings as you can.  Use the arrow keys to swim.'
-RingGameInstructionsMultiPlayer = 'Try to swim through the %s rings.  Other players will try for the other colored rings.  Use the arrow keys to swim.'
+RingGameInstructionsSinglePlayer = 'Try to swim through as many of the %s rings as you can.  Use W/A/S/D to swim.'
+RingGameInstructionsMultiPlayer = 'Try to swim through the %s rings.  Other players will try for the other colored rings.  Use W/A/S/D to swim.'
 RingGameMissed = 'MISSED'
 RingGameGroupPerfect = 'GROUP\nPERFECT!!'
 RingGamePerfect = 'PERFECT!'
@@ -5345,8 +5350,8 @@ ColorWhite = 'white'
 ColorBlack = 'black'
 ColorYellow = 'yellow'
 DivingGameTitle = 'Treasure Dive'
-DivingInstructionsSinglePlayer = 'Treasures will appear at the bottom of the lake.  Use the arrow keys to swim.  Avoid the fish and get the treasures up to the boat!'
-DivingInstructionsMultiPlayer = 'Treasures will appear at the bottom of the lake.  Use the arrow keys to swim.  Work together to get the treasures up to the boat!'
+DivingInstructionsSinglePlayer = 'Treasures will appear at the bottom of the lake.  Use W/A/S/D to swim.  Avoid the fish and get the treasures up to the boat!'
+DivingInstructionsMultiPlayer = 'Treasures will appear at the bottom of the lake.  Use W/A/S/D to swim.  Work together to get the treasures up to the boat!'
 DivingGameTreasuresRetrieved = 'Treasures Retrieved'
 TargetGameTitle = 'Toon Slingshot'
 TargetGameInstructionsSinglePlayer = 'Land on targets to score points'
@@ -5355,7 +5360,7 @@ TargetGameBoard = 'Round %s - Keeping Best Score'
 TargetGameCountdown = 'Forced launch in %s seconds'
 TargetGameCountHelp = 'Pound left and right arrows for power, stop to launch'
 TargetGameFlyHelp = 'Press down to open umbrella'
-TargetGameFallHelp = 'Use the arrow keys to land on target'
+TargetGameFallHelp = 'Use W/A/S/D to land on target'
 TargetGameBounceHelp = ' Bouncing can knock you off target'
 PhotoGameScoreTaken = '%s: %s\nYou: %s'
 PhotoGameScoreBlank = 'Score: %s'
@@ -5379,12 +5384,12 @@ CatchGamePineapples = 'pineapples'
 CatchGameAnvils = 'anvils'
 PieTossGameTitle = 'Pie Toss Game'
 PieTossGameInstructions = 'Toss pies at the targets.'
-PhotoGameInstructions = 'Capture photos matching the toons shown at the bottom. Aim the camera with the mouse, and left click to take a picture. Press Ctrl to zoom in/out, and look around with the arrow keys.  Pictures with higher ratings get more points!'
+PhotoGameInstructions = 'Capture photos matching the toons shown at the bottom. Aim the camera with the mouse, and left click to take a picture. Press Space to zoom in/out, and look around with W/A/S/D.  Pictures with higher ratings get more points!'
 PhotoGameTitle = 'Photo Fun'
 PhotoGameFilm = 'FILM'
 PhotoGameScore = 'Team Score: %s\n\nBest Photos: %s\n\nTotal Score: %s'
 CogThiefGameTitle = Cog + ' Thief'
-CogThiefGameInstructions = 'Keep the ' + Cogs + ' from stealing our gag barrels! Press the Ctrl key to throw a pie. Use the arrow keys to move. Tip: you can move diagonally.'
+CogThiefGameInstructions = 'Keep the ' + Cogs + ' from stealing our gag barrels! Press the Space bar to throw a pie. Use W/A/S/D to move. Tip: you can move diagonally.'
 CogThiefBarrelsSaved = '%(num)d Barrels\nSaved!'
 CogThiefBarrelSaved = '%(num)d Barrel\nSaved!'
 CogThiefNoBarrelsSaved = 'No Barrels\nSaved'
@@ -5605,7 +5610,7 @@ LeaderboardTitle = 'Toon Platoon'
 QuestScriptTutorialMickey_1 = 'Glonktown has a new citizen! Do you have some extra gags?'
 QuestScriptTutorialMickey_2 = 'Sure, %s!'
 QuestScriptTutorialMickey_3 = 'Tutorial Tom will tell you all about the Cogs.\x07Gotta go!'
-QuestScriptTutorialMickey_4 = 'Come here! Use the arrow keys to move.'
+QuestScriptTutorialMickey_4 = 'Come here! Use W, A, S and D to move.'
 QuestScriptTutorialMinnie_1 = 'Glonktown has a new citizen! Do you have some extra gags?'
 QuestScriptTutorialMinnie_2 = 'Sure, %s!'
 QuestScriptTutorialMinnie_3 = 'Tutorial Tom will tell you all about the Cogs.\x07Gotta go!'
@@ -5696,7 +5701,7 @@ CagedToonBattleThree = {10: 'Nice jump, %(toon)s.  Here are some pies!',
  11: 'Hi, %(toon)s!  Have some pies!',
  12: "Hey there, %(toon)s!  You've got some pies now!",
  20: 'Hey, %(toon)s!  Jump up to my cage and get some pies to throw!',
- 21: 'Hi, %(toon)s!  Use the Ctrl key to jump up and touch my cage!',
+ 21: 'Hi, %(toon)s!  Use the Space bar to jump up and touch my cage!',
  100: 'Press the Delete key to throw a pie.',
  101: 'The blue power meter shows how high your pie will go.',
  102: 'First try to lob a pie inside his undercarriage to gum up his works.',
@@ -5729,13 +5734,13 @@ ResistanceToonKeepHimBusy = "Keep him busy!  I'm going to set a trap!"
 ResistanceToonWatchThis = 'Watch this!'
 CashbotBossGetAwayFromThat = 'Hey!  Get away from that!'
 ResistanceToonCraneInstructions1 = 'Control a magnet by stepping up to a podium.'
-ResistanceToonCraneInstructions2 = 'Use the arrow keys to move the crane, and press the Ctrl key to grab an object.'
+ResistanceToonCraneInstructions2 = 'Use W/A/S/D to move the crane, and press the Space bar to grab an object.'
 ResistanceToonCraneInstructions3 = "Grab a safe with a magnet and knock the C.F.O.'s safe-ty helmet off."
 ResistanceToonCraneInstructions4 = 'Once his helmet is gone, grab a disabled goon and hit him in the head!'
 ResistanceToonGetaway = 'Eek!  Gotta run!'
 CashbotCraneLeave = 'Leave Crane'
-CashbotCraneAdvice = 'Use the arrow keys to move the overhead crane.'
-CashbotMagnetAdvice = 'Hold down the control key to pick things up.'
+CashbotCraneAdvice = 'Use W/A/S/D to move the overhead crane.'
+CashbotMagnetAdvice = 'Hold down the Space bar to pick things up.'
 CashbotCraneLeaving = 'Leaving crane'
 MintElevatorRejectMessage = 'You cannot enter the Mints until you have completed your %s Cog Suit.'
 BossElevatorRejectMessage = 'You cannot board this elevator until you have earned a promotion.'
@@ -8429,8 +8434,8 @@ TipDict = {TIP_NONE: ('',),
               'If you wait too long to attack a lured Cog, it will wake up. Higher level lures last longer.',
               'There are fishing ponds on every street in Glonktown. Some streets have unique fish.'),
  TIP_MINIGAME: ('After you fill up your jellybean jar, any jellybeans you get from Trolley Games automatically spill over into your bank.',
-                'You can use the arrow keys instead of the mouse in the "Match Minnie" Trolley Game.',
-                'In the Cannon Game you can use the arrow keys to move your cannon and press the "Control" key to fire.',
+                'You can use W, A, S and D instead of the mouse in the "Match Minnie" Trolley Game.',
+                'In the Cannon Game you can use W/A/S/D to move your cannon and press the Space bar to fire.',
                 'In the Ring Game, bonus points are awarded when the entire group successfully swims through its rings.',
                 'A perfect game of Match Minnie will double your points.',
                 'In the Tug-of-War you are awarded more jellybeans if you play against a tougher Cog.',
@@ -8514,7 +8519,7 @@ TipDict = {TIP_NONE: ('',),
                'Screwball Stadium is the easiest track at Goofy Speedway.',
                'Airborne Acres has the most hills and jumps of any track at Goofy Speedway.',
                'Blizzard Boulevard is the most challenging track at Goofy Speedway.'),
- TIP_GOLF: ('Press the Tab key to see a top view of the golf course.', 'Press the Up Arrow key to point yourself towards the golf hole.', 'Swinging the club is just like throwing a pie.')}
+ TIP_GOLF: ('Press the Tab key to see a top view of the golf course.', 'Press the W key to point yourself towards the golf hole.', 'Swinging the club is just like throwing a pie.')}
 FishGenusNames = {0: 'Balloon Fish',
  2: 'Cat Fish',
  4: 'Clown Fish',
@@ -8896,7 +8901,7 @@ KartRace_RRInfo = 'Welcome to Rustic Raceway!\nPlease be kind to the fauna and s
 KartRace_AAInfo = 'Welcome to Airborne Acres!\nHold onto your hats! It looks bumpy up ahead...\n'
 KartRace_CCInfo = 'Welcome to City Circuit!\nWatch out for pedestrians as you speed through downtown!\n'
 KartRace_BBInfo = 'Welcome to Blizzard Boulevard!\nWatch your speed. There might be ice out there.\n'
-KartRace_GeneralInfo = 'Use Control to throw gags you pick up on the track, and the arrow keys to control your kart.'
+KartRace_GeneralInfo = 'Use Space to throw gags you pick up on the track, and W/A/S/D to control your kart.'
 KartRace_TrackInfo = {RaceGlobals.RT_Speedway_1: KartRace_SSInfo + KartRace_GeneralInfo,
  RaceGlobals.RT_Speedway_1_rev: KartRace_SSInfo + KartRace_GeneralInfo,
  RaceGlobals.RT_Speedway_2: KartRace_CoCoInfo + KartRace_GeneralInfo,
@@ -9546,10 +9551,10 @@ BossbotRTPhase4Speech1 = 'Good Job! Now squirt the C.E.O. with the water on the 
 BossbotRTPhase4Speech2 = 'or use golf balls to slow him down.'
 BossbotPitcherLeave = 'Leave Bottle'
 BossbotPitcherLeaving = 'Leaving Bottle'
-BossbotPitcherAdvice = 'Use the left and right keys to rotate.\nHold down Ctrl increase power.\nRelease Ctrl to fire.'
+BossbotPitcherAdvice = 'Use A and D to rotate.\nHold down Space to increase power.\nRelease Space to fire.'
 BossbotGolfSpotLeave = 'Leave Golf Ball'
 BossbotGolfSpotLeaving = 'Leaving Golf Ball'
-BossbotGolfSpotAdvice = 'Use the left and right keys to rotate.\nCtrl to fire.'
+BossbotGolfSpotAdvice = 'Use A and D to rotate.\nSpace to fire.'
 BossbotRewardSpeech1 = "No! The Chairman won't like this."
 BossbotRewardSpeech2 = 'Arrrggghhh!!!!'
 BossbotRTCongratulations = "You did it!  You've demoted the C.E.O.!\x07Here, take these pink slips the C.E.O. left behind.\x07With it you'll be able to fire Cogs in a battle."
@@ -9576,12 +9581,12 @@ ElevatorLawBotCourse2 = 'Office C'
 ElevatorLawBotCourse3 = 'Office D'
 DaysToGo = 'Wait\n%s Days'
 IceGameTitle = 'Ice Slide'
-IceGameInstructions = 'Get as close to the center by the end of the second round. Use arrow keys to change direction and force. Press Ctrl to launch your toon.  Hit barrels for extra points and avoid the TNT!'
-IceGameInstructionsNoTnt = 'Get as close to the center by the end of the second round. Use arrow keys to change direction and force. Press Ctrl to launch your toon.  Hit barrels for extra points.'
+IceGameInstructions = 'Get as close to the center by the end of the second round. Use W/A/S/D to change direction and force. Press Space to launch your toon.  Hit barrels for extra points and avoid the TNT!'
+IceGameInstructionsNoTnt = 'Get as close to the center by the end of the second round. Use W/A/S/D to change direction and force. Press Space to launch your toon.  Hit barrels for extra points.'
 IceGameWaitingForPlayersToFinishMove = 'Waiting for other players...'
 IceGameWaitingForAISync = 'Waiting for other players...'
 IceGameInfo = 'Match %(curMatch)d/%(numMatch)d, Round %(curRound)d/%(numRound)d'
-IceGameControlKeyWarning = 'Remember to press the Ctrl key!'
+IceGameControlKeyWarning = 'Remember to press the Space bar!'
 PicnicTableJoinButton = 'Join'
 PicnicTableObserveButton = 'Observe'
 PicnicTableCancelButton = 'Cancel'
@@ -9760,7 +9765,7 @@ CogdoMazeGameTimeOut = 'Oh no, time ran out! You lost your jokes.'
 CogdoMazeGameTimeAlert = 'Hurry up! 60 seconds to go!'
 CogdoMazeGameBossGuiTitle = 'BIG COGS:'
 CogdoMazeFindHint = 'Find a Water Cooler'
-CogdoMazeThrowHint = "Press 'Ctrl' to throw your water balloon"
+CogdoMazeThrowHint = "Press 'Space' to throw your water balloon"
 CogdoMazeSquashHint = 'Falling objects pop your balloon'
 CogdoMazeBossHint = 'Big Cogs take TWO hits to defeat'
 CogdoMazeMinionHint = 'Smaller Cogs drop jokes'
@@ -9772,7 +9777,7 @@ CogdoFlyingGameFuelLabel = 'Fuel'
 CogdoFlyingGameLegalEagleTargeting = 'A Legal Eagle has noticed you!'
 CogdoFlyingGameLegalEagleAttacking = 'Incoming Eagle!'
 CogdoFlyingGamePickUpAPropeller = 'You need a propeller to fly!'
-CogdoFlyingGamePressCtrlToFly = "Press 'Ctrl' to fly up!"
+CogdoFlyingGamePressCtrlToFly = "Press 'Space' to fly up!"
 CogdoFlyingGameYouAreInvincible = 'Red Tape protects you!'
 CogdoFlyingGameTimeIsRunningOut = 'Time is running out!'
 CogdoFlyingGameMinimapIntro = 'This meter shows your progress!\nX marks the finish line.'

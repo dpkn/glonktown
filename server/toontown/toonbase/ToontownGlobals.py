@@ -1,11 +1,12 @@
 from . import TTLocalizer
 from otp.otpbase.OTPGlobals import *
+from otp.otpbase import KeyBindings
 from direct.showbase.PythonUtil import invertDict
 from panda3d.core import BitMask32, Vec4
 from enum import IntEnum
-MapHotkeyOn = 'alt'
-MapHotkeyOff = 'alt-up'
-MapHotkey = 'alt'
+MapHotkeyOn = KeyBindings.MapEvent
+MapHotkeyOff = KeyBindings.MapEvent + '-up'
+MapHotkey = KeyBindings.MapEvent
 AccountDatabaseChannelId = 4008
 ToonDatabaseChannelId = 4021
 DoodleDatabaseChannelId = 4023

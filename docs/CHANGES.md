@@ -60,8 +60,12 @@ made each is in the [README's credits](../README.md#credits).
 
 - **Rebindable controls** (from calebcodesalot): a Controls tab in the Shticker Book's options to rebind walking, jumping,
   ToonTasks, gags and chat (arrow keys or WASD presets), and a Smooth Animations switch (on by default, as before).
-- **WASD by default**: W/A/S/D to walk, Space to jump and Enter to chat, for toons that never changed their keys (saved keys stay).
+- **WASD by default**: W/A/S/D to walk, Space to jump and Enter to chat, for toons that never changed their keys (saved keys stay). Minigame, activity, boss and tutorial hints name these keys
+  instead of the arrow keys and Ctrl.
 - **Run key for everyone**: hold Shift to run at the `~run` Magic Word's speed. It can be rebound in the Controls tab.
+- **Every shortcut in one place**: Throw Pie, Map, Shticker Book, Friends and Camera View can be rebound in the Controls tab too,
+  which now has two columns. The browser page's own Keyboard keys page is gone, and the on-screen controls (stick, JUMP, ACTION,
+  TASKS, tug-of-war pads) press the game's actions directly, so they work whatever the keys are set to.
 - **Escape stays in the game in full screen** in Chrome and Edge (hold Escape to leave full screen). Safari and Firefox always
   leave full screen on Escape.
 - **Walking no longer gets stuck after a cutscene.** Typed chat and the joystick switched walking on while a cutscene held the

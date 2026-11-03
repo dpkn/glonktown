@@ -662,10 +662,21 @@ class ControlsTabPage(DirectFrame):
     notify = DirectNotifyGlobal.directNotify.newCategory('ControlsTabPage')
     CaptureEvent = 'controlsTabPage-keyCaptured'
     ReservedKeys = (ToontownGlobals.OptionsPageHotkey,
-     ToontownGlobals.StickerBookHotkey,
-     ToontownGlobals.FriendsListHotkey,
-     ToontownGlobals.ScreenshotHotkey,
-     ToontownGlobals.MapHotkey)
+     ToontownGlobals.ScreenshotHotkey)
+    # Two columns: moving and chat on the left, the shortcuts on the right.
+    Columns = ((KeyBindings.Forward,
+      KeyBindings.Reverse,
+      KeyBindings.TurnLeft,
+      KeyBindings.TurnRight,
+      KeyBindings.Jump,
+      KeyBindings.Run,
+      KeyBindings.Chat), (KeyBindings.Quests,
+      KeyBindings.Inventory,
+      KeyBindings.ThrowPie,
+      KeyBindings.Map,
+      KeyBindings.Book,
+      KeyBindings.Friends,
+      KeyBindings.Camera))
     KeyAliases = {'lshift': 'shift',
      'rshift': 'shift',
      'lcontrol': 'control',
@@ -691,16 +702,19 @@ class ControlsTabPage(DirectFrame):
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         buttonImage = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
         textStartHeight = 0.45
-        textRowHeight = 0.08
+        textRowHeight = 0.09
         leftMargin = -0.72
         buttonbase_xcoord = 0.35
+        columnLabelX = (-0.75, 0.03)
+        columnButtonX = (-0.17, 0.6)
         button_textpos = (0, -0.02)
         options_text_scale = 0.052
         self.keyButtons = {}
-        for i, action in enumerate(KeyBindings.Actions):
-            height = textStartHeight - i * textRowHeight
-            DirectLabel(parent=self, relief=None, text=TTLocalizer.ControlsPageActionNames[action], text_align=TextNode.ALeft, text_scale=options_text_scale, pos=(leftMargin, 0, height))
-            self.keyButtons[action] = DirectButton(parent=self, relief=None, image=buttonImage, image_scale=(0.9, 1, 0.8), text='', text_scale=0.045, text_pos=button_textpos, pos=(buttonbase_xcoord, 0, height), command=self.__startCapture, extraArgs=[action])
+        for column, actions in enumerate(self.Columns):
+            for i, action in enumerate(actions):
+                height = textStartHeight - i * textRowHeight
+                DirectLabel(parent=self, relief=None, text=TTLocalizer.ControlsPageActionNames[action], text_align=TextNode.ALeft, text_scale=0.045, pos=(columnLabelX[column], 0, height))
+                self.keyButtons[action] = DirectButton(parent=self, relief=None, image=buttonImage, image_scale=(0.75, 1, 0.8), text='', text_scale=0.04, text_pos=button_textpos, pos=(columnButtonX[column], 0, height), command=self.__startCapture, extraArgs=[action])
 
         self.statusLabel = DirectLabel(parent=self, relief=None, text='', text_scale=0.045, text_wordwrap=28, pos=(0, 0, -0.29))
         self.chatLabel = DirectLabel(parent=self, relief=None, text='', text_scale=0.045, text_wordwrap=28, pos=(0, 0, -0.4))
@@ -769,6 +783,7 @@ class ControlsTabPage(DirectFrame):
         self.oldButtonDownEvent = buttonThrower.getButtonDownEvent()
         buttonThrower.setButtonDownEvent(self.CaptureEvent)
         self.accept(self.CaptureEvent, self.__keyCaptured)
+        base.keyBindings.setPaused(True)
 
     def __stopCapture(self):
         if self.captureAction == None:
@@ -776,6 +791,7 @@ class ControlsTabPage(DirectFrame):
         self.captureAction = None
         self.ignore(self.CaptureEvent)
         base.buttonThrowers[0].node().setButtonDownEvent(self.oldButtonDownEvent)
+        base.keyBindings.setPaused(False)
         self.__updateKeys()
 
     def __keyCaptured(self, key):

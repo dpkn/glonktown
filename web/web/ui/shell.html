@@ -136,26 +136,8 @@
         </div>
       </template>
       <div class="note" x-show="$store.settings.needsRestart">Smooth edges changes when the game restarts.</div>
-      <button class="action" @click="$store.keysDialog.stopListening(); $store.shell.dialog = 'keys'">Keyboard keys</button>
       <button class="action" x-show="$store.settings.needsRestart" @click="$store.settings.restartGame()">Restart game now</button>
       <button class="action done" @click="$store.shell.dialog = null">Done</button>
-    </div>
-
-    <div class="dialog" x-show="$store.shell.dialog === 'keys'">
-      <h2>Keyboard keys</h2>
-      <div class="tip">Tap an action, then press the key you want for it. The game's own keys keep working too.</div>
-      <template x-for="action in $store.keysDialog.actions">
-        <div class="row">
-          <div class="label"><span x-text="action.label"></span><small x-text="'Game key: ' + $store.keysDialog.gameKeyName(action)"></small></div>
-          <div class="choices">
-            <button :class="{ selected: $store.keysDialog.keysFor(action.id).length, waiting: $store.keysDialog.waitingFor === action.id }"
-                    @click="$store.keysDialog.listen(action)" x-text="$store.keysDialog.buttonText(action)"></button>
-          </div>
-        </div>
-      </template>
-      <button class="action" @click="$store.keysDialog.useGameKeys()">Use the game's keys (WASD)</button>
-      <button class="action" @click="$store.keysDialog.useArrowKeys()">Use the arrow keys</button>
-      <button class="action done" @click="$store.keysDialog.stopListening(); $store.shell.dialog = 'display'">Back</button>
     </div>
   </div>
 

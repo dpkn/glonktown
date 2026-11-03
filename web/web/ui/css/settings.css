@@ -1,4 +1,4 @@
-/* The Display dialog and its Keyboard keys page: a row per setting, the choices as a row of buttons. */
+/* The Display dialog: a row per setting, the choices as a row of buttons. */
 
 #ttr .settings {
   position: absolute;
@@ -25,13 +25,6 @@
   text-align: center;
   font: 26px var(--title-font);
   letter-spacing: .02em;
-}
-
-#ttr .settings .tip {
-  padding: 0 0 8px;
-  text-align: center;
-  font-size: 13px;
-  opacity: .8;
 }
 
 #ttr .settings .row {
@@ -79,13 +72,6 @@
   background: #59a6ff;
   border-color: #3d8bf0;
   color: #fff;
-}
-
-/* waiting for the key to be pressed */
-#ttr .settings .choices button.waiting {
-  background: var(--gold);
-  border-color: #d27a00;
-  color: #733805;
 }
 
 #ttr .settings .note {

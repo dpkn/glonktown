@@ -9,6 +9,11 @@ Run = 'run'
 Quests = 'quests'
 Inventory = 'inventory'
 Chat = 'chat'
+ThrowPie = 'throwPie'
+Map = 'map'
+Book = 'book'
+Friends = 'friends'
+Camera = 'camera'
 Actions = (Forward,
  Reverse,
  TurnLeft,
@@ -17,7 +22,18 @@ Actions = (Forward,
  Run,
  Quests,
  Inventory,
- Chat)
+ Chat,
+ ThrowPie,
+ Map,
+ Book,
+ Friends,
+ Camera)
+# The same in both presets.
+Shortcuts = {ThrowPie: 'delete',
+ Map: 'alt',
+ Book: 'f8',
+ Friends: 'f7',
+ Camera: 'tab'}
 ArrowKeysPreset = 'arrows'
 WASDPreset = 'wasd'
 DefaultPreset = WASDPreset
@@ -29,7 +45,8 @@ Presets = {ArrowKeysPreset: {Forward: 'arrow_up',
                    Run: 'shift',
                    Quests: 'end',
                    Inventory: 'home',
-                   Chat: 'enter'},
+                   Chat: 'enter',
+                   **Shortcuts},
  WASDPreset: {Forward: 'w',
               Reverse: 's',
               TurnLeft: 'a',
@@ -38,7 +55,8 @@ Presets = {ArrowKeysPreset: {Forward: 'arrow_up',
               Run: 'shift',
               Quests: 'end',
               Inventory: 'home',
-              Chat: 'enter'}}
+              Chat: 'enter',
+              **Shortcuts}}
 ChangedEvent = 'keyBindingsChanged'
 ModifierKeys = ('shift', 'control', 'alt')
 ModifierPatterns = ('%s', 'control-%s', 'shift-control-%s', 'alt-%s', 'control-alt-%s', 'shift-%s', 'shift-alt-%s')
@@ -58,6 +76,11 @@ RunEvent = getEvent(Run)
 QuestsEvent = getEvent(Quests)
 InventoryEvent = getEvent(Inventory)
 ChatEvent = getEvent(Chat)
+ThrowPieEvent = getEvent(ThrowPie)
+MapEvent = getEvent(Map)
+BookEvent = getEvent(Book)
+FriendsEvent = getEvent(Friends)
+CameraEvent = getEvent(Camera)
 
 def isTypingKey(key):
     return len(key) == 1 or key == 'space'
@@ -72,6 +95,7 @@ class KeyBindings(DirectObject):
         self.activeKeys = {}
         self.heldActions = set()
         self.typing = False
+        self.paused = False
         self.__listen()
 
     def destroy(self):
@@ -134,6 +158,13 @@ class KeyBindings(DirectObject):
             self.typing = typing
             self.__listen()
 
+    def setPaused(self, paused):
+        # While the Controls tab waits for a new key, no key does its action
+        # (the Shticker Book key would close the book).
+        if paused != self.paused:
+            self.paused = paused
+            self.__listen()
+
     def __changed(self):
         self.__listen()
         base.settings.updateSetting(self.SettingName, dict(self.keys))
@@ -143,6 +174,8 @@ class KeyBindings(DirectObject):
     def __listen(self):
         activeKeys = {}
         for action, key in self.keys.items():
+            if self.paused:
+                break
             if not (self.typing and isTypingKey(key)):
                 activeKeys[action] = key
 

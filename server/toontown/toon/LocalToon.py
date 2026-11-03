@@ -18,6 +18,7 @@ from otp.avatar import LocalAvatar
 from otp.login import LeaveToPayDialog
 from otp.avatar import PositionExaminer
 from otp.otpbase import OTPGlobals
+from otp.otpbase import KeyBindings
 from otp.avatar import DistributedPlayer
 from toontown.shtiker import ShtikerBook
 from toontown.shtiker import InventoryPage
@@ -387,8 +388,8 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
             base.setCellsAvailable([base.bottomCells[4]], 0)
         self.accept('time-insert', self.__beginTossPie)
         self.accept('time-insert-up', self.__endTossPie)
-        self.accept('time-delete', self.__beginTossPie)
-        self.accept('time-delete-up', self.__endTossPie)
+        self.accept(KeyBindings.ThrowPieEvent, self.__beginTossPieKey)
+        self.accept(KeyBindings.ThrowPieEvent + '-up', self.__endTossPieKey)
         self.accept('pieHit', self.__pieHit)
         self.accept('interrupt-pie', self.interruptPie)
         self.accept('InputState-jump', self.__toonMoved)
@@ -631,6 +632,12 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
         self.__beginTossPie(globalClock.getFrameTime())
 
     def __endTossPieMouse(self, mouseParam):
+        self.__endTossPie(globalClock.getFrameTime())
+
+    def __beginTossPieKey(self):
+        self.__beginTossPie(globalClock.getFrameTime())
+
+    def __endTossPieKey(self):
         self.__endTossPie(globalClock.getFrameTime())
 
     def __beginTossPie(self, time):

@@ -20,8 +20,8 @@ export const bridge = window.ttr = {
   vh: 0,
   pw: 0, ph: 0,           // set by the game: the size it really draws at
 
-  // touch controls: "forward,back,left,right,jump,action,tugLeft,tugRight" and a counter of camera taps
-  inp: '0,0,0,0,0,0,0,0',
+  // touch controls: "forward,back,left,right,jump,action,tugLeft,tugRight,tasks" and a counter of camera taps
+  inp: '0,0,0,0,0,0,0,0,0',
   camN: 0,
 
   // typed chat: counters the game watches for a new value and for a send

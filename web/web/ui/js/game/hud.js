@@ -1,7 +1,7 @@
 import Alpine from '../../vendor/alpine-3.17.4.min.js';
 import { bridge } from './bridge.js';
 import { focusGame } from './canvas.js';
-import { keyboard, sendGameKey } from './keyboard.js';
+import { keyboard } from './keyboard.js';
 import { settings } from '../screens/settings.js';
 import { onHold } from '../lib/directives.js';
 import { canGoFullscreen, goFullscreen, hasTouchScreen, isFullscreen } from '../lib/device.js';
@@ -9,7 +9,7 @@ import { canGoFullscreen, goFullscreen, hasTouchScreen, isFullscreen } from '../
 // The in-game touch controls, laid out like the iOS app's: a stick, JUMP, CAM, ACTION, TASKS and the tug-of-war pads. The game says
 // which ones it wants (setUI); the page sends back which are held (bridge.inp) and how often CAM was tapped (bridge.camN).
 
-const INPUTS = ['forward', 'back', 'left', 'right', 'jump', 'action', 'tugLeft', 'tugRight'];     // bridge.inp's order
+const INPUTS = ['forward', 'back', 'left', 'right', 'jump', 'action', 'tugLeft', 'tugRight', 'tasks'];     // bridge.inp's order
 const held = Object.fromEntries(INPUTS.map((name) => [name, false]));
 
 function setHeld(changes) {
@@ -37,8 +37,8 @@ export const hud = Alpine.reactive({
   hold(name, pressed) { setHeld({ [name]: pressed }); },
   turnCamera() { bridge.camN++; },
 
-  // TASKS presses the game's tasks key (End): the key going down shows the task list and coming up hides it, so a tap shows it and the
-  // next tap hides it
+  // TASKS holds the game's ToonTasks key down while open: down shows the task list and up hides it, so a tap shows it and the next tap
+  // hides it
   toggleTasks() {
     focusGame();
     this.setTasksOpen(!this.tasksOpen);
@@ -46,7 +46,7 @@ export const hud = Alpine.reactive({
   setTasksOpen(open) {
     if (open === this.tasksOpen) return;
     this.tasksOpen = open;
-    sendGameKey(open ? 'keydown' : 'keyup', 'End');
+    setHeld({ tasks: open });
   },
 
   goFullscreen() {

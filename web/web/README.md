@@ -21,7 +21,7 @@ blue and uses Nunito. The title and headings use Luckiest Guy from Google Fonts 
 In game, a browser tab that has left full screen (Esc, or a swipe on Android) shows a small button at the top centre that goes
 back to it.
 
-The display settings (picture quality, smooth edges, the FPS counter, on-screen controls, keyboard keys) are hidden: open the
+The display settings (picture quality, smooth edges, the FPS counter, on-screen controls) are hidden: open the
 page once with `?display=1` to show the Display button and the in-game gear on that device, `?display=0` to hide them again.
 
 ## The page shell (`ui/`)

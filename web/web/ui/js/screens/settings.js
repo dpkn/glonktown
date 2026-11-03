@@ -1,10 +1,9 @@
 import Alpine from '../../vendor/alpine-3.17.4.min.js';
 import { bridge } from '../game/bridge.js';
-import { GAME_ACTIONS, captureKey, keyName, keysFor, remap, useArrowKeys, useGameKeys } from '../game/keyboard.js';
 import { saved } from '../lib/storage.js';
 import { relayout } from '../lib/viewport.js';
 
-// The Display dialog (from the sign-in screen and, in game, the gear) and its Keyboard keys page.
+// The Display dialog (from the sign-in screen and, in game, the gear).
 
 // The Display button and the gear only show on a device that opened the page once with ?display=1 (remembered; ?display=0 hides them)
 const displayParam = new URLSearchParams(location.search).get('display');
@@ -48,31 +47,4 @@ export const settings = Alpine.reactive({
     if (option.key === 'resolution') relayout();
   },
   restartGame() { location.reload(); },
-});
-
-export const keysDialog = Alpine.reactive({
-  actions: GAME_ACTIONS,
-  waitingFor: null,     // the action whose new key is being pressed
-
-  keysFor,
-  gameKeyName: (action) => keyName(action.gameKey),
-  buttonText(action) {
-    if (this.waitingFor === action.id) return 'Press a key... (Esc cancels)';
-    const mine = keysFor(action.id);
-    return mine.length ? mine.map(keyName).join(', ') : keyName(action.gameKey);
-  },
-
-  listen(action) {
-    this.waitingFor = action.id;
-    captureKey((e) => {
-      this.waitingFor = null;
-      if (e.code && e.code !== 'Escape') remap(action.id, e.code);
-    });
-  },
-  stopListening() {
-    this.waitingFor = null;
-    captureKey(null);
-  },
-  useGameKeys() { this.stopListening(); useGameKeys(); },
-  useArrowKeys() { this.stopListening(); useArrowKeys(); },
 });
