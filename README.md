@@ -250,13 +250,13 @@ method.
 
 2. In the Cloudflare dashboard, under Workers & Pages → Create → Import a repository, pick this repository and set:
 
-   | Setting                                  | Value                                                                                                                           |
-   | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-   | Project name                             | `glonktown` (the `name` in `web/wrangler.jsonc`)                                                                                |
-   | Build command                            | `sh build_page.sh`                                                                                                              |
-   | Deploy command                           | `npx wrangler deploy`                                                                                                           |
-   | Root directory (under advanced settings) | `web`                                                                                                                           |
-   | Build variables                          | `GLONKTOWN_SERVER` = `https://play.example.com` (the server devices use when no `?server=` is given), `PYTHON_VERSION` = `3.12` |
+   | Setting                                  | Value                                                                                                |
+   | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+   | Project name                             | `glonktown` (the `name` in `web/wrangler.jsonc`)                                                     |
+   | Build command                            | `sh build_page.sh`                                                                                   |
+   | Deploy command                           | `npx wrangler deploy`                                                                                |
+   | Root directory (under advanced settings) | `web`                                                                                                |
+   | Build variables                          | `GLONKTOWN_SERVER` = `https://play.example.com` (the server devices use when no `?server=` is given) |
 
    The bucket binding comes from `web/wrangler.jsonc`; with another bucket name, change it there and pass the name to
    `tools/upload_files.sh`.
