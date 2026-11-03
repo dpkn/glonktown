@@ -1,4 +1,4 @@
-/* Glonktown (web) - loading screen, game-file downloader, sign-in, recovery cards and the in-game
+/* Glonktown (web) - loading screen, game-file downloader, sign-in and the in-game
    touch controls. The layout numbers are copied from the iOS app (main.m). The game itself runs in Python (main.py). */
 (function () {
   'use strict';
@@ -26,6 +26,10 @@
   };
 
   // ------------------------------------------------------------------ helpers
+  // the page's font (the title keeps the toon font); without an internet connection the system's own font is used
+  const uiFont = document.createElement('link');
+  uiFont.rel = 'stylesheet'; uiFont.href = 'https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap';
+  document.head.appendChild(uiFont);
   const root = document.createElement('div');
   root.id = 'ttr';
   document.body.appendChild(root);
@@ -110,11 +114,10 @@
   }
   function fitTitle() {
     if (typeof title === 'undefined') return;
-    let fs = Math.min(56 * sc, W / 17);
+    let fs = Math.min(84 * sc, W / 11, H * 0.14);
     title.style.fontSize = fs + 'px';
-    // measure the text itself (the box is always as wide as the screen, so its scrollWidth never says the text is too wide)
-    const textW = () => { const r = document.createRange(); r.selectNodeContents(title.firstChild); return r.getBoundingClientRect().width; };
-    for (let i = 0; i < 12 && textW() > W * 0.92; i++) { fs *= 0.9; title.style.fontSize = fs + 'px'; }
+    // measure the word, not the title box (that is always as wide as the screen)
+    for (let i = 0; i < 12 && titleWord.offsetWidth > W * 0.92; i++) { fs *= 0.9; title.style.fontSize = fs + 'px'; }
   }
   addEventListener('resize', relayout);
   // iOS (especially a Home Screen app) sometimes reports a stale window size until the phone is rotated: keep checking, and re-measure
@@ -147,23 +150,38 @@
   [400, 1500, 4000, 9000].forEach((ms) => setTimeout(() => { if (!kbHold) relayout(); }, ms));
   addEventListener('orientationchange', () => setTimeout(relayout, 200));
 
-  // ------------------------------------------------------------------ backdrop: splash art
+  // ------------------------------------------------------------------ backdrop: an evening sky with twinkling stars, slow clouds and light
+  // motes drifting up from the hills. All of it only moves or fades (no repainting), so it stays smooth while the game starts up.
+  const cssVars = (e, vars) => { Object.keys(vars).forEach((k) => e.style.setProperty('--' + k, vars[k])); return e; };
+  let seed = 7;
+  const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;          // the same sky on every visit
   const bg = el('div', null, root);
   bg.id = 'ttr-bg';
-  [[0.3, 0.1, 150], [0.75, 0.55, 110], [0.1, 0.7, 130], [0.6, 0.15, 90], [0.9, 0.85, 120], [0.45, 0.8, 100], [0.2, 0.3, 80]].forEach((d) => {
-    const dot = el('div', 'dot', bg); dot.dataset.fx = d[0]; dot.dataset.fy = d[1]; dot.dataset.d = d[2];
+  const bgImg = el('img', null, bg);
+  bgImg.style.display = 'none';
+  for (let i = 0; i < 46; i++) {
+    const secs = 2.5 + rand() * 4;
+    cssVars(el('div', 'star', bg, { left: rand() * 100 + '%', top: Math.pow(rand(), 1.6) * 55 + '%', animationDuration: secs + 's', animationDelay: -rand() * secs + 's' }),
+      { s: (0.8 + rand() * 1.8).toFixed(1) });
+  }
+  [[0.1, 560, 240, 0.15, 0.35], [0.24, 420, 190, 0.6, 0.45], [0.38, 640, 280, 0.35, 0.55], [0.5, 380, 170, 0.85, 0.6]].forEach(([top, w, secs, phase, o]) => {
+    cssVars(el('div', 'cloud', bg, { top: top * 100 + '%', animationDuration: secs + 's', animationDelay: -secs * phase + 's' }), { w, o });
   });
+  el('div', 'hills', bg);
+  for (let i = 0; i < 14; i++) {
+    const secs = 10 + rand() * 8;
+    cssVars(el('div', 'mote', bg, { left: 4 + rand() * 92 + '%', animationDuration: secs + 's', animationDelay: -rand() * secs + 's' }),
+      { s: (2 + rand() * 2.5).toFixed(1), dx: Math.round((rand() - 0.5) * 80) });
+  }
   const title = el('div', null, root);
   title.id = 'ttr-title';
-  title.textContent = 'GLONKTOWN';
+  const titleWord = el('span', null, title);
+  titleWord.textContent = 'GLONKTOWN';
   const logo = el('img', null, root);
   logo.id = 'ttr-logo';
   logo.style.display = 'none';
-  const bgImg = el('img', null, bg);
-  bgImg.style.display = 'none';
   let haveArt = false;
   layouts.push(() => {
-    bg.querySelectorAll('.dot').forEach((d) => { const s = +d.dataset.d; Object.assign(d.style, { width: s + 'px', height: s + 'px', left: d.dataset.fx * W + 'px', top: d.dataset.fy * H + 'px' }); });
     if (haveArt && logo.naturalWidth) {
       const lh = Math.min(H * 0.40, 200 * sc), lw = lh * logo.naturalWidth / logo.naturalHeight;
       Object.assign(logo.style, { height: lh + 'px', width: lw + 'px', top: Math.max(H * 0.04, 10) + 'px' });
@@ -178,7 +196,7 @@
           bgImg.src = urls[0]; if (urls[1]) logo.src = urls[1];
           await Promise.all([bgImg.decode().catch(() => {}), logo.decode().catch(() => {})]);
           bgImg.style.display = ''; if (urls[1]) { logo.style.display = ''; title.style.display = 'none'; }
-          bg.querySelectorAll('.dot').forEach((d) => { d.style.display = 'none'; });
+          bg.classList.add('art');
           haveArt = true; relayout();
         }
         return;
@@ -200,7 +218,7 @@
         bgImg.src = b; if (l) logo.src = l;
         await Promise.all([bgImg.decode().catch(() => {}), logo.decode().catch(() => {})]);
         bgImg.style.display = ''; if (l) { logo.style.display = ''; title.style.display = 'none'; }
-        bg.querySelectorAll('.dot').forEach((d) => { d.style.display = 'none'; });
+        bg.classList.add('art');
         haveArt = true; relayout();
       }
     } catch (e) { /* the gradient and title stay */ }
@@ -213,13 +231,15 @@
   const status = el('div', null, load); status.id = 'ttr-status';
   const detail = el('div', null, load); detail.id = 'ttr-detail';
   const spin = el('div', null, load); spin.id = 'ttr-spin'; spin.style.display = 'none';
+  for (let i = 0; i < 3; i++) el('i', null, spin);
   const errBox = el('div', null, load); errBox.id = 'ttr-error'; errBox.style.display = 'none';
   const errBtn = el('button', 'ttr-pill light on', load); errBtn.textContent = 'Try again'; errBtn.style.display = 'none';
   layouts.push(() => {
-    const bw = Math.min(W * 0.6, 640);
-    Object.assign(bar.style, { width: bw + 'px', top: H * 0.68 - 29 + 'px' });
-    status.style.top = H * 0.68 + 30 + 'px';
-    detail.style.top = H * 0.68 + 30 + 34 * sc * 1.45 + 10 * sc + 'px';      // under the (outlined, larger) status line, whatever the screen size
+    const bw = Math.min(W * 0.6, 560 * sc), bh = 6 * sc, by = H * 0.55;
+    Object.assign(bar.style, { width: bw + 'px', height: bh + 'px', top: by + 'px' });
+    status.style.top = by - 40 * sc + 'px';
+    detail.style.top = by + bh + 14 * sc + 'px';
+    spin.style.top = by + 'px';        // where the bar was: the bar is hidden while the game starts
     Object.assign(errBtn.style, { left: (W - 170) / 2 + 'px', top: H - 64 + 'px', width: '170px', height: '40px', fontSize: '16px' });
   });
   function setStatus(msg, det, frac) {
@@ -257,7 +277,7 @@
              keys: () => tx('readonly', (s) => s.getAllKeys()), del: (k) => tx('readwrite', (s) => s.delete(k)) };
   })();
   function fsReady() { return typeof window.FS !== 'undefined' && T.pyReady; }
-  const ASSETS = '/data/data/game_ot/assets/';
+  const ASSETS = '/data/data/game/assets/';
   function fsWrite(path, data) {
     const FSr = window.FS;
     const dir = path.slice(0, path.lastIndexOf('/'));
@@ -377,21 +397,23 @@
   login.id = 'ttr-login'; login.style.display = 'none';
   const uField = field('Toon name', false, login, 'username', 'username');
   const pField = field('Password', true, login, 'password', 'current-password');
-  const playBtn = el('button', 'ttr-btn on', login); playBtn.textContent = 'PLAY!';
+  const playBtn = el('button', 'ttr-btn on', login); playBtn.textContent = 'PLAY';
   const forgot = el('button', 'ttr-link on', login); forgot.textContent = 'Forgot password?';
   const lmsg = el('div', null, login); lmsg.id = 'ttr-msg';
   let kbMode = false;
+  // only phones and tablets get an on-screen keyboard to make room for; a desktop keeps the fields where they are
+  const touchFirst = () => !!(window.matchMedia && matchMedia('(hover: none) and (pointer: coarse)').matches);
   function loginLayout() {
     const vv = window.visualViewport;
-    const kb = kbMode && vv;
+    const kb = kbMode && vv && touchFirst();
     const top = kb ? vv.offsetTop : 0;                  // the visible area above the keyboard starts here
-    const w = Math.min(W * 0.5, 380 * sc), y0 = kb ? top + 10 * sc : H * (haveArt ? 0.47 : 0.36);
-    [uField, pField].forEach((f, i) => { Object.assign(f.style, { width: w + 'px', top: y0 + i * 52 * sc + 'px', left: W / 2 + 'px' }); });
-    const bw = 220 * sc, bh = 48 * sc;
-    place(playBtn, (W - bw) / 2, y0 + 106 * sc, bw, bh);
-    place(forgot, (W + bw) / 2 + 10 * sc, y0 + 106 * sc, 150 * sc, bh);
-    lmsg.style.top = y0 + 160 * sc + 'px'; lmsg.style.fontSize = 17 * sc + 'px';
-    logo.style.opacity = kb ? '0' : '';
+    const w = Math.min(W * 0.5, 360 * sc), y0 = kb ? top + 10 * sc : H * (haveArt ? 0.47 : 0.36);
+    [uField, pField].forEach((f, i) => { Object.assign(f.style, { width: w + 'px', top: y0 + i * 56 * sc + 'px', left: W / 2 + 'px' }); });
+    const bw = 220 * sc, bh = 50 * sc;
+    place(playBtn, (W - bw) / 2, y0 + 120 * sc, bw, bh);
+    place(forgot, (W + bw) / 2 + 14 * sc, y0 + 120 * sc + bh * 0.2, null, bh * 0.6);
+    lmsg.style.top = y0 + 194 * sc + 'px'; lmsg.style.fontSize = 16 * sc + 'px';
+    logo.style.opacity = title.style.opacity = kb ? '0' : '';
   }
   layouts.push(loginLayout);
   if (window.visualViewport) {
@@ -400,10 +422,10 @@
   }
   function loginMessage(m, bad) { lmsg.textContent = m; lmsg.className = bad ? 'bad' : ''; lmsg.id = 'ttr-msg'; }
   function showLogin() {
-    showLoad(false); login.style.display = ''; cardClose();
+    showLoad(false); login.style.display = '';
     uField.value = LS.getItem(prefs.userKey) || '';
     pField.value = LS.getItem(prefs.userKey + '.pw') || '';
-    loginMessage('New here? Pick a name and password and tap PLAY!', false);
+    loginMessage('New here? Pick a name and password and tap PLAY.', false);
     relayout();
   }
   async function authCall(path, text) {
@@ -418,14 +440,14 @@
     const user = uField.value.trim().toLowerCase(), pw = pField.value;
     if (!user || !pw) { loginMessage('Enter your toon name and password.', true); return; }
     if (user.includes(':')) { loginMessage("Please don't use colons in your name.", true); return; }
+    if (!standalone) goFull();        // the game plays full screen; a browser only allows that straight after a tap or key press, so ask now
     playBtn.disabled = true; loginMessage('Signing in...', false);
     const cookie = user + ':' + pw;
     const r = await authCall('/auth', cookie);
     playBtn.disabled = false;
     if (!r.ok) { loginMessage(r.text || 'Sign-in failed.', true); return; }
     LS.setItem(prefs.userKey, user); LS.setItem(prefs.userKey + '.pw', pw);
-    const proceed = () => startGame(cookie);
-    if (r.tag === 'setup') showRecoveryCard(false, cookie, user, proceed); else proceed();
+    startGame(cookie);
   }
   [uField, pField].forEach((f) => {
     f.setAttribute('enterkeyhint', f === pField ? 'go' : 'next');
@@ -446,67 +468,7 @@
   }
   onEnter(pField, () => signIn());
   onEnter(uField, () => pField.focus());
-  forgot.addEventListener('click', () => {
-    const user = uField.value.trim().toLowerCase();
-    if (!user) { loginMessage('Type your toon name above first, then tap Forgot password.', true); return; }
-    showRecoveryCard(true, '', user, () => { showLogin(); });
-  });
-
-  // ------------------------------------------------------------------ cards (server choice, recovery)
-  const cardWrap = el('div', null, root);
-  cardWrap.id = 'ttr-cardwrap'; cardWrap.style.display = 'none';
-  function cardClose() { cardWrap.style.display = 'none'; cardWrap.innerHTML = ''; }
-  function newCard(h) {
-    cardWrap.innerHTML = ''; cardWrap.style.display = '';
-    login.style.display = 'none';
-    const cw = Math.min(W - 40, 520 * sc), ch = h * sc;
-    const card = el('div', 'ttr-card', cardWrap, { width: cw + 'px', height: ch + 'px', top: Math.max(16, (H - ch) / 2) + 'px' });
-    card.style.marginBottom = '16px';
-    return { card, cw, ch, pad: 20 * sc, w: cw - 40 * sc };
-  }
-  function cText(parent, cls, txt, top, size, extra) {
-    const t = el('div', cls, parent, Object.assign({ top: top * sc + 'px', fontSize: size * sc + 'px' }, extra || {}));
-    t.textContent = txt; return t;
-  }
-  function cField(parent, ph, secure, top, geo) {
-    const f = field(ph, secure, parent);
-    Object.assign(f.style, { position: 'absolute', left: geo.pad + 'px', width: geo.w + 'px', top: top * sc + 'px', height: 42 * sc + 'px' });
-    return f;
-  }
-  function cButton(parent, txt, cls, top, wpx, hpx, geo, fill) {
-    const b = el('button', cls + ' on', parent);
-    b.textContent = txt;
-    Object.assign(b.style, { position: 'absolute', left: (geo.cw - wpx * sc) / 2 + 'px', top: top * sc + 'px', width: wpx * sc + 'px', height: hpx * sc + 'px' });
-    if (fill) b.style.background = fill;
-    return b;
-  }
-  function showRecoveryCard(reset, cookie, user, done) {
-    const g = newCard(reset ? 392 : 344);
-    cText(g.card, 't', reset ? 'Reset password' : 'Forgot-password help', 12, 26);
-    cText(g.card, 's', reset ? 'Answer the two questions you saved for ' + user + ', then pick a new password.' :
-      'Pick two answers only you will remember. If you ever forget your password, they let you set a new one.', 52, 14, { padding: '0 ' + g.pad + 'px', fontWeight: 600 });
-    const nick = cField(g.card, 'Your nickname', false, 100, g);
-    const toon = cField(g.card, 'A toon name you made', false, 148, g);
-    const npw = reset ? cField(g.card, 'New password', true, 196, g) : null;
-    const y = reset ? 244 : 196;
-    const msg = cText(g.card, 's', '', y + 2, 14, { padding: '0 ' + g.pad + 'px' });
-    const setMsg = (t, bad) => { msg.textContent = t; msg.style.color = bad ? '#d91a1a' : '#1a408c'; };
-    const prim = cButton(g.card, reset ? 'Reset password' : 'Save', 'ttr-pill blue', y + 40, 220, 44, g);
-    prim.style.fontSize = 22 * sc + 'px';
-    const sec = cButton(g.card, reset ? 'Cancel' : 'Skip for now', 'ttr-pill gray', y + 92, 160, 32, g);
-    sec.addEventListener('click', () => { cardClose(); done(); });
-    prim.addEventListener('click', async () => {
-      const n = nick.value.trim(), t = toon.value.trim(), p = npw ? npw.value : '';
-      if (!n || !t || (reset && !p)) { setMsg('Fill in every box.', true); return; }
-      if (reset && p.includes(':')) { setMsg("Please don't use colons in a password.", true); return; }
-      prim.disabled = sec.disabled = true; setMsg(reset ? 'Checking...' : 'Saving...', false);
-      const r = await authCall(reset ? '/recover' : '/setrecovery', reset ? [user, n, t, p].join('\n') : [cookie, n, t].join('\n'));
-      prim.disabled = sec.disabled = false;
-      if (!r.ok) { setMsg(r.text || "That didn't work.", true); return; }
-      cardClose();
-      if (reset) { showLogin(); pField.value = p; loginMessage('Password changed! Tap PLAY.', false); } else done();
-    });
-  }
+  forgot.addEventListener('click', () => loginMessage('Ask the host to reset your password. Your toons stay.', false));
 
   // ------------------------------------------------------------------ the flow
   async function beginDownload() {
@@ -517,7 +479,7 @@
     catch (e) { console.error(e); showError(String(e && e.stack || e)); }
   }
   async function startGame(cookie) {
-    login.style.display = 'none'; cardClose(); showLoad(true);
+    login.style.display = 'none'; showLoad(true);
     setStatus('Starting Toontown...', '', null); bar.style.display = 'none'; spin.style.display = '';
     T.wsUrl = prefs.ws;
     try {            // the server's game settings (gameconfig.json); no file, or no answer in 3 seconds, means the game's own defaults
@@ -533,6 +495,10 @@
     bg.style.display = 'none'; logo.style.display = 'none'; title.style.display = 'none'; load.style.display = 'none';
     hud.style.display = '';
     relayout(); keepAwake();
+    if (!standalone && !isFullscreen()) {        // not full screen after all (refused, or left while loading): the first tap or key in the game makes it so
+      const once = (e) => { if (e.key === 'Escape') return; removeEventListener('pointerup', once, true); removeEventListener('keydown', once, true); goFull(); };
+      addEventListener('pointerup', once, true); addEventListener('keydown', once, true);
+    }
     [500, 2000, 6000].forEach((ms) => setTimeout(() => { if (!kbHold) relayout(); }, ms));
   };
 
@@ -636,7 +602,12 @@
   const RES_CHOICES = [['2', 'Sharp'], ['1.5', 'Balanced'], ['1', 'Fast'], ['0.75', 'Fastest']];
   const lsGet = (k, d) => { try { const v = LS.getItem(k); return v == null ? d : v; } catch (e) { return d; } };
   const lsSet = (k, v) => { try { LS.setItem(k, v); } catch (e) {} };
-  function applyFps() { fps.style.display = lsGet('ttr_fps', '1') === '0' ? 'none' : ''; }
+  // The Display button (sign-in screen) and the gear (in game) only show on a device that opened the page once with ?display=1
+  // (remembered; ?display=0 hides them again)
+  const displayParam = new URLSearchParams(location.search).get('display');
+  if (displayParam === '0' || displayParam === '1') lsSet('ttr_display', displayParam);
+  const showDisplayButtons = lsGet('ttr_display', '0') === '1';
+  function applyFps() { fps.style.display = lsGet('ttr_fps', '0') === '1' ? '' : 'none'; }
   applyFps();
   const setWrap = el('div', null, root); setWrap.id = 'ttr-set'; setWrap.style.display = 'none';
   function showSettings() {
@@ -657,8 +628,8 @@
     const aaNow = T.aa;
     const note = el('div', 'note', card); note.style.visibility = 'hidden'; note.textContent = 'Smooth edges changes when the game restarts.';
     row('Smooth edges', 'Softens jagged lines; off is faster', [['1', 'On'], ['0', 'Off']], aaNow, (v) => { lsSet('ttr_aa', v); note.style.visibility = v === aaNow ? 'hidden' : ''; restart.style.display = v === aaNow ? 'none' : ''; });
-    row('Speed counter', 'The FPS number at the top', [['1', 'Show'], ['0', 'Hide']], lsGet('ttr_fps', '1'), (v) => { lsSet('ttr_fps', v); applyFps(); });
-    row('On-screen controls', 'Auto hides them while you play with a keyboard', [['auto', 'Auto'], ['show', 'Show'], ['hide', 'Hide']], lsGet('ttr_touch', 'auto'),
+    row('Speed counter', 'The FPS number at the top', [['1', 'Show'], ['0', 'Hide']], lsGet('ttr_fps', '0'), (v) => { lsSet('ttr_fps', v); applyFps(); });
+    row('On-screen controls', 'Auto shows them on touch screens, until you play with a keyboard', [['auto', 'Auto'], ['show', 'Show'], ['hide', 'Hide']], lsGet('ttr_touch', 'auto'),
       (v) => { lsSet('ttr_touch', v); applyTouchUI(); });
     const keysBtn = el('button', 'act', card); keysBtn.textContent = 'Keyboard keys';
     keysBtn.addEventListener('click', showKeys);
@@ -668,10 +639,12 @@
     done.addEventListener('click', () => { setWrap.style.display = 'none'; setWrap.innerHTML = ''; });
   }
   const gearBtn = el('button', 'ttr-gear on', hud); gearBtn.textContent = '⚙';
+  if (!showDisplayButtons) gearBtn.style.display = 'none';
   gearBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
   gearBtn.addEventListener('click', (e) => { e.preventDefault(); showSettings(); });
   layouts.push(() => place(gearBtn, W / 2 + 46 * sc, Math.max(SAFE.t, 6), 30 * sc, 28 * sc));
   const dsp = pill('Display', login, 'light');
+  if (!showDisplayButtons) dsp.style.display = 'none';
   dsp.addEventListener('click', showSettings);
   layouts.push(() => { const ph = 30 * sc; place(dsp, W - 126 * sc - 14 - SAFE.r, Math.max(SAFE.t, 6) + 8, 126 * sc, ph); dsp.style.visibility = kbMode ? 'hidden' : ''; });
 
@@ -754,7 +727,8 @@
   const saveKeys = () => lsSet('ttr_keys', JSON.stringify(keyMap));
   let kbUsed = false, lastKeyAt = 0, keyCapture = null;
   const heldKeys = {};       // the player's key -> the game key sent for it, until it comes up
-  function touchHidden() { const m = lsGet('ttr_touch', 'auto'); return m === 'hide' || (m === 'auto' && kbUsed); }
+  const hasTouchScreen = () => !!(window.matchMedia && matchMedia('(any-pointer: coarse)').matches);
+  function touchHidden() { const m = lsGet('ttr_touch', 'auto'); return m === 'hide' || (m === 'auto' && (kbUsed || !hasTouchScreen())); }
   function applyTouchUI() { T.setUI(uiArgs[0], uiArgs[1], uiArgs[2]); }
   function keyName(code) {
     const named = { ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→', ControlLeft: 'Ctrl', ControlRight: 'Right Ctrl', AltLeft: 'Alt/Option',
@@ -867,10 +841,13 @@
   const needInstall = (qs.get('install') === '1') || ((isIOS || isAndroid) && !standalone && !skipInstall && qs.get('install') !== '0');
   let installEvt = null;                       // Chrome on Android offers a one-tap install through this event
   addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; const b = document.getElementById('ttr-installbtn'); if (b) b.style.display = ''; });
-  // Android: full screen + landscape lock from the first tap (a normal browser tab cannot lock the rotation any other way)
+  // Android: full screen + landscape lock from the first tap (a normal browser tab cannot lock the rotation any other way).
+  // Everywhere else full screen starts with PLAY (iPhone has no full screen for pages: there the Home Screen app is full screen)
+  function isFullscreen() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
   function goFull() {
-    const d = document.documentElement;
-    try { const r = d.requestFullscreen ? d.requestFullscreen({ navigationUI: 'hide' }) : null; if (r && r.then) r.then(() => { try { screen.orientation.lock('landscape').catch(() => {}); } catch (e) {} }).catch(() => {}); } catch (e) {}
+    const d = document.documentElement, req = d.requestFullscreen || d.webkitRequestFullscreen;
+    if (!req || isFullscreen()) return;
+    try { const r = req.call(d, { navigationUI: 'hide' }); if (r && r.then) r.then(() => { try { screen.orientation.lock('landscape').catch(() => {}); } catch (e) {} }).catch(() => {}); } catch (e) {}
   }
   if (isAndroid && !standalone) { const once = () => { removeEventListener('pointerup', once, true); goFull(); }; addEventListener('pointerup', once, true); }
   // keep the screen on while playing

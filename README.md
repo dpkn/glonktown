@@ -11,7 +11,7 @@ restored, fixes from other forks and settings for a small group. The browser cli
 
 ## Play
 
-On the party's network, open **`http://<the host Mac's address>:7380/play/`**, pick a toon name and a password, and tap **PLAY!**
+On the party's network, open **`http://<the host Mac's address>:7380/play/`**, pick a toon name and a password, and tap **PLAY**
 Use the same name and password next time.
 
 - The first start downloads the game files (about 390 MB). They are kept on the device afterwards.

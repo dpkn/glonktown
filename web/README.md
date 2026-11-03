@@ -14,8 +14,11 @@ What runs on the phone. How it fits together is in [../docs/ARCHITECTURE.md](../
 | `NOTICE.txt` | The licence notice packed into the code pack |
 
 Not in the repository: the game's art, sound and data (your Open Toontown `resources/`), the `_ui/` pictures the page
-uses (`background.jpg` for the sky and the Toon font `ToonDisplay.ttf`; the page works without them, with a plain
-background and system fonts) and an optional `logo.png`.
+uses (`background.jpg` for the sky and the Toon font `ToonDisplay.ttf` for the title; the page works without them, with a
+drawn sky and system fonts) and an optional `logo.png`. The rest of the page uses Nunito from Google Fonts.
+
+The display settings (picture quality, smooth edges, the FPS counter, on-screen controls, keyboard keys) are hidden: open the
+page once with `?display=1` to show the Display button and the in-game gear on that device, `?display=0` to hide them again.
 
 ## Build
 
