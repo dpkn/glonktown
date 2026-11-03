@@ -7,6 +7,7 @@ from toontown.safezone import DistributedButterflyAI
 from panda3d.core import *
 from panda3d.toontown import *
 from toontown.toon import NPCToons
+from toontown.toon import NPCWalkerManagerAI
 
 class HoodDataAI:
     notify = DirectNotifyGlobal.directNotify.newCategory('HoodDataAI')
@@ -23,6 +24,7 @@ class HoodDataAI:
         self.redirectingToMe = []
         self.hoodPopulation = 0
         self.pgPopulation = 0
+        self.walkerManager = None
         return
 
     def startup(self):
@@ -30,9 +32,13 @@ class HoodDataAI:
         self.createPartyPeople()
         self.createBuildingManagers()
         self.createSuitPlanners()
+        self.walkerManager = NPCWalkerManagerAI.create(self)
 
     def shutdown(self):
         self.setRedirect(None)
+        if self.walkerManager:
+            self.walkerManager.shutdown()
+            self.walkerManager = None
         if self.treasurePlanner:
             self.treasurePlanner.stop()
             self.treasurePlanner.deleteAllTreasuresNow()

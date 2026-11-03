@@ -356,6 +356,33 @@ class GiveBeans(MagicWord):
             return "More than one toon matches that name: " + ", ".join(t.getName() for t in partial)
         return f"No toon named {name} is online."
 
+class Walkers(MagicWord):
+    aliases = ["walker", "npcwalkers"]
+    desc = "Shows the walking toons in each playground. 'trolley' sends one in your playground to the trolley, 'leave' makes one " \
+           "teleport away, 'reset' replaces them all."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    arguments = [("action", str, False, "")]
+
+    def handleWord(self, invoker, avId, toon, *args):
+        from toontown.toon import NPCWalkerManagerAI
+        action = args[0].strip().lower()
+        if not action:
+            return "Walkers: " + ", ".join(f"{m.zoneId}: {len(m.walkers)}" for m in NPCWalkerManagerAI.getManagers()) + \
+                   f" (want {NPCWalkerManagerAI.getManagers()[0].getCount()} each while someone is there)"
+        manager = NPCWalkerManagerAI._managers.get(invoker.zoneId)
+        if not manager:
+            return "This zone has no walkers."
+        if action == 'reset':
+            manager.removeAll()
+            manager.update(playerCount=1)
+            return f"Replaced the walkers: {len(manager.walkers)} now."
+        if action not in ('trolley', 'leave'):
+            return "Use trolley, leave or reset."
+        for walker in manager.walkers:
+            if walker.command(action):
+                return f"{walker.getName()} is on the way."
+        return "No walker can do that right now (the trolley may be busy)."
+
 class AbortMinigame(MagicWord):
     aliases = ["exitgame", "exitminigame", "quitgame", "quitminigame", "skipgame", "skipminigame"]
     desc = "Aborts an ongoing minigame."

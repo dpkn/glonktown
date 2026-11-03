@@ -248,6 +248,8 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         def setLocation(self, parentId, zoneId):
             DistributedPlayerAI.DistributedPlayerAI.setLocation(self, parentId, zoneId)
             if self.isPlayerControlled():
+                from toontown.toon import NPCWalkerManagerAI
+                NPCWalkerManagerAI.playerChangedZone(zoneId)
                 if 100 <= zoneId < ToontownGlobals.DynamicZonesBegin:
                     hood = ZoneUtil.getHoodId(zoneId)
                     self.sendUpdate('setLastHood', [hood])

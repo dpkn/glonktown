@@ -69,6 +69,8 @@ You can only use a word on toons with a lower access level than yours.
 |---|---|---|---|
 | `~fireworks` | `firework` | show [`all`] | Starts a firework show where you are, or in every playground with `all`. Shows: `newyear` (default), `newyears`, `summer`, `combo`, `party`. |
 
+| `~walkers` | `walker`, `npcwalkers` | [`trolley`, `leave` or `reset`] | Shows how many walking toons each playground has. In a playground, `trolley` sends one of them to the trolley, `leave` makes one teleport away and `reset` replaces them all. Added by Glonktown. |
+
 Cog invasions start by themselves; `invasion_minutes` in `gameconfig.json` sets how long they last
 ([server/docker/README.md](../server/docker/README.md#game-settings-no-rebuild)).
 

@@ -18,6 +18,15 @@ Open problems are in [TODO.md](TODO.md).
   and the neighborhoods have their original names (Donald's Dock, Minnie's Melodyland, Daisy Gardens, Goofy Speedway, Donald's
   Dreamland, Chip 'n Dale's Acorn Acres). The Donald's Dock boat is back, and Minnie's piano spins again (upstream never created
   it). Toontown: Anywhere had removed the characters and renamed the neighborhoods.
+- **Walking toons make the playgrounds feel busy.** While a real toon is in a playground, six toons with random looks and names
+  walk its classic character's route, stand around, do emotes, say Speed Chat phrases, wave and say hi to toons who walk up to
+  them, teleport away and come back, and now and then run to the trolley and hop in. They hop in only while the trolley is empty
+  and waiting (never with real toons on it or about to leave), and they never join a game. The same few faces turn up again. A
+  playground nobody is in has none (they leave 45 seconds after the last real toon), so they cost nothing there.
+  `walkers` in `gameconfig.json` sets how many (0 turns them off), and `~walkers` shows or moves them. Donald's Dock and Chip 'n
+  Dale's MiniGolf have no character route, so they have no walkers. (`toontown/toon/DistributedNPCWalker*.py`,
+  `NPCWalkerManagerAI.py`, `NPCWalkerGlobals.py`; a new `DistributedNPCWalker` class in `toon.dc`, so the code pack and the image
+  must be updated together.)
 - **The town is called Glonktown** in the game's own text and window title; the first playground is Glonktown Central.
 - **One district**, Toon Valley, with Cog invasions. Toontown: Anywhere ran three.
 - **Small-group tuning** (from Retrolight): Aoogah and Trunk damage and gag carry limits as on Toontown Rewritten (3 TNT, 7
