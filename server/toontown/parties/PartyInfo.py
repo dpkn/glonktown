@@ -56,8 +56,8 @@ class PartyInfo(PartyInfoBase):
     def __init__(self, partyId, hostId, startYear, startMonth, startDay, startHour, startMinute, endYear, endMonth, endDay, endHour, endMinute, isPrivate, inviteTheme, activityList, decors, status):
         PartyInfoBase.__init__(self, partyId, hostId, startYear, startMonth, startDay, startHour, startMinute, endYear, endMonth, endDay, endHour, endMinute, isPrivate, inviteTheme, activityList, decors, status)
         serverTzInfo = base.cr.toontownTimeManager.serverTimeZone
-        self.startTime = self.startTime.replace(tzinfo=serverTzInfo)
-        self.endTime = self.endTime.replace(tzinfo=serverTzInfo)
+        self.startTime = serverTzInfo.localize(self.startTime)
+        self.endTime = serverTzInfo.localize(self.endTime)
 
 
 class PartyInfoAI(PartyInfoBase):
@@ -66,5 +66,5 @@ class PartyInfoAI(PartyInfoBase):
     def __init__(self, partyId, hostId, startYear, startMonth, startDay, startHour, startMinute, endYear, endMonth, endDay, endHour, endMinute, isPrivate, inviteTheme, activityList, decors, status):
         PartyInfoBase.__init__(self, partyId, hostId, startYear, startMonth, startDay, startHour, startMinute, endYear, endMonth, endDay, endHour, endMinute, isPrivate, inviteTheme, activityList, decors, status)
         serverTzInfo = simbase.air.toontownTimeManager.serverTimeZone
-        self.startTime = self.startTime.replace(tzinfo=serverTzInfo)
-        self.endTime = self.endTime.replace(tzinfo=serverTzInfo)
+        self.startTime = serverTzInfo.localize(self.startTime)
+        self.endTime = serverTzInfo.localize(self.endTime)

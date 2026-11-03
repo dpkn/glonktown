@@ -495,9 +495,9 @@ class PlayGame(StateData.StateData):
 
     def goToParty(self, ownerId, partyId, zoneId):
         if ownerId == 0 and partyId == 0 and zoneId == 0:
-            self.doneStatus['where'] = 'playground'
-        else:
-            self.doneStatus['where'] = 'party'
+            self.goToPartyFailed(0)
+            return
+        self.doneStatus['where'] = 'party'
         self.doneStatus['ownerId'] = ownerId
         self.doneStatus['partyId'] = partyId
         self.doneStatus['zoneId'] = zoneId

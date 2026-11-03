@@ -824,10 +824,11 @@ class OTPClientRepository(ClientRepositoryBase):
     def __blockWebAutoReconnect(self, block):
         """The browser game answers "Try to connect again?" by itself (webui._auto_reconnect, which gives up after 3 tries in 3 minutes). When the
         same account signed in somewhere else, two devices then boot each other in turn. For that one case switch it off: fill its list of recent
-        tries with times far in the future (block), and clear the list again when the box goes away."""
+        tries with times far in the future (block), and take them out again when the box goes away (keeping the real tries, so it still gives up)."""
         rc = getattr(sys.modules.get('webui'), '_rc', None)
         if isinstance(rc, dict):
-            rc['tries'] = [time.time() + 86400.0] * 3 if block else []
+            now = time.time()
+            rc['tries'] = [now + 86400.0] * 3 if block else [t for t in rc['tries'] if t <= now]
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def enterNoConnection(self):
@@ -846,7 +847,7 @@ class OTPClientRepository(ClientRepositoryBase):
         else:
             message = OTPLocalizer.CRLostConnection
         reconnect = 1
-        if self.bootedIndex in (152, 127):
+        if self.bootedIndex in (152, 127, 131):
             reconnect = 0
         self.__blockWebAutoReconnect(self.bootedIndex == 100)
         self.launcher.setDisconnectDetails(self.bootedIndex, message)
@@ -863,7 +864,7 @@ class OTPClientRepository(ClientRepositoryBase):
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def __handleLostConnectionAck(self):
-        if self.lostConnectionBox.doneStatus == 'ok' and self.loginInterface.supportsRelogin():
+        if self.lostConnectionBox.doneStatus == 'ok' and self.lostConnectionBox.style == OTPDialog.TwoChoice:
             self.loginFSM.request('connect', [self.serverList])
         else:
             self.loginFSM.request('shutdown')

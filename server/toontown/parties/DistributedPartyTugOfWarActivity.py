@@ -501,6 +501,8 @@ class DistributedPartyTugOfWarActivity(DistributedPartyTeamActivity):
 
     def tightenRopes(self):
         self.notify.debug('tightenRopes')
+        if not self.toonIds[PartyGlobals.TeamActivityTeams.LeftTeam] or not self.toonIds[PartyGlobals.TeamActivityTeams.RightTeam]:
+            return
         self.tugRopes[0].setup(3, ((self.toonIdsToRightHands[self.toonIds[PartyGlobals.TeamActivityTeams.LeftTeam][0]], (0, 0, 0)), (self.toonIdsToRightHands[self.toonIds[PartyGlobals.TeamActivityTeams.LeftTeam][0]], (0, 0, 0)), (self.toonIdsToRightHands[self.toonIds[PartyGlobals.TeamActivityTeams.RightTeam][0]], (0, 0, 0))), [0,
          0,
          0,

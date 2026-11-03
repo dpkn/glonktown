@@ -1,6 +1,6 @@
 # Credits and third-party notices
 
-**Toontown: Anywhere is an unofficial, fan-made project.** It is not affiliated with, endorsed by, or connected to Disney or
+**Glonktown is an unofficial, fan-made project.** It is not affiliated with, endorsed by, or connected to Disney or
 Toontown Rewritten. Toontown is a trademark of Disney. There is no commercial purpose.
 
 This repository contains **no game files**: no models, textures, sounds or other Disney content.
@@ -8,7 +8,7 @@ This repository contains **no game files**: no models, textures, sounds or other
 ## Open Toontown
 
 The game's code (the `otp` and `toontown` packages and its server) comes from the **Open Toontown** project,
-<https://github.com/open-toontown/open-toontown>. Our changes to it, and the server's Docker image, are in our fork,
+<https://github.com/open-toontown/open-toontown>. Glonktown builds on Toontown: Anywhere's fork of it,
 <https://github.com/lPuffyy/open-toontown-anywhere>, which carries Open Toontown's code. Open Toontown is
 licensed under the BSD 3-Clause License:
 

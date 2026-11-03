@@ -151,7 +151,7 @@ class DistributedPartyManager(DistributedObject):
         return PartyGlobals.GoToPartyStatus.AllowedToGo
 
     def getGoToPartyFailedMessage(self, reason):
-        return ''
+        return TTLocalizer.PartyGatePartyUnavailable
 
     def sendAvatarToParty(self, hostId):
         DistributedPartyManager.notify.debug('sendAvatarToParty hostId = %s' % hostId)

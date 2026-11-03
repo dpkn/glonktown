@@ -22,7 +22,7 @@ LOGIN_MANAGER = 4670
 GAME_ROOT, DISTRICTS_ZONE = 4618, 3
 SERVER_VERSION = "sv1.0.47.38"
 FIRST_NAME_ASTRO = 34
-PLAYGROUNDS = {2000: "Toontown Central", 1000: "Donald's Dock", 3000: "The Brrrgh", 4000: "Minnie's Melodyland", 5000: "Daisy Gardens",
+PLAYGROUNDS = {2000: "Glonktown Central", 1000: "Donald's Dock", 3000: "The Brrrgh", 4000: "Minnie's Melodyland", 5000: "Daisy Gardens",
                6000: "Acorn Acres", 8000: "Goofy Speedway", 9000: "Donald's Dreamland"}
 CHARACTER_WORDS = ("Mickey", "Minnie", "Goofy", "Donald", "Daisy", "Pluto", "Chip", "Dale", "Boat", "Piano")
 

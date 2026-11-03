@@ -499,7 +499,7 @@ class DistributedPartyCatchActivity(DistributedPartyActivity, DistributedPartyCa
         base.localAvatar.cTrav.addCollider(legsCollNodepath, handler)
         base.localAvatar.cTrav.addCollider(headCollNodepath, handler)
         base.localAvatar.cTrav.addCollider(lHandCollNodepath, handler)
-        base.localAvatar.cTrav.addCollider(lHandCollNodepath, handler)
+        base.localAvatar.cTrav.addCollider(rHandCollNodepath, handler)
         if self.ShowToonSpheres:
             legsCollNodepath.show()
             headCollNodepath.show()

@@ -4,31 +4,34 @@
   'use strict';
   const LS = (() => { try { return window.localStorage; } catch (e) { return { getItem() { return null; }, setItem() {}, removeItem() {} }; } })();
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  // ------------------------------------------------------------------ the game server: sign-in, game settings, logs and the game connection.
+  // The page and the game files always come from the page's own site. The game server is that same site, unless server.js (window.TTR_SERVER)
+  // names another one; ?server=<address> moves this device to a different server, and ?server= with nothing after it moves it back.
+  const server = (() => {
+    const asked = new URLSearchParams(location.search).get('server');
+    if (asked !== null) { if (asked.trim()) LS.setItem('ttr_server', asked.trim()); else LS.removeItem('ttr_server'); }
+    const own = LS.getItem('ttr_server') || '';
+    let origin = (own || window.TTR_SERVER || '').replace(/\/+$/, '');
+    if (origin && !/^https?:\/\//i.test(origin)) origin = location.protocol + '//' + origin;
+    const wsBase = origin ? origin.replace(/^http/i, 'ws') : (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host;
+    return {
+      url: (path) => origin + path,
+      ws: location.port === '8002' && !origin ? 'ws://' + location.hostname + ':8766' : wsBase + '/ws',   // the local test server's own bridge
+      userKey: own ? 'ttr_user@' + origin.replace(/^https?:\/\//i, '') : 'ttr_user',                     // each server has its own logins
+    };
+  })();
   const T = window.ttr = {
     aa: (() => { try { return window.localStorage.getItem('ttr_aa') === '0' ? '0' : '1'; } catch (e) { return '1'; } })(),
     pyReady: false, go: false, gameConfig: '', typeBtn: '', dbg: false, safeL: 0, safeR: 0, safeT: 0, safeB: 0, vh: 0, pycode: '', winW: 0, winH: 0, cookie: '', inp: '0,0,0,0,0,0,0,0', camN: 0, txtIn: 0, txtSub: 0, txtVal: '',
-    wsUrl: window.TTR_WS || ((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws'),
-  };
-
-  // ------------------------------------------------------------------ preferences
-  const prefs = {
-    get mode() { return LS.getItem('ttr_srv_mode'); },
-    get res() { return LS.getItem('ttr_srv_res') || ''; },
-    get game() { return LS.getItem('ttr_srv_game') || ''; },
-    get isDefault() { return this.mode !== 'custom'; },
-    get base() { return this.isDefault ? '' : this.res.replace(/\/+$/, ''); },
-    get ws() {
-      if (this.isDefault) return T.wsUrl;
-      const g = this.game;
-      return /^wss?:/i.test(g) ? g : ((location.protocol === 'https:' ? 'wss://' : 'ws://') + g);
-    },
-    get userKey() { return this.isDefault ? 'ttr_user' : 'ttr_user_' + btoa(this.res).slice(0, 12); },
+    wsUrl: server.ws,
   };
 
   // ------------------------------------------------------------------ helpers
-  // the page's font (the title keeps the toon font); without an internet connection the system's own font is used
+  // the lettering font for the title and headings, and the page font for when the game's own (_ui/ImpressBT.ttf) is not there;
+  // without an internet connection the system's own font is used
   const uiFont = document.createElement('link');
-  uiFont.rel = 'stylesheet'; uiFont.href = 'https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap';
+  uiFont.rel = 'stylesheet'; uiFont.href = 'https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@600;700;800;900&display=swap';
   document.head.appendChild(uiFont);
   const root = document.createElement('div');
   root.id = 'ttr';
@@ -59,7 +62,7 @@
   // Everyone else is logged quietly: only crash information (Python tracebacks, errors, lost connections, page errors) and one line
   // about the device and the sign-in name. No passwords, no touches, no frame timings. At most 400 lines per visit.
   let quietSent = 0, tbLeft = 0, lastQuiet = '';
-  const QUIET_WANT = /Traceback|[A-Za-z_]*(Error|Exception)\b|STEP FAILED|reconnecting|webnet: (closed|error)|Aborted/;
+  const QUIET_WANT = /Traceback|[A-Za-z_]*(Error|Exception)\b|STEP FAILED|reconnecting|webnet: (closed|error)|game ended|Aborted/;
   function quietLog(m) {
     if (quietSent >= 400) return;
     let want = false;
@@ -71,14 +74,14 @@
     } else if (/^JS\| (page error|unhandled|console\.error|session)/.test(m)) want = true;
     if (!want || m === lastQuiet) return;
     lastQuiet = m; quietSent++;
-    try { navigator.sendBeacon('/__log', m); } catch (e) {}
+    try { navigator.sendBeacon(server.url('/__log'), m); } catch (e) {}
   }
   function plog(m) {
-    if (LOGGING) { try { navigator.sendBeacon('/__log', m); } catch (e) {} return; }
+    if (LOGGING) { try { navigator.sendBeacon(server.url('/__log'), m); } catch (e) {} return; }
     if (m.indexOf('JS| env') !== 0) { quietLog(m); return; }
     // the real site: only the screen-fact lines, a few per visit, as a plain request the web server's log records
     if (m.indexOf('JS| env') !== 0 || dn >= 12) return;
-    dn++; try { new Image().src = '/__d?' + encodeURIComponent(m) + '&r=' + Date.now(); } catch (e) {}
+    dn++; try { new Image().src = server.url('/__d?') + encodeURIComponent(m) + '&r=' + Date.now(); } catch (e) {}
   }
   T.plog = plog;
   {
@@ -109,15 +112,7 @@
     cap = Math.max(0.5, Math.min(cap, 2));
     const dpr = Math.min(window.devicePixelRatio || 1, cap);
     T.winW = Math.round(W * dpr); T.winH = Math.round(H * dpr);
-    fitTitle();
     T.safeL = SAFE.l; T.safeR = SAFE.r; T.safeT = SAFE.t; T.safeB = SAFE.b; T.vh = H;      // the game keeps its on-screen items inside these
-  }
-  function fitTitle() {
-    if (typeof title === 'undefined') return;
-    let fs = Math.min(84 * sc, W / 11, H * 0.14);
-    title.style.fontSize = fs + 'px';
-    // measure the word, not the title box (that is always as wide as the screen)
-    for (let i = 0; i < 12 && titleWord.offsetWidth > W * 0.92; i++) { fs *= 0.9; title.style.fontSize = fs + 'px'; }
   }
   addEventListener('resize', relayout);
   // iOS (especially a Home Screen app) sometimes reports a stale window size until the phone is rotated: keep checking, and re-measure
@@ -150,79 +145,70 @@
   [400, 1500, 4000, 9000].forEach((ms) => setTimeout(() => { if (!kbHold) relayout(); }, ms));
   addEventListener('orientationchange', () => setTimeout(relayout, 200));
 
-  // ------------------------------------------------------------------ backdrop: an evening sky with twinkling stars, slow clouds and light
-  // motes drifting up from the hills. All of it only moves or fades (no repainting), so it stays smooth while the game starts up.
-  const cssVars = (e, vars) => { Object.keys(vars).forEach((k) => e.style.setProperty('--' + k, vars[k])); return e; };
-  let seed = 7;
-  const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;          // the same sky on every visit
+  // ------------------------------------------------------------------ backdrop: the game's own loading-screen sky (_ui/sky.jpg, which
+  // tools/build_client.sh copies from its resources), so the page and the game's first screens are the same picture. Until it has loaded, or
+  // without it, the same blue.
   const bg = el('div', null, root);
   bg.id = 'ttr-bg';
   const bgImg = el('img', null, bg);
-  bgImg.style.display = 'none';
-  for (let i = 0; i < 46; i++) {
-    const secs = 2.5 + rand() * 4;
-    cssVars(el('div', 'star', bg, { left: rand() * 100 + '%', top: Math.pow(rand(), 1.6) * 55 + '%', animationDuration: secs + 's', animationDelay: -rand() * secs + 's' }),
-      { s: (0.8 + rand() * 1.8).toFixed(1) });
-  }
-  [[0.1, 560, 240, 0.15, 0.35], [0.24, 420, 190, 0.6, 0.45], [0.38, 640, 280, 0.35, 0.55], [0.5, 380, 170, 0.85, 0.6]].forEach(([top, w, secs, phase, o]) => {
-    cssVars(el('div', 'cloud', bg, { top: top * 100 + '%', animationDuration: secs + 's', animationDelay: -secs * phase + 's' }), { w, o });
-  });
-  el('div', 'hills', bg);
-  for (let i = 0; i < 14; i++) {
-    const secs = 10 + rand() * 8;
-    cssVars(el('div', 'mote', bg, { left: 4 + rand() * 92 + '%', animationDuration: secs + 's', animationDelay: -rand() * secs + 's' }),
-      { s: (2 + rand() * 2.5).toFixed(1), dx: Math.round((rand() - 0.5) * 80) });
-  }
-  const title = el('div', null, root);
-  title.id = 'ttr-title';
-  const titleWord = el('span', null, title);
-  titleWord.textContent = 'GLONKTOWN';
-  const logo = el('img', null, root);
-  logo.id = 'ttr-logo';
-  logo.style.display = 'none';
-  let haveArt = false;
-  layouts.push(() => {
-    if (haveArt && logo.naturalWidth) {
-      const lh = Math.min(H * 0.40, 200 * sc), lw = lh * logo.naturalWidth / logo.naturalHeight;
-      Object.assign(logo.style, { height: lh + 'px', width: lw + 'px', top: Math.max(H * 0.04, 10) + 'px' });
-    }
-  });
   async function loadArt() {
+    if (bg.classList.contains('art')) return;
+    const url = '/_ui/sky.jpg';
     try {
-      if (typeof caches === 'undefined') {                       // not a secure page: no Cache API, just fetch the two pictures
-        const urls = await Promise.all([prefs.base + '/_ui/background.jpg', prefs.base + '/_ui/logo.png'].map(async (u) => {
-          const r = await fetch(u, { cache: 'no-store' }); return r.ok ? URL.createObjectURL(await r.blob()) : null; }));
-        if (urls[0]) {          // the logo is optional: the sky alone is enough
-          bgImg.src = urls[0]; if (urls[1]) logo.src = urls[1];
-          await Promise.all([bgImg.decode().catch(() => {}), logo.decode().catch(() => {})]);
-          bgImg.style.display = ''; if (urls[1]) { logo.style.display = ''; title.style.display = 'none'; }
-          bg.classList.add('art');
-          haveArt = true; relayout();
-        }
-        return;
-      }
-      const cache = await caches.open('ttr-art-v1');
-      const get = async (url) => {
+      let r = null;
+      if (typeof caches === 'undefined') {                       // not a secure page: no Cache API, just fetch it
+        const n = await fetch(url, { cache: 'no-store' }); if (n.ok) r = n;
+      } else {
         // ask the server first: a picture it no longer has (404) is dropped from the saved copy; the saved copy is only for when we are offline
-        let status = 0, r = null;
+        const cache = await caches.open('ttr-art-v1');
+        let status = 0;
         try {
           const n = await fetch(url + '?t=' + Date.now(), { cache: 'no-store' });
           status = n.status;
           if (n.ok) { await cache.put(url, n.clone()); r = n; } else if (n.status === 404) await cache.delete(url);
         } catch (e) { /* offline */ }
         if (!r && status !== 404) r = await cache.match(url);
-        return r ? URL.createObjectURL(await r.blob()) : null;
-      };
-      const [b, l] = await Promise.all([get(prefs.base + '/_ui/background.jpg'), get(prefs.base + '/_ui/logo.png')]);
-      if (b) {
-        bgImg.src = b; if (l) logo.src = l;
-        await Promise.all([bgImg.decode().catch(() => {}), logo.decode().catch(() => {})]);
-        bgImg.style.display = ''; if (l) { logo.style.display = ''; title.style.display = 'none'; }
-        bg.classList.add('art');
-        haveArt = true; relayout();
       }
-    } catch (e) { /* the gradient and title stay */ }
+      if (!r) return;
+      bgImg.src = URL.createObjectURL(await r.blob());
+      await bgImg.decode().catch(() => {});
+      bg.classList.add('art');
+    } catch (e) { /* the plain blue stays */ }
   }
+
+  // ------------------------------------------------------------------ the title, lettered like the game's logo: the word is drawn five times
+  // over (a shadow, a dark rim, a red band, a black edge, then the yellow letters), each letter tipped and bobbed a little
+  const title = el('div', null, root);
+  title.id = 'ttr-title';
+  const TILT = [-7, 5, -4, 6, -5, 4, -6, 5, -3], BOB = [-4, 3, -2, 5, -4, 2, -3, 4, -1];
+  title.innerHTML = '<svg role="img" aria-label="Glonktown"><defs><linearGradient id="ttr-gold" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#fff7a8"/><stop offset=".45" stop-color="#ffe01a"/><stop offset="1" stop-color="#ffa600"/></linearGradient>' +
+    '<text id="ttr-word" font-size="100" rotate="' + TILT.join(' ') + '">' + [...'GLONKTOWN'].map((c, i) => '<tspan y="' + BOB[i] + '">' + c + '</tspan>').join('') + '</text></defs>' +
+    '<use href="#ttr-word" class="s" transform="translate(3 9)"/><use href="#ttr-word" class="e"/><use href="#ttr-word" class="b"/>' +
+    '<use href="#ttr-word" class="k"/><use href="#ttr-word" class="f"/></svg>';
+  const titleSvg = title.firstChild;
+  let titleAspect = 0, titleTop = 0, titleH = 0;
+  let titleUp = false;          // the title moves up to make room once the sign-in dialog is shown, and stays there
+  function measureTitle() {     // again whenever a font arrives: the letters change shape
+    try {
+      const b = titleSvg.querySelector('use.e').getBBox(), p = 19;      // half the widest edge, and the shadow below it
+      if (!b.width) return;
+      const vw = b.width + 2 * p + 3, vh = b.height + 2 * p + 9;
+      titleSvg.setAttribute('viewBox', [b.x - p, b.y - p, vw, vh].join(' '));
+      titleAspect = vw / vh;
+      relayout();
+    } catch (e) {}
+  }
+  if (document.fonts) document.fonts.addEventListener('loadingdone', measureTitle);
+  layouts.push(() => {
+    titleTop = titleUp ? Math.max(SAFE.t + 4, H * 0.04) : H * 0.2;
+    title.style.top = titleTop + 'px';
+    if (!titleAspect) return;
+    let h = Math.min(130 * sc, H * 0.16), w = h * titleAspect;
+    if (w > W * 0.92) { w = W * 0.92; h = w / titleAspect; }
+    titleSvg.style.width = w + 'px'; titleSvg.style.height = h + 'px';
+    titleH = h;
+  });
 
   // ------------------------------------------------------------------ loading screen
   const load = el('div', null, root);
@@ -235,12 +221,14 @@
   const errBox = el('div', null, load); errBox.id = 'ttr-error'; errBox.style.display = 'none';
   const errBtn = el('button', 'ttr-pill light on', load); errBtn.textContent = 'Try again'; errBtn.style.display = 'none';
   layouts.push(() => {
-    const bw = Math.min(W * 0.6, 560 * sc), bh = 6 * sc, by = H * 0.55;
+    const bw = Math.min(W * 0.6, 520 * sc), bh = 14 * sc, by = H * 0.72;
     Object.assign(bar.style, { width: bw + 'px', height: bh + 'px', top: by + 'px' });
-    status.style.top = by - 40 * sc + 'px';
-    detail.style.top = by + bh + 14 * sc + 'px';
-    spin.style.top = by + 'px';        // where the bar was: the bar is hidden while the game starts
-    Object.assign(errBtn.style, { left: (W - 170) / 2 + 'px', top: H - 64 + 'px', width: '170px', height: '40px', fontSize: '16px' });
+    status.style.top = by - 46 * sc + 'px';
+    detail.style.top = by + bh + 12 * sc + 'px';
+    spin.style.top = by - 4 * sc + 'px';        // where the bar was: the bar is hidden while the game starts
+    const et = titleTop + titleH + 10 * sc;
+    Object.assign(errBox.style, { top: et + 'px', height: Math.max(60, by - 56 * sc - et) + 'px' });
+    Object.assign(errBtn.style, { left: (W - 170) / 2 + 'px', top: H - Math.max(SAFE.b, 8) - 48 + 'px', width: '170px', height: '40px' });
   });
   function setStatus(msg, det, frac) {
     status.textContent = msg || ''; detail.textContent = det || '';
@@ -250,8 +238,9 @@
   function showError(msg) {
     spin.style.display = 'none'; status.textContent = 'Something went wrong';
     errBox.textContent = msg; errBox.style.display = ''; errBtn.style.display = '';
+    titleUp = true; relayout();
   }
-  errBtn.addEventListener('click', () => { errBox.style.display = 'none'; errBtn.style.display = 'none'; beginDownload(); });
+  errBtn.addEventListener('click', () => { errBox.style.display = 'none'; errBtn.style.display = 'none'; fetchGameAndStart(); });
 
   // ------------------------------------------------------------------ the downloader
   // Saved packs: the Cache API on secure (https) pages, IndexedDB everywhere else, so the files are not downloaded every launch.
@@ -328,13 +317,15 @@
       if (waited === 90000) setStatus('Getting ready...', 'Still starting. If nothing changes, reload this page.', 0);
     }
     setStatus('Checking game files...', '', 0);
-    const base = prefs.base;
-    const packs = await (await fetch(base + '/packs.json?t=' + Date.now(), { cache: 'no-store' })).json();
+    const packs = await (await fetch('/packs.json?t=' + Date.now(), { cache: 'no-store' })).json();
     const total = packs.reduce((a, p) => a + p[1], 0);
     let got = 0, done = 0;
     let cache = null;
     try { if (typeof caches !== 'undefined' && !/nocache/.test(location.search)) cache = await caches.open('ttr-packs-v1'); } catch (e) { cache = null; }
-    const want = new Set(packs.map((p) => base + '/_packs/' + p[0] + '.zip?s=' + p[1]));   // the size is part of the address: a browser cache ignores everything after a # , so a changed pack was never fetched again
+    // packs.json is always fetched fresh, and each pack is saved under a hash of its contents: a pack that changed gets a new
+    // address, so the saved copy is never used for it, and saved packs that are no longer listed are deleted
+    const packKey = (name, hash) => '/_packs/' + name + '.zip?v=' + hash;
+    const want = new Set(packs.map((p) => packKey(p[0], p[2])));
     try {
       if (cache) { for (const k of await cache.keys()) { if (!want.has(k.url.replace(location.origin, '')) && !want.has(k.url)) await cache.delete(k); } }
       else { for (const k of await idb.keys()) { if (!want.has(k)) await idb.del(k); } }
@@ -343,15 +334,10 @@
     const upd = (first) => setStatus(first ? 'Downloading game files' : 'Loading game files',
       mb(got) + ' of ' + mb(total) + ' MB   (' + done + ' of ' + packs.length + ' packs)', total ? got / total : 0);
     let fromNet = false;
-    for (const [name, size] of packs) {
-      const url = base + '/_packs/' + name + '.zip';
-      const key = url + '?s=' + size;
+    for (const [name, , hash] of packs) {
+      const key = packKey(name, hash);
       let body, putP = null, chunks = null;
       let resp = cache ? await cache.match(key) : null;
-      if (cache && !resp && name !== '_code') {            // copy saved by an older page version (its address had no size in it): keep it, so game art is not downloaded twice
-        const old = await cache.match(url);
-        if (old) { resp = old; try { await cache.put(key, old.clone()); await cache.delete(url); } catch (e) { /* fine */ } }
-      }
       let blob = null;
       if (!cache) { try { blob = await idb.get(key); } catch (e) { blob = null; } }
       if (blob) body = blob.stream();
@@ -392,28 +378,45 @@
     return f;
   }
 
-  // ------------------------------------------------------------------ the sign-in screen (same layout as the app)
+  // ------------------------------------------------------------------ the sign-in screen: a dialog like the game's own, under the title.
+  // Two tabs say which it is: making an account, or signing in to one. A device that has signed in before opens on the second.
   const login = el('div', null, root);
   login.id = 'ttr-login'; login.style.display = 'none';
-  const uField = field('Toon name', false, login, 'username', 'username');
-  const pField = field('Password', true, login, 'password', 'current-password');
-  const playBtn = el('button', 'ttr-btn on', login); playBtn.textContent = 'PLAY';
-  const forgot = el('button', 'ttr-link on', login); forgot.textContent = 'Forgot password?';
-  const lmsg = el('div', null, login); lmsg.id = 'ttr-msg';
-  let kbMode = false;
+  const panel = el('div', 'ttr-dialog on', login); panel.id = 'ttr-panel';
+  const tabs = el('div', 'ttr-tabs', panel);
+  const newTab = el('button', 'on', tabs); newTab.textContent = "I'm new";
+  const backTab = el('button', 'on', tabs); backTab.textContent = "I've played before";
+  const lmsg = el('div', null, panel); lmsg.id = 'ttr-msg';
+  const uField = field('', false, panel, 'username', 'username');
+  const pField = field('', true, panel, 'password', 'current-password');
+  const playBtn = el('button', 'ttr-btn on', panel);
+  let signUp = false, kbMode = false;
+  function setMode(isNew) {
+    signUp = isNew;
+    newTab.classList.toggle('sel', isNew); backTab.classList.toggle('sel', !isNew);
+    uField.placeholder = isNew ? 'Pick a name' : 'Your name';
+    pField.placeholder = isNew ? 'Pick a password' : 'Your password';
+    pField.autocomplete = isNew ? 'new-password' : 'current-password';
+    playBtn.textContent = isNew ? 'SIGN UP' : 'PLAY';
+    uField.value = isNew ? '' : LS.getItem(server.userKey) || '';
+    pField.value = isNew ? '' : LS.getItem(server.userKey + '.pw') || '';
+    loginMessage(isNew ? 'Pick any name and password. Remember them!' : 'Welcome back! Sign in to play.', false);
+  }
+  newTab.addEventListener('click', () => setMode(true));
+  backTab.addEventListener('click', () => setMode(false));
   // only phones and tablets get an on-screen keyboard to make room for; a desktop keeps the fields where they are
   const touchFirst = () => !!(window.matchMedia && matchMedia('(hover: none) and (pointer: coarse)').matches);
   function loginLayout() {
     const vv = window.visualViewport;
     const kb = kbMode && vv && touchFirst();
-    const top = kb ? vv.offsetTop : 0;                  // the visible area above the keyboard starts here
-    const w = Math.min(W * 0.5, 360 * sc), y0 = kb ? top + 10 * sc : H * (haveArt ? 0.47 : 0.36);
-    [uField, pField].forEach((f, i) => { Object.assign(f.style, { width: w + 'px', top: y0 + i * 56 * sc + 'px', left: W / 2 + 'px' }); });
-    const bw = 220 * sc, bh = 50 * sc;
-    place(playBtn, (W - bw) / 2, y0 + 120 * sc, bw, bh);
-    place(forgot, (W + bw) / 2 + 14 * sc, y0 + 120 * sc + bh * 0.2, null, bh * 0.6);
-    lmsg.style.top = y0 + 194 * sc + 'px'; lmsg.style.fontSize = 16 * sc + 'px';
-    logo.style.opacity = title.style.opacity = kb ? '0' : '';
+    const pw = Math.min(W - 24, 400 * sc);
+    Object.assign(panel.style, { width: pw + 'px', left: (W - pw) / 2 + 'px' });
+    // above the keyboard: at the top of the visible area; otherwise in the middle of the space under the title
+    const y0 = kb ? vv.offsetTop + 8 * sc : titleTop + titleH + 6 * sc;
+    const room = H - Math.max(SAFE.b, 10) - y0;
+    panel.classList.toggle('kb', !!kb);         // typing: only the fields, the button and any error
+    panel.style.top = (kb ? y0 : y0 + Math.max(0, (room - panel.offsetHeight) / 2)) + 'px';
+    title.style.opacity = kb ? '0' : '';
   }
   layouts.push(loginLayout);
   if (window.visualViewport) {
@@ -422,32 +425,43 @@
   }
   function loginMessage(m, bad) { lmsg.textContent = m; lmsg.className = bad ? 'bad' : ''; lmsg.id = 'ttr-msg'; }
   function showLogin() {
-    showLoad(false); login.style.display = '';
-    uField.value = LS.getItem(prefs.userKey) || '';
-    pField.value = LS.getItem(prefs.userKey + '.pw') || '';
-    loginMessage('New here? Pick a name and password and tap PLAY.', false);
+    showLoad(false); login.style.display = ''; titleUp = true;
+    setMode(!LS.getItem(server.userKey));
+    sayWhyEnded();
     relayout();
+  }
+  function sayWhyEnded() {          // the page was started again because the game ended (T.ended)
+    let why = null;
+    try { why = JSON.parse(sessionStorage.getItem('ttr.ended')); sessionStorage.removeItem('ttr.ended'); } catch (e) {}
+    if (!why) return;
+    const [kind, detail] = why;
+    if (kind === 'quit') loginMessage("You've logged out. See you soon!", false);
+    else if (kind === 'lost') loginMessage(detail || 'Lost the connection to the Glonktown server.', true);
+    else loginMessage('The game stopped unexpectedly (error ' + detail + ').', true);
   }
   async function authCall(path, text) {
     try {
-      const r = await fetch(prefs.base + path, { method: 'POST', body: text, headers: { 'Content-Type': 'text/plain' } });
+      // the sign-in service only makes a new account when the player said they are new, so a mistyped name is an error, not an empty account
+      const r = await fetch(server.url(path), { method: 'POST', body: text, headers: { 'Content-Type': 'text/plain', 'X-Ttr-Mode': signUp ? 'new' : 'login' } });
       const t = (await r.text()).trim();
-      if (r.status === 404) return { ok: true, tag: 'ok', text: t };
-      return { ok: r.ok, tag: r.ok ? t : '', text: t };
-    } catch (e) { return { ok: false, tag: '', text: "Can't reach the Toontown server. Check your Wi-Fi." }; }
+      if (r.status === 404) return { ok: true, tag: 'ok', token: '', text: t };
+      const [tag, token] = t.split(' ');          // "ok <play token>": the game logs in with the token, which the server checks
+      return { ok: r.ok, tag: r.ok ? tag : '', token: r.ok ? token || '' : '', text: t };
+    } catch (e) { return { ok: false, tag: '', text: "Can't reach the Glonktown server. It may be switched off, or check your internet." }; }
   }
   async function signIn() {
     const user = uField.value.trim().toLowerCase(), pw = pField.value;
-    if (!user || !pw) { loginMessage('Enter your toon name and password.', true); return; }
+    if (!user || !pw) { loginMessage(signUp ? 'Pick a name and a password.' : 'Enter your name and password.', true); return; }
     if (user.includes(':')) { loginMessage("Please don't use colons in your name.", true); return; }
     if (!standalone) goFull();        // the game plays full screen; a browser only allows that straight after a tap or key press, so ask now
     playBtn.disabled = true; loginMessage('Signing in...', false);
     const cookie = user + ':' + pw;
     const r = await authCall('/auth', cookie);
     playBtn.disabled = false;
-    if (!r.ok) { loginMessage(r.text || 'Sign-in failed.', true); return; }
-    LS.setItem(prefs.userKey, user); LS.setItem(prefs.userKey + '.pw', pw);
-    startGame(cookie);
+    if (!r.ok) { loginMessage(r.text || 'Sign-in failed.', true); loginLayout(); return; }
+    LS.setItem(server.userKey, user); LS.setItem(server.userKey + '.pw', pw);
+    signedIn = { cookie, token: r.token };
+    fetchGameAndStart();
   }
   [uField, pField].forEach((f) => {
     f.setAttribute('enterkeyhint', f === pField ? 'go' : 'next');
@@ -456,7 +470,7 @@
       if (document.activeElement !== uField && document.activeElement !== pField) { kbMode = false; loginLayout(); window.scrollTo(0, 0); }
     }, 80));
   });
-  login.addEventListener('pointerdown', (e) => { if (e.target === login || e.target === lmsg) { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } });
+  login.addEventListener('pointerdown', (e) => { if (e.target === login || e.target === panel || e.target === lmsg) { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } });
   playBtn.addEventListener('click', signIn);
   // Enter / Go / Send on a phone keyboard does not always arrive as a plain "Enter" key press (Android keyboards that are suggesting words
   // report key "Unidentified" and send the line break as an input event instead), so listen for both ways.
@@ -468,31 +482,29 @@
   }
   onEnter(pField, () => signIn());
   onEnter(uField, () => pField.focus());
-  forgot.addEventListener('click', () => loginMessage('Ask the host to reset your password. Your toons stay.', false));
 
-  // ------------------------------------------------------------------ the flow
-  async function beginDownload() {
+  // ------------------------------------------------------------------ the flow: sign in, then get the game files, then start the game
+  let signedIn = null;
+  async function fetchGameAndStart() {
     login.style.display = 'none'; showLoad(true);
     errBox.style.display = 'none'; errBtn.style.display = 'none'; spin.style.display = 'none';
-    loadArt();
-    try { await downloadAll(); showLogin(); }
-    catch (e) { console.error(e); showError(String(e && e.stack || e)); }
+    try { await downloadAll(); }
+    catch (e) { console.error(e); showError(String(e && e.stack || e)); return; }
+    startGame(signedIn.cookie, signedIn.token);
   }
-  async function startGame(cookie) {
-    login.style.display = 'none'; showLoad(true);
-    setStatus('Starting Toontown...', '', null); bar.style.display = 'none'; spin.style.display = '';
-    T.wsUrl = prefs.ws;
+  async function startGame(cookie, playToken) {
+    setStatus('Starting Glonktown...', '', null); bar.style.display = 'none'; spin.style.display = '';
     try {            // the server's game settings (gameconfig.json); no file, or no answer in 3 seconds, means the game's own defaults
       const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), 3000);
-      const r = await fetch('/gameconfig.json?t=' + Date.now(), { cache: 'no-store', signal: ctl.signal });
+      const r = await fetch(server.url('/gameconfig.json?t=') + Date.now(), { cache: 'no-store', signal: ctl.signal });
       clearTimeout(timer);
       if (r.ok) T.gameConfig = await r.text();
     } catch (e) { }
-    T.cookie = cookie; T.go = true;
+    T.cookie = cookie; T.playToken = playToken || ''; T.go = true;
     plog('JS| session user: ' + String(cookie).split(':')[0]);       // the name only, never the password
   }
   T.started = function () {          // called by the game once it is drawing
-    bg.style.display = 'none'; logo.style.display = 'none'; title.style.display = 'none'; load.style.display = 'none';
+    bg.style.display = 'none'; title.style.display = 'none'; load.style.display = 'none';
     hud.style.display = '';
     relayout(); keepAwake();
     if (!standalone && !isFullscreen()) {        // not full screen after all (refused, or left while loading): the first tap or key in the game makes it so
@@ -500,6 +512,12 @@
       addEventListener('pointerup', once, true); addEventListener('keydown', once, true);
     }
     [500, 2000, 6000].forEach((ms) => setTimeout(() => { if (!kbHold) relayout(); }, ms));
+  };
+  // Called by the game when it has quit (main.py _end_game). The game cannot be started twice in one page, so start the page again: that
+  // also leaves full screen, and the sign-in screen says why the player is back.
+  T.ended = function (kind, detail) {
+    try { sessionStorage.setItem('ttr.ended', JSON.stringify([String(kind), String(detail || '')])); } catch (e) {}
+    location.reload();
   };
 
   // ------------------------------------------------------------------ in-game controls (same layout as the app)
@@ -828,7 +846,7 @@
   addEventListener('resize', checkRotate); addEventListener('orientationchange', () => setTimeout(checkRotate, 150));
 
   // ------------------------------------------------------------------ go
-  measure(); relayout(); checkRotate();
+  measure(); relayout(); checkRotate(); measureTitle();
   showLoad(true); setStatus('Getting ready...', '', 0);
   loadArt();
   // ------------------------------------------------------------------ opened in a normal browser tab on iPhone/iPad: show how to add it to the Home Screen
@@ -850,13 +868,25 @@
     try { const r = req.call(d, { navigationUI: 'hide' }); if (r && r.then) r.then(() => { try { screen.orientation.lock('landscape').catch(() => {}); } catch (e) {} }).catch(() => {}); } catch (e) {}
   }
   if (isAndroid && !standalone) { const once = () => { removeEventListener('pointerup', once, true); goFull(); }; addEventListener('pointerup', once, true); }
+  // In game, a browser tab that has left full screen (Esc, or a swipe on Android) shows a small button at the top that goes back to it
+  const fullBtn = el('button', 'ttr-full on', hud);
+  fullBtn.title = 'Full screen'; fullBtn.setAttribute('aria-label', 'Full screen');
+  fullBtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>';
+  const canFull = !standalone && !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+  function showFullBtn() { fullBtn.style.display = canFull && !isFullscreen() ? '' : 'none'; }
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach((t) => document.addEventListener(t, showFullBtn));
+  showFullBtn();
+  fullBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+  fullBtn.addEventListener('click', (e) => { e.preventDefault(); goFull(); gameFocus(); });
+  layouts.push(() => {
+    const s = 34 * sc, besideGear = showDisplayButtons || fps.style.display !== 'none';
+    place(fullBtn, besideGear ? W / 2 + 82 * sc : (W - s) / 2, Math.max(SAFE.t, 6) + 2 * sc, s, s);
+  });
   // keep the screen on while playing
   let wl = null;
   function keepAwake() { try { if (navigator.wakeLock && !document.hidden) navigator.wakeLock.request('screen').then((l) => { wl = l; }).catch(() => {}); } catch (e) {} }
   document.addEventListener('visibilitychange', () => { if (!document.hidden && hud.style.display !== 'none') keepAwake(); });
-  // Open Toontown test build: served from the PC's own test server (port 8002), the files and the game connection are on that same machine
-  if (!prefs.mode && location.port === '8002') { LS.setItem('ttr_srv_mode', 'custom'); LS.setItem('ttr_srv_res', location.origin); LS.setItem('ttr_srv_game', 'ws://' + location.hostname + ':8766'); }
-  function begin() { beginDownload(); }
+  function begin() { loadArt(); showLogin(); }
   if (needInstall) {
     installUp = true; checkRotate();
     const ins = el('div', null, root); ins.id = 'ttr-install';

@@ -3,11 +3,13 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 from toontown.catalog import CatalogItem
 from toontown.estate import MailboxGlobals
+from toontown.parties.PartyGlobals import InviteStatus
 from toontown.toonbase import ToontownGlobals
 
 
 class DistributedMailboxAI(DistributedObjectAI):
-    """The mailbox in front of a house: holds what the owner ordered from the catalog until they accept or discard it."""
+    """The mailbox in front of a house: holds what the owner ordered from the catalog until they accept or discard it, and
+    the party invites they have not answered yet."""
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedMailboxAI')
 
     def __init__(self, air, house):
@@ -48,7 +50,7 @@ class DistributedMailboxAI(DistributedObjectAI):
         av = self.air.doId2do.get(avId)
         if avId != self.house.ownerId or av is None:
             self.sendUpdate('setMovie', [MailboxGlobals.MAILBOX_MOVIE_NOT_OWNER, avId])
-        elif len(av.mailboxContents) == 0:
+        elif len(av.mailboxContents) == 0 and av.getNumInvitesToShowInMailbox() == 0:
             self.sendUpdate('setMovie', [MailboxGlobals.MAILBOX_MOVIE_EMPTY, avId])
         else:
             self.sendUpdate('setMovie', [MailboxGlobals.MAILBOX_MOVIE_READY, avId])
@@ -97,10 +99,20 @@ class DistributedMailboxAI(DistributedObjectAI):
         self.sendUpdateToAvatarId(self.air.getAvatarIdFromSender(), 'discardItemResponse', [context, retcode])
 
     def acceptInviteMessage(self, context, inviteKey):
-        pass
+        self.__replyToInvite(context, inviteKey, InviteStatus.Accepted, 'acceptItemResponse')
 
     def rejectInviteMessage(self, context, inviteKey):
-        pass
+        self.__replyToInvite(context, inviteKey, InviteStatus.Rejected, 'discardItemResponse')
 
     def markInviteReadButNotReplied(self, inviteKey):
-        pass
+        avId = self.air.getAvatarIdFromSender()
+        if avId == self.house.ownerId:
+            self.air.partyManager.replyToInvite(avId, inviteKey, InviteStatus.ReadButNotReplied)
+
+    def __replyToInvite(self, context, inviteKey, status, responseField):
+        avId = self.air.getAvatarIdFromSender()
+        if avId == self.house.ownerId and self.air.partyManager.replyToInvite(avId, inviteKey, status):
+            retcode = ToontownGlobals.P_ItemAvailable
+        else:
+            retcode = ToontownGlobals.P_InvalidIndex
+        self.sendUpdateToAvatarId(avId, responseField, [context, retcode])

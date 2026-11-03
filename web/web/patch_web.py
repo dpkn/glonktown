@@ -1,14 +1,10 @@
 """After pygbag has built the page (pygbag --build game), put our screens into it:
-   python patch_web.py [ws url]      ("auto" for a hosted site: the page then connects to wss://<this site>/ws)"""
+   python patch_web.py"""
 import os
 import shutil
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 app = "game"       # the folder that holds main.py, built by pygbag into game/build/web
-ws = sys.argv[1] if len(sys.argv) > 1 else "ws://localhost:8766"
-if ws == "auto":
-    ws = ""        # hosted build: the page works out the address itself (wss://<this site>/ws)
 web = os.path.join(HERE, app, "build", "web")
 index = os.path.join(web, "index.html")
 s = open(index, encoding="utf-8").read()
@@ -24,8 +20,11 @@ if "ttr-ui.js" not in s:
     s = s.replace('<meta name="viewport" content="width=device-width, initial-scale=1.0">',
                   '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">', 1)
     s = s.replace("</head>", '<link rel="stylesheet" href="ttr-ui.css">\n</head>', 1)
-    s = s.replace("</body>", '<script>window.TTR_WS = %r;</script>\n<script src="ttr-audio.js"></script>\n<script src="ttr-ui.js"></script>\n</body>' % ws, 1)
+    s = s.replace("</body>", '<script src="server.js"></script>\n<script src="ttr-audio.js"></script>\n<script src="ttr-ui.js"></script>\n</body>', 1)
     open(index, "w", encoding="utf-8").write(s)
+# the game server the page signs in to and plays on: '' is the site the page came from. web/build_pages.sh writes another one for Cloudflare Pages
+with open(os.path.join(web, "server.js"), "w") as f:
+    f.write("window.TTR_SERVER = '';\n")
 # home-screen app: manifest, icons, iOS app tags
 import json
 for f in ("icon-180.png", "icon-192.png", "icon-512.png"):

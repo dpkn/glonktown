@@ -49,6 +49,8 @@ from toontown.racing.DistributedStartingBlockAI import DistributedViewingBlockAI
 from toontown.racing.DistributedViewPadAI import DistributedViewPadAI
 from toontown.racing.RaceManagerAI import RaceManagerAI
 from toontown.uberdog.DistributedPartyManagerAI import DistributedPartyManagerAI
+from toontown.parties.ToontownTimeManager import ToontownTimeManager
+from toontown.safezone.DistributedPartyGateAI import DistributedPartyGateAI
 from toontown.safezone.SafeZoneManagerAI import SafeZoneManagerAI
 from toontown.shtiker.CogPageManagerAI import CogPageManagerAI
 from toontown.spellbook.ToontownMagicWordManagerAI import ToontownMagicWordManagerAI
@@ -58,6 +60,7 @@ from toontown.toonbase import ToontownGlobals
 from toontown.tutorial.TutorialManagerAI import TutorialManagerAI
 from toontown.uberdog.DistributedInGameNewsMgrAI import DistributedInGameNewsMgrAI
 import os
+import time
 
 
 class ToontownAIRepository(ToontownInternalRepository):
@@ -145,6 +148,10 @@ class ToontownAIRepository(ToontownInternalRepository):
         """
         Creates "local" (non-distributed) objects.
         """
+
+        # Create our Toontown time manager (party times are on this clock)...
+        self.toontownTimeManager = ToontownTimeManager(serverTimeUponLogin=int(time.time()),
+                                                       globalClockRealTimeUponLogin=globalClock.getRealTime())
 
         # Create our holiday manager...
         self.holidayManager = HolidayManagerAI(self)
@@ -457,7 +464,16 @@ class ToontownAIRepository(ToontownInternalRepository):
         return spots
 
     def findPartyHats(self, dnaData, zoneId):
-        return []  # TODO
+        partyHats = []
+        if 'prop_party_gate' in dnaData.getName():
+            partyHat = DistributedPartyGateAI(self)
+            partyHat.generateWithRequired(zoneId)
+            partyHats.append(partyHat)
+        else:
+            for i in range(dnaData.getNumChildren()):
+                partyHats.extend(self.findPartyHats(dnaData.at(i), zoneId))
+
+        return partyHats
 
     def findRacingPads(self, dnaData, zoneId, area, type='racing_pad', overrideDNAZone=False):
         kartPads, kartPadGroups = [], []

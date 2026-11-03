@@ -5,14 +5,13 @@ How to run, update, back up and debug Glonktown on the host Mac. Read [ARCHITECT
 Paths here are from the repository root:
 
 ```
-server/    the game server (code, docker/, otpy/); server/resources holds the stock Open Toontown resources (not in git)
+server/    the game server (code, docker/, otpy/); server/resources holds the game's resources (not in git)
 web/       the browser client
 runtime/   the container's mounts (not in git): databases/, data/, web/{_play,root}
 tools/     build_client.sh (page + packs into runtime/web), make_icons.py
 ```
 
-The game's resources are a clone of <https://github.com/open-toontown/resources> in `server/resources` (or a symlink to one),
-mounted read-only.
+The game's resources are in `server/resources` (see the README's setup step 2), mounted read-only.
 
 ## Everyday
 
@@ -112,7 +111,7 @@ and get the same toons back, because the game account is matched by name (`runti
 
 - `accounts.json` maps a name to an account number.
 - `astrondb/<number>.yaml` is each object: an `AstronAccount` (its toons and access level) or a `DistributedToon`.
-- To make an account staff (magic words), set its `ACCESS_LEVEL` to `"SYSTEM_ADMIN"` (or `ADMIN`, `DEVELOPER`, `MODERATOR`).
+- To make an account staff ([magic words](MAGIC_WORDS.md)), set its `ACCESS_LEVEL` to `"SYSTEM_ADMIN"` (or `ADMIN`, `DEVELOPER`, `MODERATOR`).
   Stop the container first; Astron rewrites these files as the game runs.
 - Never edit toons while the container is running.
 
@@ -134,7 +133,8 @@ Every browser sends **crash information** to `runtime/data/logs/client.log`, qui
 lost connections, one line about the device (browser, screen size) and one line with the sign-in name. At most 400 lines per visit;
 nothing else (no passwords, touches or frame timings). The page decides this (`quietLog` in `web/web/ttr-ui.js`).
 
-The file stops growing at 30 MB, and each address may send 6,000 lines an hour (see `server/docker/auth_service.py`).
+The file stops growing at 30 MB. How many lines an address may send an hour is `CLOG_PER_HOUR` in
+`server/docker/docker-compose.yml`.
 
 ## Test sessions with logging
 

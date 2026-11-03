@@ -5,7 +5,7 @@ from otp.launcher.LauncherBase import LauncherBase
 from toontown.toonbase import TTLocalizer
 
 class QuickLauncher(LauncherBase):
-    GameName = 'Toontown'
+    GameName = 'Glonktown'
     Localizer = TTLocalizer
 
     def __init__(self):

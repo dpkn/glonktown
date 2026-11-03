@@ -6,6 +6,9 @@ if [ ! -d /ot/src/resources/phase_3 ]; then
 fi
 mkdir -p /ot/data/phone_logs /ot/data/backups /ot/data/logs /ot/src/astron/databases/astrondb /ot/src/astron/logs
 [ -f /ot/data/users.json ] || echo '{"open_registration": true, "users": {}}' > /ot/data/users.json
+# the key the sign-in service signs play tokens with and the login manager checks them with
+[ -s /ot/data/login_secret ] || head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n' > /ot/data/login_secret
+chmod 600 /ot/data/login_secret
 chmod 666 /ot/data/users.json
 L=/ot/data/logs
 # the services write their own log files (so they survive in the data folder); show them in `docker logs` / the Zima's Logs tab too
@@ -24,8 +27,8 @@ UD=$!
 sleep 25
 python -u -m toontown.ai.AIStart --base-channel 401000000 $COMMON --district-name "Toon Valley" etc/Configrc.prc etc/live.prc > $L/ai1.log 2>&1 &
 A1=$!
-# nightly backup of the toons and users, keeping 14 days
-( while true; do sleep 86400; tar czf /ot/data/backups/auto-$(date +%Y%m%d-%H%M).tgz -C /ot/src/astron databases -C /ot/data users.json 2>/dev/null; ls -1t /ot/data/backups/auto-*.tgz | tail -n +15 | xargs -r rm -f; done ) &
+# nightly backup of the toons, users and planned parties, keeping 14 days
+( while true; do sleep 86400; tar czf /ot/data/backups/auto-$(date +%Y%m%d-%H%M).tgz -C /ot/src/astron databases -C /ot/data users.json parties.json 2>/dev/null; ls -1t /ot/data/backups/auto-*.tgz | tail -n +15 | xargs -r rm -f; done ) &
 # if the UberDOG or a district dies, exit so Docker restarts everything
 while kill -0 $UD 2>/dev/null && kill -0 $A1 2>/dev/null; do sleep 20; done
 echo "a game process died; exiting so the container restarts" >&2

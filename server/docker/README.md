@@ -1,12 +1,12 @@
 # Running the server in Docker
 
 This folder builds **one image that runs the whole Glonktown server**: Astron (built from source), the UberDOG, one district
-(Toon Valley), a WebSocket bridge for the browser client, a small sign-in service, nginx, and backups. The design is Toontown:
-Anywhere's server fork; Glonktown runs it on the host's Mac for a LAN party.
+(Toon Valley), a WebSocket bridge for the browser client, a small sign-in service, nginx, and backups, on the host's Mac for a
+LAN party.
 
 The image has the game's **code**. It does **not** have the game's **resources** (the art, sound and DNA files): they belong to
-Disney and are not in this repository. Clone <https://github.com/open-toontown/resources> into `server/resources` (or symlink an
-existing copy there); it is mounted read-only.
+Disney and are not in this repository. Clone them into `server/resources` (the README's setup step 2); they are mounted
+read-only.
 
 ## Build and run
 
@@ -36,10 +36,12 @@ at the repository root.
 
 ## Notes
 
-- **Players are ordinary.** `docker/live.prc` makes new accounts `NO_ACCESS`. To make someone staff, set `ACCESS_LEVEL` to
+- **Players are ordinary.** `docker/live.prc` makes new accounts `NO_ACCESS`. To make someone staff (for the
+  [magic words](../../docs/MAGIC_WORDS.md)), set `ACCESS_LEVEL` to
   `SYSTEM_ADMIN` (or `ADMIN`, `DEVELOPER`, `MODERATOR`) in their account file under `runtime/databases/astrondb`, while the server is stopped.
-- **Sign-in.** The sign-in service keeps `users.json` (salted PBKDF2-SHA256). The game connection itself trusts the name the page sends, so the
-  server must only be reachable through nginx on the home network: never publish Astron's ports, forward 7380 or tunnel it to the internet.
+- **Sign-in.** The sign-in service keeps `users.json` (salted PBKDF2-SHA256) and gives each signed-in player a play token, signed with
+  `login_secret` in the data folder; the game's login manager only lets in genuine tokens. Everything is plain HTTP, so keep the server
+  reachable only through nginx on the home network: never publish Astron's ports, forward 7380 or tunnel it to the internet.
 - **What is inside.** Python 3.9, Panda3D 1.11 (a development wheel), the Python side of Panda3D 1.11 in `docker/overlay/direct`
   (Panda3D's own files, with its license), our pure-Python replacement for the compiled `libotp` / `libtoontown` (`otpy/`), and Astron
   built from <https://github.com/Astron/Astron> at the commit named in the Dockerfile.

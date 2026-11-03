@@ -771,6 +771,28 @@ def TTR_mark(msg):
         pass
 
 
+def _sys_exit(code=None):
+    """pygbag's sys.exit shuts the page's whole Python down and empties this script's globals, without raising: the game froze on a grey
+    screen. Raise SystemExit, as sys.exit does everywhere else, so the game's quit comes back to the frame loop in main()."""
+    raise SystemExit(code)
+
+
+def _end_game():
+    """The game has quit (sys.exit: the player exited, or gave up on a lost connection). The page starts again at its sign-in screen and
+    says why: "lost" with the server's reason for throwing the player out (empty when the connection just broke), "error" with the
+    game's exit code, or "quit"."""
+    launcher = builtins.launcher
+    reason = getattr(launcher, "disconnectMsg", "normal")
+    if reason != "normal":
+        kind, detail = "lost", reason if getattr(launcher, "disconnectCode", None) is not None else ""
+    elif launcher.getPandaErrorCode():
+        kind, detail = "error", str(launcher.getPandaErrorCode())
+    else:
+        kind, detail = "quit", ""
+    print("web: game ended:", kind, detail)
+    TTR.ended(kind, detail)
+
+
 async def main():
     TTR.pyReady = True
     print("web: ready, waiting for the page to download the game files and sign in")
@@ -811,6 +833,7 @@ async def main():
         except Exception:
             pass
         user = cookie.split(":")[0] or "dev"
+        play_token = str(TTR.playToken or "") or user       # the token from the sign-in service; a test server without one takes the bare name
         os.environ["LOGIN_TOKEN"] = user
         import runpy
         _out, _err = sys.stdout, sys.stderr
@@ -819,7 +842,7 @@ async def main():
 
         class WebLauncher(ToontownDummyLauncher):
             def getPlayToken(self):
-                return user
+                return play_token
 
         builtins.launcher = WebLauncher()
 
@@ -828,6 +851,7 @@ async def main():
             process = "client"
 
         builtins.game = _Game()
+        sys.exit = _sys_exit
         print("web: running toontown.toonbase.ToontownStart as", user)
         runpy.run_module("toontown.toonbase.ToontownStart", run_name="__main__")
         print("web: ToontownStart returned; base =", getattr(builtins, "base", None))
@@ -848,11 +872,14 @@ async def main():
                     _pf["dts"].append((_t0 - _pf["last"]) * 1000.0)
                 _pf["last"] = _t0
                 _pf["steps"].append((_t1 - _t0) * 1000.0)
+                webui.poll()            # can end the game too: it answers Cancel once reconnecting has failed
+            except SystemExit:
+                _end_game()
+                return
             except BaseException:
                 print("web: STEP FAILED")
                 print(traceback.format_exc())
                 await asyncio.sleep(1)
-            webui.poll()
             webaudio.tick()
             frames += 1
             if frames % 20 == 0:

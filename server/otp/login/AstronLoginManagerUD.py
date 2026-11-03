@@ -21,6 +21,7 @@ from direct.distributed.MsgTypes import (
 from otp.otpbase import OTPGlobals
 
 from otp.login import NameJudge
+from otp.login import PlayToken
 from toontown.makeatoon.NameGenerator import NameGenerator
 from toontown.toon.ToonDNA import ToonDNA
 from toontown.toonbase import TTLocalizer
@@ -58,7 +59,24 @@ class DeveloperAccountDB(AccountDB):
             with open(self.accountDbFilePath, 'w') as file:
                 json.dump(self.accountToId, file)
 
+        # With a secret (the Docker server), only tokens signed by the sign-in service get in; without one (a developer's
+        # own server), the play token is simply the account name.
+        self.tokenSecret = None
+        secretFile = config.GetString('login-secret-file', '')
+        if secretFile:
+            with open(secretFile, 'r') as file:
+                self.tokenSecret = file.read().strip().encode()
+
     def lookup(self, playToken, callback):
+        if self.tokenSecret is not None:
+            name = PlayToken.nameFromToken(playToken, self.tokenSecret)
+            if name is None:
+                callback({'success': False,
+                          'reason': 'The play token is not signed by the sign-in service, or has run out.',
+                          'code': 131})
+                return
+            playToken = name
+
         # Check if this play token exists in the accountsToId:
         if playToken not in self.accountToId:
             # It is not, so we'll associate them with a brand new account object.
@@ -122,14 +140,14 @@ class GameOperation:
         else:
             del self.loginManager.account2operation[self.sender]
 
-    def _handleCloseConnection(self, reason=''):
+    def _handleCloseConnection(self, reason='', code=122):
         # Closes either the sender connection or the sender account
         # depending on the type of operation we are running, and then
         # finishes off this operation.
         if self.__class__.__name__ == 'LoginOperation':
-            self.loginManager.closeConnection(self.sender, reason=reason)
+            self.loginManager.closeConnection(self.sender, reason=reason, code=code)
         else:
-            self.loginManager.closeConnection(self.sender, reason=reason, isAccount=True)
+            self.loginManager.closeConnection(self.sender, reason=reason, isAccount=True, code=code)
 
         self._handleDone()
 
@@ -154,7 +172,8 @@ class LoginOperation(GameOperation):
         if not result.get('success'):
             # The play token was rejected!
             self.loginManager.air.writeServerEvent('play-token-rejected', self.sender, self.playToken)
-            self._handleCloseConnection(result.get('reason', 'The accounts database rejected your play token.'))
+            self._handleCloseConnection(result.get('reason', 'The accounts database rejected your play token.'),
+                                        result.get('code', 122))
             return
 
         # Grab the databaseId, accessLevel, and the accountId from the result.
@@ -870,7 +889,7 @@ class AstronLoginManagerUD(DistributedObjectGlobalUD):
         # TODO: In the future, add more database interfaces & make this configurable.
         self.accountDb = DeveloperAccountDB(self)
 
-    def closeConnection(self, connectionId, reason='', forOperations=False, isAccount=False):
+    def closeConnection(self, connectionId, reason='', forOperations=False, isAccount=False, code=122):
         if forOperations:
             if isAccount:
                 # Closes the account for duplicate operations.
@@ -892,7 +911,7 @@ class AstronLoginManagerUD(DistributedObjectGlobalUD):
             datagram.addServerHeader(self.GetAccountConnectionChannel(connectionId), self.air.ourChannel, CLIENTAGENT_EJECT)
         else:
             datagram.addServerHeader(connectionId, self.air.ourChannel, CLIENTAGENT_EJECT)
-        datagram.addUint32(122)
+        datagram.addUint32(code)
         if forOperations and not reason:
             datagram.addString('An operation is already running: %s' % operation.__class__.__name__)
         else:

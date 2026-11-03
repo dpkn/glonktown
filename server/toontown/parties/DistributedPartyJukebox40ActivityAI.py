@@ -1,5 +1,8 @@
 from direct.directnotify import DirectNotifyGlobal
-from direct.distributed.DistributedObjectAI import DistributedObjectAI
+from toontown.parties import PartyGlobals
+from toontown.parties.DistributedPartyJukeboxActivityBaseAI import DistributedPartyJukeboxActivityBaseAI
 
-class DistributedPartyJukebox40ActivityAI(DistributedObjectAI):
+
+class DistributedPartyJukebox40ActivityAI(DistributedPartyJukeboxActivityBaseAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedPartyJukebox40ActivityAI')
+    phaseToMusicData = PartyGlobals.PhaseToMusicData40

@@ -2677,6 +2677,7 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
             DistributedPlayerAI.DistributedPlayerAI.incrementPopulation(self)
             if getattr(self.air, 'halloweenTreats', None):
                 self.air.halloweenTreats.toonArrived(self)
+            self.air.partyManager.toonArrived(self)
             if self.air.suitInvasionManager.getInvading():
                 taskMgr.doMethodLater(5.0, self.__sendInvasionBulletin, self.uniqueName('invasionBulletin'))
 
@@ -4038,7 +4039,7 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
             if partyReply.partyId == partyId:
                 for reply in partyReply.replies:
                     if reply.inviteeId == inviteeId:
-                        reply.inviteeId = newStatus
+                        reply.status = newStatus
                         break
 
     def canPlanParty(self):

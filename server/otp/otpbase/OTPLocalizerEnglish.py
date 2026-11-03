@@ -5,7 +5,7 @@ lDaisyGardens = 'Daisy Gardens'
 lDonaldsDock = "Donald's Dock"
 lDonaldsDreamland = "Donald's Dreamland"
 lMinniesMelodyland = "Minnie's Melodyland"
-lToontownCentral = 'Toontown Central'
+lToontownCentral = 'Glonktown Central'
 lGoofySpeedway = 'Goofy Speedway'
 lOutdoorZone = "Chip 'n Dale's Acorn Acres"
 lGolfZone = "Chip 'n Dale's MiniGolf"
@@ -53,28 +53,28 @@ ChatManagerWhisperTo = 'Whisper to:'
 ChatManagerWhisperToName = 'Whisper To:\n%s'
 ChatManagerCancel = lCancel
 ChatManagerWhisperOffline = '%s is offline.'
-OpenChatWarning = 'To become True Friends with somebody, click on them, and select "True Friends" from the detail panel.\n\nSpeedChat Plus can also be enabled, which allow users to chat by typing words found in the Disney SpeedChat Plus dictionary.\n\nTo activate these features or to learn more, exit Toontown and then click on Membership and select Manage Account.  Log in to edit your "Community Settings."\n\nIf you are under 18, you need a Parent Account to manage these settings.'
+OpenChatWarning = 'To become True Friends with somebody, click on them, and select "True Friends" from the detail panel.\n\nSpeedChat Plus can also be enabled, which allow users to chat by typing words found in the Disney SpeedChat Plus dictionary.\n\nTo activate these features or to learn more, exit Glonktown and then click on Membership and select Manage Account.  Log in to edit your "Community Settings."\n\nIf you are under 18, you need a Parent Account to manage these settings.'
 OpenChatWarningOK = lOK
 UnpaidChatWarning = 'Once you have subscribed, you can use this button to chat with your friends using the keyboard.  Until then, you should chat with other Toons using SpeedChat.'
 UnpaidChatWarningPay = 'Subscribe'
 UnpaidChatWarningContinue = 'Continue Free Trial'
-PaidNoParentPasswordWarning = 'Use this button to chat with your friends by using the keyboard, enable it through your Account Manager on the Toontown Web site. Until then, you can chat by using SpeedChat.'
-UnpaidNoParentPasswordWarning = 'This is for SpeedChat Plus, which allows users to chat by typing words found in the Disney SpeedChat Plus dictionary. To activate this feature, exit Toontown and click on Membership. Select Manage Account and log in to edit your "Community Settings." If you are under 18, you need a Parent Account to manage these settings.'
+PaidNoParentPasswordWarning = 'Use this button to chat with your friends by using the keyboard, enable it through your Account Manager on the Glonktown Web site. Until then, you can chat by using SpeedChat.'
+UnpaidNoParentPasswordWarning = 'This is for SpeedChat Plus, which allows users to chat by typing words found in the Disney SpeedChat Plus dictionary. To activate this feature, exit Glonktown and click on Membership. Select Manage Account and log in to edit your "Community Settings." If you are under 18, you need a Parent Account to manage these settings.'
 PaidNoParentPasswordWarningSet = 'Update Chat Settings'
 PaidNoParentPasswordWarningContinue = 'Continue Playing Game'
 PaidParentPasswordUKWarning = 'Once you have Enabled Chat, you can enable this button to chat with your friends using the keyboard. Until then, you should chat with other Toons using SpeedChat.'
 PaidParentPasswordUKWarningSet = 'Enable Chat Now!'
 PaidParentPasswordUKWarningContinue = 'Continue Playing Game'
 NoSecretChatWarningTitle = 'Parental Controls'
-NoSecretChatWarning = 'To chat with a friend, the True Friends feature must first be enabled.  Kids, have your parent visit the Toontown Web site to learn about True Friends.'
+NoSecretChatWarning = 'To chat with a friend, the True Friends feature must first be enabled.  Kids, have your parent visit the Glonktown Web site to learn about True Friends.'
 RestrictedSecretChatWarning = 'To get or enter a True Friend Code, log in with the Parent Account. You can disable this prompt by changing your True Friends options.'
 NoSecretChatWarningOK = lOK
 NoSecretChatWarningCancel = lCancel
 NoSecretChatWarningWrongPassword = "That's not the correct Parent Account.  Please log in with the Parent Account that is linked to this account."
 NoSecretChatAtAllTitle = 'Open Chat With True Friends'
-NoSecretChatAtAll = 'Open Chat with True Friends allows real-life friends to chat openly with each other by means of a True Friend Code that must be shared outside of the game.\n\nTo activate these features or to learn more, exit Toontown and then click on Membership and select Manage Account. Log in to edit your "Community Settings." If you are under 18, you need a Parent Account to manage these settings.'
+NoSecretChatAtAll = 'Open Chat with True Friends allows real-life friends to chat openly with each other by means of a True Friend Code that must be shared outside of the game.\n\nTo activate these features or to learn more, exit Glonktown and then click on Membership and select Manage Account. Log in to edit your "Community Settings." If you are under 18, you need a Parent Account to manage these settings.'
 NoSecretChatAtAllAndNoWhitelistTitle = 'Chat button'
-NoSecretChatAtAllAndNoWhitelist = 'You can use the blue Chat button to communicate with other Toons by using Speechat Plus or Open Chat with True Friends.\n\nSpeedchat Plus is a form of type chat that allows users to communicate by using the Disney SpeedChat Plus dictionary.\n\nOpen Chat with True Friends allows real-life friends to chat openly with each other by means of a True Friend Code that must be shared outside of the game.\n\nTo activate these features or to learn more, exit Toontown and then click on Membership and select Manage Account.  Log in to edit your "Community Settings." If you are under 18, you need a Parent Account to manage these settings.'
+NoSecretChatAtAllAndNoWhitelist = 'You can use the blue Chat button to communicate with other Toons by using Speechat Plus or Open Chat with True Friends.\n\nSpeedchat Plus is a form of type chat that allows users to communicate by using the Disney SpeedChat Plus dictionary.\n\nOpen Chat with True Friends allows real-life friends to chat openly with each other by means of a True Friend Code that must be shared outside of the game.\n\nTo activate these features or to learn more, exit Glonktown and then click on Membership and select Manage Account.  Log in to edit your "Community Settings." If you are under 18, you need a Parent Account to manage these settings.'
 NoSecretChatAtAllOK = lOK
 ChangeSecretFriendsOptions = 'Change True Friends Options'
 ChangeSecretFriendsOptionsWarning = '\nPlease enter the Parent Account Password to change your True Friends options.'
@@ -114,7 +114,7 @@ TextPropertiesManager.getGlobalPtr().setProperties('black', black)
 grey = TextProperties()
 grey.setTextColor(0.5, 0.5, 0.5, 1)
 TextPropertiesManager.getGlobalPtr().setProperties('grey', grey)
-ActivateChat = "True Friends allows one member to chat with another member only by means of a True Friend Code that must be communicated outside of the game. True Friends is not moderated or supervised.\n\nPlease choose one of Toontown's True Friends options:\n\n      \x01shadow\x01No True Friends\x02 - Ability to make True Friends is disabled.\n      This offers the highest level of control.\n\n      \x01shadow\x01Restricted True Friends\x02 - Requires the Parent Account Password to make\n      each new True Friend.\n\n      \x01shadow\x01Unrestricted True Friends\x02 - Once enabled with the Parent Account Password,\n      it is not required to supply the Parent Account Password to make each new\n      True Friend. \x01red\x01This option is not recommended for children under 13.\x02\n\n\n\n\n\n\nBy enabling the True Friends feature, you acknowledge that there are some risks inherent in the True Friends feature and that you have been informed of, and agree to accept, any such risks."
+ActivateChat = "True Friends allows one member to chat with another member only by means of a True Friend Code that must be communicated outside of the game. True Friends is not moderated or supervised.\n\nPlease choose one of Glonktown's True Friends options:\n\n      \x01shadow\x01No True Friends\x02 - Ability to make True Friends is disabled.\n      This offers the highest level of control.\n\n      \x01shadow\x01Restricted True Friends\x02 - Requires the Parent Account Password to make\n      each new True Friend.\n\n      \x01shadow\x01Unrestricted True Friends\x02 - Once enabled with the Parent Account Password,\n      it is not required to supply the Parent Account Password to make each new\n      True Friend. \x01red\x01This option is not recommended for children under 13.\x02\n\n\n\n\n\n\nBy enabling the True Friends feature, you acknowledge that there are some risks inherent in the True Friends feature and that you have been informed of, and agree to accept, any such risks."
 ActivateChatYes = 'Update'
 ActivateChatNo = lCancel
 ActivateChatMoreInfo = 'More Info'
@@ -131,7 +131,7 @@ PrivacyPolicyText_Intro = [' ']
 PrivacyPolicyClose = lClose
 SecretFriendsInfoPanelOk = lOK
 SecretFriendsInfoPanelClose = lClose
-SecretFriendsInfoPanelText = ['\nThe Open Chat with True Friends Feature\n\nThe Open Chat with True Friends feature enables a member to chat directly with another member within Disney\'s Toontown Online (the "Service") once the members establish a True Friends connection.  When your child attempts to use the Open Chat with True Friends feature, we will require that you indicate your consent to your child\'s use of this feature by entering your Parent Account Password.  Here is a detailed description of the process of creating an Open Chat with True Friends connection between members whom we will call "Sally" and "Mike."\n1. Sally\'s parent and Mike\'s parent each enable the Open Chat with True Friends feature by entering their respective Parent Account Passwords either (a) in the Account Options areas within the Service, or (b) when prompted within the game by a Parental Controls pop-up.\n2. Sally requests a True Friend Code (described below) from within the Service.\n',
+SecretFriendsInfoPanelText = ['\nThe Open Chat with True Friends Feature\n\nThe Open Chat with True Friends feature enables a member to chat directly with another member within Glonktown (the "Service") once the members establish a True Friends connection.  When your child attempts to use the Open Chat with True Friends feature, we will require that you indicate your consent to your child\'s use of this feature by entering your Parent Account Password.  Here is a detailed description of the process of creating an Open Chat with True Friends connection between members whom we will call "Sally" and "Mike."\n1. Sally\'s parent and Mike\'s parent each enable the Open Chat with True Friends feature by entering their respective Parent Account Passwords either (a) in the Account Options areas within the Service, or (b) when prompted within the game by a Parental Controls pop-up.\n2. Sally requests a True Friend Code (described below) from within the Service.\n',
  "\n3. Sally's True Friend Code is communicated to Mike outside of the Service. (Sally's True Friend Code may be communicated to Mike either directly by Sally, or indirectly through Sally's disclosure of the True Friend Code to another person.)\n4. Mike submits Sally's True Friend Code to the Service within 48 hours of the time that Sally requested the True Friend Code from the Service.\n5. The Service then notifies Mike that Sally has become Mike's True Friend.  The Service similarly notifies Sally that Mike has become Sally's True Friend.\n6. Sally and Mike can now open chat directly with each other until either one chooses to terminate the other as a True Friend, or until the Open Chat with True Friends feature is disabled for either Sally or Mike by their respective parent.  The True Friends connection can thus be disabled anytime by either: (a) a member removing the True Friend from his or her friends list (as described in the Service); or, (b) the parent of that member disabling the Open Chat with ",
  "\nTrue Friends feature by going to the Account Options area within the Service and following the steps set forth there.\n\nA True Friend Code is a computer-generated random code assigned to a particular member. The True Friend Code must be used to activate a True Friend connection within 48 hours of the time that the member requests the True Friend Code; otherwise, the True Friend Code expires and cannot be used.  Moreover, a single True Friend Code can only be used to establish one True Friend connection.  To make additional True Friend connections, a member must request an additional True Friend Code for each additional True Friend.\n\nTrue Friendships do not transfer.  For example, if Sally becomes a True Friend of Mike, and Mike becomes a True Friend of Jessica, Sally does not automatically become Jessica's True Friend.  In order for Sally and Jessica to\n",
  '\nbecome True Friends, one of them must request a new True Friend Code from the Service and communicate it to the other.\n\nTrue Friends communicate with one another in a free-form interactive open chat.  The content of this chat is directly entered by the participating member and is processed through the Service, which is operated by the Walt Disney Internet Group ("WDIG"), 500 S. Buena Vista St., Burbank, CA 91521-7691.  While we advise members not to exchange personal information such as first and last names, e-mail addresses, postal addresses, or phone numbers while using Open Chat with True Friends, we cannot guarantee that such exchanges of personal information will not happen. Although the True Friends chat is automatically filtered for most bad words, Open Chat with True Friends may be moderated, and Disney reserves the right to moderate any part of the Service that Disney,\n',
@@ -140,10 +140,10 @@ SecretFriendsInfoPanelText = ['\nThe Open Chat with True Friends Feature\n\nThe 
 LeaveToPay = 'Click Purchase to exit the game and buy a Membership at toontown.com'
 LeaveToPayYes = 'Purchase'
 LeaveToPayNo = lCancel
-LeaveToSetParentPassword = 'In order to set parent account password, the game will exit to the Toontown website.'
+LeaveToSetParentPassword = 'In order to set parent account password, the game will exit to the Glonktown website.'
 LeaveToSetParentPasswordYes = 'Set Password'
 LeaveToSetParentPasswordNo = lCancel
-LeaveToEnableChatUK = 'In order to enable chat, the game will exit to the Toontown website.'
+LeaveToEnableChatUK = 'In order to enable chat, the game will exit to the Glonktown website.'
 LeaveToEnableChatUKYes = 'Enable Chat'
 LeaveToEnableChatUKNo = lCancel
 ChatMoreInfoOK = lOK
@@ -186,6 +186,7 @@ CRBootedReasons = {1: 'An unexpected problem has occurred.  Your connection has 
  125: 'Your installed files appear to be invalid.  Please use the Play button on the official website to run.',
  126: 'You are not authorized to use administrator privileges.',
  127: 'A problem has occurred with your Toon.  Please contact Member Services via phone or email and reference Error Code 127.  Thank you.',
+ 131: 'Your sign-in has run out.  Reload the page and sign in again.',
  151: 'You have been logged out by an administrator working on the servers.',
  152: "There has been a reported violation of our Terms of Use connected to '%(name)s'. For more details, please review the message sent to the e-mail address associated with '%(name)s'.",
  153: 'The district you were playing on has been reset.  Everyone who was playing on that district has been disconnected.  However, you should be able to connect again and go right back into the game.',
@@ -289,7 +290,7 @@ FriendSecretNeedsPasswordWarningOK = lOK
 FriendSecretNeedsPasswordWarningCancel = lCancel
 FriendSecretNeedsPasswordWarningWrongUsername = "That's not the correct username.  Please enter the username of the parental account.  This is not the same username used to play the game."
 FriendSecretNeedsPasswordWarningWrongPassword = "That's not the correct password.  Please enter the password of the parental account.  This is not the same password used to play the game."
-FriendSecretIntro = "If you are playing Disney's Toontown Online with someone you know in the real world, you can become True Friends.  You can chat using the keyboard with your True Friends.  Other Toons won't understand what you're saying.\n\nYou do this by getting a True Friend Code.  Tell the True Friend Code to your friend, but not to anyone else.  When your friend types in your True Friend Code on his or her screen, you'll be True Friends in Toontown!"
+FriendSecretIntro = "If you are playing Glonktown with someone you know in the real world, you can become True Friends.  You can chat using the keyboard with your True Friends.  Other Toons won't understand what you're saying.\n\nYou do this by getting a True Friend Code.  Tell the True Friend Code to your friend, but not to anyone else.  When your friend types in your True Friend Code on his or her screen, you'll be True Friends in Glonktown!"
 FriendSecretGetSecret = 'Get a True Friend Code'
 FriendSecretEnterSecret = 'If you have a True Friend Code from someone you know, type it here.'
 FriendSecretOK = lOK
@@ -870,7 +871,7 @@ SpeedChatStaticTextToontown = {100: 'Hi!',
  103: 'Hey!',
  104: 'Howdy!',
  105: 'Hi everybody!',
- 106: 'Welcome to Toontown!',
+ 106: 'Welcome to Glonktown!',
  107: "What's up?",
  108: 'How are you doing?',
  109: 'Hello?',
@@ -1764,7 +1765,7 @@ SpeedChatStaticTextToontown = {100: 'Hi!',
  30101: "Welcome to my April Toons' Week party!",
  30102: 'The Silly Meter is back in Toon Hall!',
  30110: 'Mickey is in Daisy Gardens.',
- 30111: 'Daisy is in Toontown Central.',
+ 30111: 'Daisy is in Glonktown Central.',
  30112: 'Minnie is in The Brrrgh.',
  30113: 'Pluto is in Melodyland.',
  30114: 'Donald is sleepwalking at the Speedway.',
@@ -1827,14 +1828,14 @@ SpeedChatStaticTextToontown = {100: 'Hi!',
  30201: 'Load some pies...',
  30202: 'Joyful toons...',
  30203: 'Snowman heads...',
- 30204: "Toontown's merry...",
+ 30204: "Glonktown's merry...",
  30205: 'Lure good cheer...',
  30220: 'Deck the halls with seltzer spray!\nHappy Winter Holiday!',
  30221: 'Load some pies into your sleigh!\nHappy Winter Holiday!',
  30222: 'Joyful toons bring Cogs dismay!\nHappy Winter Holiday!',
  30223: 'Snowman heads are hot today!\nHappy Winter Holiday!',
- 30224: "Toontown's merry, come what may!\nHappy Winter Holiday!",
- 30225: 'Lure good cheer the Toontown way!\nHappy Winter Holiday!',
+ 30224: "Glonktown's merry, come what may!\nHappy Winter Holiday!",
+ 30225: 'Lure good cheer the Glonktown way!\nHappy Winter Holiday!',
  30250: 'Boo!',
  30251: 'Happy Halloween!',
  30252: 'Spooky!',
@@ -1845,10 +1846,10 @@ SpeedChatStaticTextToontown = {100: 'Hi!',
  30302: 'The Silly Meter is in Toon Hall.',
  30303: 'Things sure are getting silly around here!',
  30304: 'I saw a fire hydrant moving!',
- 30305: 'Toontown is coming to life!',
+ 30305: 'Glonktown is coming to life!',
  30306: "Have you been to Flippy's new office?",
  30307: 'I caused a Silly Surge in battle!',
- 30308: "Let's defeat some Cogs to make Toontown sillier!",
+ 30308: "Let's defeat some Cogs to make Glonktown sillier!",
  30309: 'The Silly Meter is bigger and crazier than ever!',
  30310: 'Lots of hydrants have come alive!',
  30311: 'I saw a mail box moving!',
@@ -1857,13 +1858,13 @@ SpeedChatStaticTextToontown = {100: 'Hi!',
  30314: "What's going to happen next?",
  30315: 'Something silly, I bet!',
  30316: 'Have you caused a Silly Surge yet?',
- 30317: "Let's defeat some Cogs to make Toontown sillier!",
+ 30317: "Let's defeat some Cogs to make Glonktown sillier!",
  30318: 'Cog Invasion!',
  30319: 'Incoming!',
  30320: "Let's stop those Cogs!",
  30321: 'I miss the Silly Surges!',
  30322: "Let's go stop an Invasion!",
- 30323: 'Toontown is sillier than ever now!',
+ 30323: 'Glonktown is sillier than ever now!',
  30324: 'Have you seen something come alive?',
  30325: 'My favorites are the fire hydrants!',
  30326: 'My favorites are the mailboxes!',
@@ -1887,9 +1888,9 @@ SpeedChatStaticTextToontown = {100: 'Hi!',
  30361: "I jumped on a Cog's face!",
  30400: 'The Sellbots are invading!',
  30401: 'The V.P. was hopping mad about Operation: Storm Sellbot ...',
- 30402: "He's sending the Sellbots in to invade Toontown!",
+ 30402: "He's sending the Sellbots in to invade Glonktown!",
  30403: "Let's go fight some Sellbots!",
- 30404: "There's a new kind of building in Toontown!",
+ 30404: "There's a new kind of building in Glonktown!",
  30405: 'Have you seen the Mover & Shaker Field Offices?',
  30406: 'The V.P. created them as a reward for the Movers & Shakers.',
  30407: "Let's go defeat a Field Office!",
@@ -2121,7 +2122,7 @@ SpeedChatStaticTextPirates = {50001: 'Aye',
  60500: 'Where are you?',
  60501: "Let's go to the Gateway Store.",
  60502: "Let's go to the Disco Hall.",
- 60503: "Let's go to Toontown.",
+ 60503: "Let's go to Glonktown.",
  60504: "Let's go to Pirates of the Carribean.",
  60505: 'Flip coin',
  60506: 'Dance',

@@ -1,5 +1,7 @@
 import http.server, os, re, json, hashlib, hmac, threading, time
 D="/ot/data/phone_logs"; U="/ot/data/users.json"
+SECRET=open("/ot/data/login_secret").read().strip().encode()   # shared with the UberDOG's login manager (otp/login/PlayToken.py)
+TOKEN_SECONDS=24*3600   # long enough for the game's own reconnects after a phone sleeps
 LOCK=threading.Lock()
 FAILS={}   # key -> [timestamps] of failed recovery attempts
 def load():
@@ -9,12 +11,15 @@ def save(db):
     json.dump(db,open(U+".tmp","w"),indent=1); os.replace(U+".tmp",U); os.chmod(U,0o666)
 def pbk(text,salt): return hashlib.pbkdf2_hmac("sha256",text.encode(),bytes.fromhex(salt),100000).hex()
 def norm(s): return " ".join(s.lower().split())
+def play_token(name):
+    signed="%s.%d"%(name,time.time()+TOKEN_SECONDS)
+    return signed+"."+hmac.new(SECRET,signed.encode(),hashlib.sha256).hexdigest()
 def check_name_pw(name,pw):
     if not (2<=len(name)<=20) or not name.replace("_","").replace("-","").isalnum(): return "Usernames are 2-20 letters, numbers, - or _."
     if len(pw)<4: return "Passwords need at least 4 characters."
     return None
-def auth(text):
-    """returns (error or None, user record or None)"""
+def auth(text,new=False):
+    """returns (error or None, user record or None). new: the player chose "I'm new", so an unknown name is registered"""
     if ":" not in text: return "Please enter a username and password.",None
     name,pw=text.split(":",1); name=name.strip().lower()
     e=check_name_pw(name,pw)
@@ -22,10 +27,11 @@ def auth(text):
     with LOCK:
         db=load(); u=db["users"].get(name)
         if u is None:
+            if not new: return "No account called %s. New? Tap \"I'm new\"."%name,None
             if not db.get("open_registration",True): return "Unknown user. Ask a parent to add you.",None
             salt=os.urandom(16).hex(); u=db["users"][name]={"salt":salt,"hash":pbk(pw,salt),"dbkey":"user:"+name}
             save(db); return None,u
-        if not hmac.compare_digest(u["hash"],pbk(pw,u["salt"])): return "Wrong password.",None
+        if not hmac.compare_digest(u["hash"],pbk(pw,u["salt"])): return ("That name is taken. Pick another one." if new else "Wrong password."),None
         return None,u
 def throttled(keys):
     now=time.time()
@@ -92,9 +98,10 @@ class H(http.server.BaseHTTPRequestHandler):
         n=int(self.headers.get("Content-Length","0")); raw=self.rfile.read(n); body=raw.decode("utf-8","replace") if n<4096 else ""
         ip=self.headers.get("X-Forwarded-For") or self.client_address[0]
         if self.path=="/auth":
-            err,u=auth(body)
+            err,u=auth(body,self.headers.get("X-Ttr-Mode")=="new")
             if err: return self.reply(403,err)
-            return self.reply(200,"ok" if u.get("rec") else "setup")
+            name=body.split(":",1)[0].strip().lower()
+            return self.reply(200,("ok " if u.get("rec") else "setup ")+play_token(name))
         if self.path=="/setrecovery":
             err=set_recovery(body); return self.reply(403 if err else 200,err or "ok")
         if self.path=="/recover":

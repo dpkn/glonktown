@@ -20,7 +20,8 @@ _rc = {"since": 0.0, "tries": []}
 
 def _auto_reconnect():
     """A phone drops the connection when the app is switched away from or the screen locks. When the player comes back and the game shows its
-    "connection lost, try to connect again?" box, accept it for them (a few times at most), so they land back in Toontown."""
+    "connection lost, try to connect again?" box, accept it for them (a few times at most), so they land back in Toontown. After that the
+    server is really gone: answer Cancel, which ends the game (main.py then takes the page back to its sign-in screen)."""
     try:
         import builtins
         b = getattr(builtins, "base", None)
@@ -30,7 +31,7 @@ def _auto_reconnect():
         if st is None or st.getName() != "noConnection":
             _rc["since"] = 0.0
             return
-        if getattr(cr, "bootedIndex", None) in (100, 127, 152):       # thrown out on purpose (100: the same account signed in somewhere else): do not retry by ourselves
+        if getattr(cr, "bootedIndex", None) in (100, 127, 131, 152):       # thrown out on purpose (100: the same account signed in somewhere else, 131: the sign-in ran out): do not retry by ourselves
             return
         if str(platform.window.document.visibilityState) != "visible":
             return
@@ -41,17 +42,17 @@ def _auto_reconnect():
         if now - _rc["since"] < 1.5:
             return
         _rc["tries"] = [t for t in _rc["tries"] if now - t < 180]
-        if len(_rc["tries"]) >= 3:
-            return
-        _rc["tries"].append(now)
+        give_up = len(_rc["tries"]) >= 3
+        if not give_up:
+            _rc["tries"].append(now)
         _rc["since"] = 0.0
         box = getattr(cr, "lostConnectionBox", None)
         if box is not None:
-            box.doneStatus = "ok"
+            box.doneStatus = "cancel" if give_up else "ok"
+        print("webui: giving up reconnecting" if give_up else "webui: reconnecting automatically")
         from direct.showbase.MessengerGlobal import messenger
         messenger.send("lostConnectionAck")
-        print("webui: reconnecting automatically")
-    except BaseException:
+    except Exception:
         print("webui: auto reconnect failed")
         print(traceback.format_exc())
 

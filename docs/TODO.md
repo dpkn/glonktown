@@ -12,9 +12,6 @@ Open work, most important first. Each item says what is known. When one is finis
   the card and manager objects the fishing pond creates when the night starts (`startBingoNight`), what the fishing spot
   does when it joins a card, and the wide-screen changes made to the fishing screen (`DistributedFishingSpot.py`).
   Turn it back on only after a night runs without a crash.
-- [ ] **The game connection does not check the password.** Only the page's sign-in does, so anyone who talks to the
-  WebSocket with another player's name is let in as that player. Fix: the sign-in service issues a short-lived signed
-  token, and the login manager checks it. See [ARCHITECTURE.md](ARCHITECTURE.md), section 3.
 - [ ] **Furniture editing on a phone.** Fixed so far: the toon is shown again when editing ends, the clipping is gone (confirmed by a
   player), and the attic and stop-editing buttons are pinned to the screen's top-left corner so a wide screen cannot push them away.
   Still to confirm: that the attic button now stays after editing, and that furniture can be picked up and moved by touch. If
@@ -27,6 +24,18 @@ Open work, most important first. Each item says what is known. When one is finis
 
 ## Worth doing
 
+- [ ] **Parties: try them in the game.** Planning, running and every activity are written and pass a test against the real
+  protocol file (see [CHANGES.md](CHANGES.md)), but nobody has played one yet. Things to watch, from reading the client:
+  - **Phones.** The party tug of war and cannons need the touch pad and the action button (`web/game/webui_core.py` only knows the
+    minigame versions: `ui_tug_active` looks for `DistributedTugOfWarGame`), and the planner's drag-and-drop grid needs a check on
+    touch, like furniture editing.
+  - The jukebox's song has no start time, so a toon who arrives mid-song hears it from the beginning and it is cut off when the
+    next one starts.
+  - The fireworks show is placed wrong for a toon who arrives after the rocket has gone up (the client starts it without the
+    launch pad).
+  - Tug of war: the client resets a toon's target rhythm whenever it hears its handicap, so the server sends it only at the start.
+  - Bean rewards on Jellybean Days: the message in the reward window shows the amount before doubling.
+
 - [ ] **Tell a player to reload when the server rejects them for old files.** After any protocol change, phones still running the
   old code pack are rejected (Astron error 125) and the game shows "Your installed files appear to be invalid". The page could notice
   that `packs.json` changed and ask the player to reload.
@@ -38,7 +47,7 @@ Open work, most important first. Each item says what is known. When one is finis
 - [ ] **A friend who is offline when you end the friendship** keeps you on their list until they remove you.
 - [ ] **iPhone strip under the toolbar** in landscape on some phones: the page's overlays are sized to the large viewport
   as a fix, not confirmed everywhere.
-- [ ] **Wide-screen layouts.** Some Open Toontown screens may still look stretched on very wide phones. Fix them as they
+- [ ] **Wide-screen layouts.** Some game screens may still look stretched on very wide phones. Fix them as they
   are found (the Cog Gallery and the fishing screen are done).
 - [ ] **Add the test-session log reading to the operations notes** with an example of what a crash looks like.
 

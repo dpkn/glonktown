@@ -1,5 +1,7 @@
-"""Build the browser download packs: _code.zip (the game's Python + config + our otpy) and one zip per resource folder, plus packs.json.
+"""Build the browser download packs: _code.zip (the game's Python + config + our otpy) and one zip per resource folder (big folders in
+   several parts: phase_3.5-1, phase_3.5-2, ...), plus packs.json.
    OT_DIR=<the game server checkout (Glonktown's server/), with its resources folder>  [OTPY_BASE=<folder holding otpy/> if OT_DIR has none]  python make_ot_packs.py      (writes into web/build/site)"""
+import hashlib
 import json
 import os
 import zipfile
@@ -17,10 +19,42 @@ SITE = os.path.join(HERE, "build", "site")
 OUT = os.path.join(SITE, "_packs")
 os.makedirs(OUT, exist_ok=True)
 packs = []
+# a static host limits the size of one file (Cloudflare Pages: 25 MiB), so a big resource folder goes out as several packs
+PACK_LIMIT = 24 * 1024 * 1024
+
+
+def entry(arc):
+    return zipfile.ZipInfo(arc, date_time=(1980, 1, 1, 0, 0, 0))     # no file times: the same files always make the same pack
 
 
 def add(z, full, arc):
-    z.write(full, arc)
+    with open(full, "rb") as f:
+        z.writestr(entry(arc), f.read())
+
+
+def pack_entry(name, zp):
+    """The pack's line in packs.json: its name, size and a hash of its contents, which is how a device knows its saved copy is stale."""
+    with open(zp, "rb") as f:
+        return [name, os.path.getsize(zp), hashlib.sha256(f.read()).hexdigest()[:16]]
+
+
+def folder_parts(folder):
+    """The folder's files, split into lists that each make a pack under PACK_LIMIT; always in the same order, so a rebuild makes the same packs."""
+    parts, part, size = [], [], 0
+    for r, ds, fs in os.walk(folder):
+        ds.sort()
+        for f in sorted(fs):
+            full = os.path.join(r, f)
+            arc = os.path.relpath(full, RES).replace(os.sep, "/")
+            n = os.path.getsize(full) + 100 + 2 * len(arc)       # the file and its two zip headers
+            if part and size + n > PACK_LIMIT:
+                parts.append(part)
+                part, size = [], 0
+            part.append((full, arc))
+            size += n
+    if part:
+        parts.append(part)
+    return parts
 
 
 
@@ -103,8 +137,8 @@ n = 0
 with zipfile.ZipFile(zp, "w", zipfile.ZIP_STORED) as z:
     for pkg, base in (("otp", OT), ("toontown", OT), ("otpy", OTPY_BASE)):
         for r, ds, fs in os.walk(os.path.join(base, pkg)):
-            ds[:] = [d for d in ds if d != "__pycache__"]
-            for f in fs:
+            ds[:] = sorted(d for d in ds if d != "__pycache__")
+            for f in sorted(fs):
                 if f.endswith(".py"):
                     full = os.path.join(r, f)
                     arc = "_code/" + os.path.relpath(full, base).replace(os.sep, "/")
@@ -112,17 +146,17 @@ with zipfile.ZipFile(zp, "w", zipfile.ZIP_STORED) as z:
                     # a browser's graphics layer has no alpha test, so the game's "binary"/"dual" see-through modes draw solid: use plain blending
                     text = text.replace("TransparencyAttrib.MDual", "TransparencyAttrib.MAlpha").replace("TransparencyAttrib.MBinary", "TransparencyAttrib.MAlpha")
                     text = web_patch(arc, text)
-                    z.writestr(arc, text.encode("utf-8", errors="surrogateescape"))
+                    z.writestr(entry(arc), text.encode("utf-8", errors="surrogateescape"))
                     n += 1
     import pytz
     pz = os.path.dirname(os.path.dirname(pytz.__file__))
     for r, ds, fs in os.walk(os.path.join(pz, "pytz")):          # the game's time code needs pytz (pure Python + zone data)
-        ds[:] = [d for d in ds if d != "__pycache__"]
-        for f in fs:
+        ds[:] = sorted(d for d in ds if d != "__pycache__")
+        for f in sorted(fs):
             full = os.path.join(r, f)
             add(z, full, "_code/" + os.path.relpath(full, pz).replace(os.sep, "/"))
             n += 1
-    for f in os.listdir(os.path.join(OT, "etc")):
+    for f in sorted(os.listdir(os.path.join(OT, "etc"))):
         add(z, os.path.join(OT, "etc", f), "_code/etc/" + f)
         n += 1
     add(z, os.path.join(OT, "LICENSE"), "_code/LICENSE-OpenToontown")          # BSD: source redistributions keep the licence notice
@@ -139,22 +173,28 @@ with zipfile.ZipFile(zp) as _z:
                 _bad.append("%s: %s" % (_n, _e))
 if _bad:
     raise SystemExit("syntax errors in the code pack, not publishing: " + "; ".join(_bad))
-packs.append(["_code", os.path.getsize(zp)])
+packs.append(pack_entry("_code", zp))
 print("_code", n, "files", os.path.getsize(zp) // 1024, "KB")
 for d in sorted(os.listdir(RES)):
     p = os.path.join(RES, d)
     if not os.path.isdir(p) or d.startswith("."):
         continue
-    zp = os.path.join(OUT, d + ".zip")
-    n = 0
-    with zipfile.ZipFile(zp, "w", zipfile.ZIP_STORED) as z:
-        for r, _, fs in os.walk(p):
-            for f in fs:
-                full = os.path.join(r, f)
-                add(z, full, os.path.relpath(full, RES).replace(os.sep, "/"))
-                n += 1
-    packs.append([d, os.path.getsize(zp)])
-    print("%-10s %6d files %8.1f MB" % (d, n, os.path.getsize(zp) / 1e6))
+    parts = folder_parts(p)
+    for i, files in enumerate(parts):
+        name = d if len(parts) == 1 else "%s-%d" % (d, i + 1)
+        zp = os.path.join(OUT, name + ".zip")
+        with zipfile.ZipFile(zp, "w", zipfile.ZIP_STORED) as z:
+            for full, arc in files:
+                add(z, full, arc)
+        packs.append(pack_entry(name, zp))
+        print("%-12s %6d files %8.1f MB" % (name, len(files), os.path.getsize(zp) / 1e6))
+built = {name + ".zip" for name, _, _ in packs}
+for f in os.listdir(OUT):
+    if f not in built:
+        os.remove(os.path.join(OUT, f))
+for name, size, _ in packs:
+    if size > PACK_LIMIT:
+        print("  WARNING: %s.zip is %.1f MB, too big for a static host such as Cloudflare Pages" % (name, size / 1e6))
 json.dump(packs, open(os.path.join(SITE, "packs.json"), "w"))
 json.dump({"files": [], "code": []}, open(os.path.join(SITE, "manifest.json"), "w"))
 print("packs.json:", len(packs), "packs")

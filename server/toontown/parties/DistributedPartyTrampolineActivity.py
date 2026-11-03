@@ -465,7 +465,8 @@ class DistributedPartyTrampolineActivity(DistributedPartyActivity):
             self.toon.setPlayRate(2.0, 'jump-land')
             self.turnLeft = False
             self.turnRight = False
-            self.activityFSM.request('Rules')
+            if self.activityFSM.state == 'Idle':
+                self.activityFSM.request('Rules')
             if self.toon.doId != base.localAvatar.doId:
                 taskMgr.add(self.remoteUpdateTask, self.uniqueName('TrampolineActivity.remoteUpdateTask'))
         else:

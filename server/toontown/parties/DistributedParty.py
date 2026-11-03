@@ -48,7 +48,9 @@ class DistributedParty(DistributedObject.DistributedObject):
         self.partyInfo = PartyInfo(*partyInfoTuple)
         self.loadDecorations()
         allActIds = [ x.activityId for x in self.partyInfo.activityList ]
-        base.partyHasJukebox = PartyGlobals.ActivityIds.PartyJukebox in allActIds or PartyGlobals.ActivityIds.PartyJukebox40 in allActIds
+        jukeboxIds = (PartyGlobals.ActivityIds.PartyJukebox, PartyGlobals.ActivityIds.PartyJukebox40,
+                      PartyGlobals.ActivityIds.PartyValentineJukebox, PartyGlobals.ActivityIds.PartyValentineJukebox40)
+        base.partyHasJukebox = any(activityId in allActIds for activityId in jukeboxIds)
         self.grid = [[False,
           False,
           False,

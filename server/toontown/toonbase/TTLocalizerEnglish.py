@@ -72,7 +72,7 @@ lDaisyGardens = 'Daisy Gardens'
 lDonaldsDock = "Donald's Dock"
 lDonaldsDreamland = "Donald's Dreamland"
 lMinniesMelodyland = "Minnie's Melodyland"
-lToontownCentral = 'Toontown Central'
+lToontownCentral = 'Glonktown Central'
 lToonHQ = 'Toon HQ'
 lSellbotHQ = 'Sellbot HQ'
 lGoofySpeedway = 'Goofy Speedway'
@@ -220,7 +220,7 @@ QuestsDefaultLeaving = ('Bye!',
  'So long, _avName_.',
  'See ya, _avName_!',
  'Good luck!',
- 'Have fun in Toontown!',
+ 'Have fun in Glonktown!',
  'See you later!')
 QuestsDefaultReject = ('Hello.',
  'Can I help you?',
@@ -639,15 +639,15 @@ QuestDialogDict = {160: {GREETING: '',
        LEAVING: QuestsDefaultLeaving},
  1039: {QUEST: 'Visit _toNpcName_ if you want to get around town more easily._where_'},
  1040: {QUEST: 'Visit _toNpcName_ if you want to get around town more easily._where_'},
- 1041: {QUEST: 'Hi!  What brings you here?\x07Everybody uses their portable hole to travel around Toontown.\x07Why, you can teleport to your friends using the Friends List, or to any neighborhood using the map in the Shticker Book.\x07Of course, you have to earn that!\x07Say, I can turn on your teleport access to ' + lToontownCentral + ' if you help out a friend of mine.\x07Seems the Cogs are causing trouble over on Loopy Lane.  Go visit _toNpcName_._where_'},
- 1042: {QUEST: 'Hi!  What brings you here?\x07Everybody uses their portable hole to travel around Toontown.\x07Why, you can teleport to your friends using the Friends List, or to any neighborhood using the map in the Shticker Book.\x07Of course, you have to earn that!\x07Say, I can turn on your teleport access to ' + lToontownCentral + ' if you help out a friend of mine.\x07Seems the Cogs are causing trouble over on Loopy Lane.  Go visit _toNpcName_._where_'},
- 1043: {QUEST: 'Hi!  What brings you here?\x07Everybody uses their portable hole to travel around Toontown.\x07Why, you can teleport to your friends using the Friends List, or to any neighborhood using the map in the Shticker Book.\x07Of course, you have to earn that!\x07Say, I can turn on your teleport access to ' + lToontownCentral + ' if you help out a friend of mine.\x07Seems the Cogs are causing trouble over on Loopy Lane.  Go visit _toNpcName_._where_'},
+ 1041: {QUEST: 'Hi!  What brings you here?\x07Everybody uses their portable hole to travel around Glonktown.\x07Why, you can teleport to your friends using the Friends List, or to any neighborhood using the map in the Shticker Book.\x07Of course, you have to earn that!\x07Say, I can turn on your teleport access to ' + lToontownCentral + ' if you help out a friend of mine.\x07Seems the Cogs are causing trouble over on Loopy Lane.  Go visit _toNpcName_._where_'},
+ 1042: {QUEST: 'Hi!  What brings you here?\x07Everybody uses their portable hole to travel around Glonktown.\x07Why, you can teleport to your friends using the Friends List, or to any neighborhood using the map in the Shticker Book.\x07Of course, you have to earn that!\x07Say, I can turn on your teleport access to ' + lToontownCentral + ' if you help out a friend of mine.\x07Seems the Cogs are causing trouble over on Loopy Lane.  Go visit _toNpcName_._where_'},
+ 1043: {QUEST: 'Hi!  What brings you here?\x07Everybody uses their portable hole to travel around Glonktown.\x07Why, you can teleport to your friends using the Friends List, or to any neighborhood using the map in the Shticker Book.\x07Of course, you have to earn that!\x07Say, I can turn on your teleport access to ' + lToontownCentral + ' if you help out a friend of mine.\x07Seems the Cogs are causing trouble over on Loopy Lane.  Go visit _toNpcName_._where_'},
  1044: {QUEST: 'Oh, thanks for stopping by.  I really need some help.\x07As you can see, I have no customers.\x07My secret recipe book is lost and nobody comes to my restaurant anymore.\x07I last saw it just before those Cogs took over my building.\x07Can you help me by recovering four of my famous recipes?',
         LEAVING: '',
         INCOMPLETE_PROGRESS: 'Any luck finding my recipes?'},
  1045: {QUEST: 'Thank you so much!\x07Before long I will have the entire collection and can reopen my restaurant.\x07Oh, I have a note here for you - something about teleport access?\x07It says thanks for helping my friend and to deliver this to Toon Headquarters.\x07Well, thanks indeed - bye!',
         LEAVING: '',
-        COMPLETE: 'Ah, yes, says here you have been a great help to some of the fine folks out on Loopy Lane.\x07Says you need teleport access to ' + lToontownCentral + '.\x07Well, consider it done.\x07Now you can teleport back to the playground from almost anywhere in Toontown.\x07Just open your map and click on ' + lToontownCentral + '.'},
+        COMPLETE: 'Ah, yes, says here you have been a great help to some of the fine folks out on Loopy Lane.\x07Says you need teleport access to ' + lToontownCentral + '.\x07Well, consider it done.\x07Now you can teleport back to the playground from almost anywhere in Glonktown.\x07Just open your map and click on ' + lToontownCentral + '.'},
  1046: {QUEST: 'The Cashbots have really been bothering the Funny Money Savings and Loan.\x07Stop by there and see if there is anything you can do._where_'},
  1047: {QUEST: 'Cashbots have been sneaking into the bank and stealing our machines.\x07Please recover 5 adding machines from Cashbots.\x07To save you from running back and forth, just bring them all back at once.',
         LEAVING: '',
@@ -968,7 +968,7 @@ QuestDialogDict = {160: {GREETING: '',
  4224: {GREETING: '',
         LEAVING: '',
         QUEST: 'Hello, Hello, HELLO!\x07Terrific!\x07I just know me and the boys are going to clean up this year.\x07Anna says to swing back by and get your reward._where_\x07Goodbye, Goodbye, GOODBYE!',
-        COMPLETE: 'Thanks for all your help, _avName_.\x07You really are an asset here in Toontown.\x07Speaking of assets...'},
+        COMPLETE: 'Thanks for all your help, _avName_.\x07You really are an asset here in Glonktown.\x07Speaking of assets...'},
  902: {QUEST: 'Go see Leo.\x07He needs someone to deliver a message for him._where_'},
  4903: {QUEST: 'Dude!\x07My castanets are all cloudy and I have a big show tonight.\x07Take them to Carlos and see if he can polish them up._where_'},
  4904: {QUEST: 'Jes, I tink I can polish dees.\x07But I need soma de blue ink from de squid.',
@@ -1644,7 +1644,7 @@ QuestDialogDict = {160: {GREETING: '',
          QUEST: 'If you are interested in Lawbot disguise parts you should visit _toNpcName_.\x07I hear he could use some help with his weather research._where_'},
  11001: {GREETING: '',
          LEAVING: '',
-         QUEST: 'Yes, yes. I have Lawbot disguise parts.\x07But they are of no interest to me.\x07The focus of my research is fluctuations in the ambient temperature of Toontown.\x07I will gladly trade you disguise parts for cog temperature sensors.\x07You can start on %s.' % GlobalStreetNames[2100][-1],
+         QUEST: 'Yes, yes. I have Lawbot disguise parts.\x07But they are of no interest to me.\x07The focus of my research is fluctuations in the ambient temperature of Glonktown.\x07I will gladly trade you disguise parts for cog temperature sensors.\x07You can start on %s.' % GlobalStreetNames[2100][-1],
          INCOMPLETE_PROGRESS: 'Have you tried looking on %s?' % GlobalStreetNames[2100][-1],
          COMPLETE: 'Ah, excellent!\x07Just as I feared...\x07Oh, yes! Here is your disguise part.'},
  11002: {GREETING: '',
@@ -2746,7 +2746,7 @@ SuitAttackTaunts = {'Audit': ["I believe your books don't balance.",
               "You aren't above the law!",
               'There should be a law against you.',
               "There's no ex post facto with me!",
-              "The opinions expressed in this attack are not those of Disney's Toontown Online.",
+              "The opinions expressed in this attack are not those of Glonktown.",
               'We cannot be held responsible for damages suffered in this attack.',
               'Your results for this attack may vary.',
               'This attack is void where prohibited.',
@@ -2957,7 +2957,7 @@ SuitAttackTaunts = {'Audit': ["I believe your books don't balance.",
             "You've been bagged.",
             'Paper or plastic?',
             'My enemies shall be sacked!',
-            'I hold the Toontown record in sacks per game.',
+            'I hold the Glonktown record in sacks per game.',
             "You're no longer wanted around here.",
             "Your time is up around here, you're being sacked!",
             'Let me bag that for you.',
@@ -3256,7 +3256,7 @@ SharedChatterComments = ["That's a great name, %.",
  "I like what you're wearing.",
  "I think I'll go fishing this afternoon.",
  'Have fun in my neighborhood.',
- 'I hope you are enjoying your stay in Toontown!',
+ 'I hope you are enjoying your stay in Glonktown!',
  "I heard it's snowing at the Brrrgh.",
  'Have you ridden the trolley today?',
  'I like to meet new people.',
@@ -3293,7 +3293,7 @@ MickeyChatter = (['Welcome to ' + lToontownCentral + '.', 'Hi, my name is ' + Mi
   "I think I'll go swimming at " + lDonaldsDock + '.',
   "It's time for a nap. I'm going to Dreamland."])
 WinterMickeyCChatter = (["Hi, I'm Merry Mickey!",
-  'Welcome to Tinseltown... I mean, Toontown!',
+  'Welcome to Tinseltown... I mean, Glonktown!',
   'Happy Winter Holiday!',
   'Happy Winter Holiday, %'], ['Sing your seasonal cheer at Joy Buzzers to the World and Joy is sure to return the favor!',
   'Golly, these halls sure are decked!',
@@ -3315,7 +3315,7 @@ WinterMickeyCChatter = (["Hi, I'm Merry Mickey!",
   'Shucks, sorry you have to go. So long!',
   "I'm going caroling with Minnie!"])
 ValentinesMickeyChatter = (["Hi, I'm Mickey!",
-  'Welcome to ValenToontown Central!',
+  'Welcome to ValenGlonktown Central!',
   "Happy ValenToon's Day!",
   "Happy ValenToon's Day, %"], ['Love is in the air! And butterflies!',
   'Those hearts are good for Laff boosts!',
@@ -3326,7 +3326,7 @@ ValentinesMickeyChatter = (["Hi, I'm Mickey!",
   "I'm taking Minnie out to the Kooky Cafe!",
   'Will Minnie want chocolates or flowers?'], ['I loved having you visit!', "Tell Minnie I'll pick her up soon!"])
 WinterMickeyDChatter = (["Hi, I'm Merry Mickey!",
-  'Welcome to Tinseltown... I mean, Toontown!',
+  'Welcome to Tinseltown... I mean, Glonktown!',
   'Happy Winter Holiday!',
   'Happy Winter Holiday, %'], ['Golly, these halls sure are decked!',
   'Just look at those tree lights! What a sight!',
@@ -3343,7 +3343,7 @@ VampireMickeyChatter = (['Welcome to ' + lToontownCentral + '.',
   'Hi, my name is ' + Mickey + ". What's yours?",
   'Happy Halloween!',
   'Happy Halloween, %!',
-  'Welcome to Tombtown... I mean Toontown!'], ['If you think playing tricks is All Fun and Games, go see Lazy Hal for a treat!',
+  'Welcome to Tombtown... I mean Glonktown!'], ['If you think playing tricks is All Fun and Games, go see Lazy Hal for a treat!',
   "It's fun to dress up for Halloween!",
   'If you think playing tricks is All Fun and Games, go see Lazy Hal for a treat!',
   'Do you like my costume?',
@@ -3432,7 +3432,7 @@ WitchMinnieChatter = (['Welcome to Magicland... I mean Melodyland!',
   'I hear Tabitha has treats for Really Kool Katz who can play tricks!',
   'Abra-Cadabra!',
   'I hear Tabitha has treats for Really Kool Katz who can play tricks!',
-  'Toontown looks positively spooky today!',
+  'Glonktown looks positively spooky today!',
   'I hear Tabitha has treats for Really Kool Katz who can play tricks!',
   'Are you seeing stars too?',
   'I hear Tabitha has treats for Really Kool Katz who can play tricks!',
@@ -3524,7 +3524,7 @@ ChipChatter = (['Welcome to %s!' % lOutdoorZone,
   "Hello, I'm " + Chip + ". What's your name?",
   "No, I'm " + Chip + '.',
   "It's so nice to see you %!",
-  'We are Chip and Dale!'], ['I like golf.', 'We have the best acorns in Toontown.', 'The golf holes with volcanoes are the most challenging for me.'], ["We're going to the " + lTheBrrrgh + ' and play with %s.' % Pluto,
+  'We are Chip and Dale!'], ['I like golf.', 'We have the best acorns in Glonktown.', 'The golf holes with volcanoes are the most challenging for me.'], ["We're going to the " + lTheBrrrgh + ' and play with %s.' % Pluto,
   "We'll visit %s and fix him." % Donald,
   "I think I'll go swimming at " + lDonaldsDock + '.',
   "Oh, I'm a little sleepy. I think I'll go to Dreamland."])
@@ -3586,7 +3586,7 @@ GoofyChatter = (['Welcome to ' + lDaisyGardens + '.', 'Hi, my name is ' + Goofy 
   'Gawrsh there sure are a lot of ' + Cogs + ' near ' + lDonaldsDock + '.',
   'It looks like ' + Daisy + ' has planted some new flowers in her garden.',
   'At the Brrrgh branch of my Gag Shop, Hypno-Goggles are on sale for only 1 jellybean!',
-  "Goofy's Gag Shops offer the best jokes, tricks, and funnybone-ticklers in all of Toontown!",
+  "Goofy's Gag Shops offer the best jokes, tricks, and funnybone-ticklers in all of Glonktown!",
   "At Goofy's Gag Shops, every pie in the face is guaranteed to make a laugh or you get your jellybeans back!"], ["I'm going to Melody Land to see %s!" % Mickey,
   "Gosh, I'm late for my game with %s!" % Donald,
   "I think I'll go swimming at " + lDonaldsDock + '.',
@@ -3617,7 +3617,7 @@ GoofySpeedwayChatter = (['Welcome to ' + lGoofySpeedway + '.', 'Hi, my name is '
   "D'oh! I forgot to fix " + Mickey + "'s breakfast!",
   'Gawrsh there sure are a lot of ' + Cogs + ' near ' + lDonaldsDock + '.',
   'At the Brrrgh branch of my Gag Shop, Hypno-Goggles are on sale for only 1 jellybean!',
-  "Goofy's Gag Shops offer the best jokes, tricks, and funnybone-ticklers in all of Toontown!",
+  "Goofy's Gag Shops offer the best jokes, tricks, and funnybone-ticklers in all of Glonktown!",
   "At Goofy's Gag Shops, every pie in the face is guaranteed to make a laugh or you get your jellybeans back!"], ["I'm going to Melody Land to see %s!" % Mickey,
   "Gosh, I'm late for my game with %s!" % Donald,
   "I think I'll go swimming at " + lDonaldsDock + '.',
@@ -3657,7 +3657,7 @@ WinterDreamlandCChatter = (["Hi, I'm Dozing Donald!",
   'Happy Winter Holiday, %!'], ['Willow says that learning a little Sleep Voice Training is a real present, sing her a tune and find out why!',
   'I wish I was nestled all snug in my bed!',
   'Willow says that learning a little Sleep Voice Training is a real present, sing her a tune and find out why!',
-  "I'm dreaming of a white Toontown!",
+  "I'm dreaming of a white Glonktown!",
   'Willow says that learning a little Sleep Voice Training is a real present, sing her a tune and find out why!',
   'I meant to leave out milk and cookies!',
   'Willow says that learning a little Sleep Voice Training is a real present, sing her a tune and find out why!',
@@ -3672,7 +3672,7 @@ WinterDreamlandDChatter = (["Hi, I'm Dozing Donald!",
   'Welcome to Holiday Dreamland!',
   'Happy Winter Holiday!',
   'Happy Winter Holiday, %!'], ['I wish I was nestled all snug in my bed!',
-  "I'm dreaming of a white Toontown!",
+  "I'm dreaming of a white Glonktown!",
   'I meant to leave out milk and cookies!',
   'When I wake up, I better see lots of presents!',
   "I hope I don't sleep through the holidays!",
@@ -3817,7 +3817,7 @@ AFMinnieChatter = (["Happy April Toons' Week!", "Happy April Toons' Week, %!"], 
   'Have you heard your Doodle talk yet?',
   'Gravity has taken a holiday at the Estates!'], ["Have a wacky April Toons' Week!", 'I have to go chase cars now!  Bye!'])
 AFDaisyChatter = (["Happy April Toons' Week!", "Happy April Toons' Week, %!"], ['Welcome to ' + lToontownCentral + "! I'm " + Mickey + ' Mouse!',
-  "Hi, I'm " + Mickey + '! The happiest mouse in Toontown!',
+  "Hi, I'm " + Mickey + '! The happiest mouse in Glonktown!',
   'If you see ' + Daisy + ', tell her ' + Mickey + ' said hi!',
   "What, you've never seen a mouse with feathers?",
   "Isn't this silly?",
@@ -3891,7 +3891,7 @@ CLGoofySpeedwayChatter = (['Welcome to ' + lGoofySpeedway + '.',
   "D'oh! I forgot to fix " + Mickey + "'s breakfast!",
   'Gawrsh there sure are a lot of ' + Cogs + ' near ' + lDonaldsDock + '.',
   'At the Brrrgh branch of my Gag Shop, Hypno-Goggles are on sale for only 1 jellybean!',
-  "Goofy's Gag Shops offer the best jokes, tricks, and funnybone-ticklers in all of Toontown!",
+  "Goofy's Gag Shops offer the best jokes, tricks, and funnybone-ticklers in all of Glonktown!",
   "At Goofy's Gag Shops, every pie in the face is guaranteed to make a laugh or you get your jellybeans back!"], ['I better go get my kart a new paint job for the upcoming Grand Prix Weekend.',
   "Gosh, I better get workin' on this broken Leaderboard!",
   "Hope I'll see y'all on Grand Prix Weekend!  Goodbye!",
@@ -3912,14 +3912,14 @@ GPGoofySpeedwayChatter = (['Welcome to ' + lGoofySpeedway + '.',
   "D'oh! I forgot to fix " + Mickey + "'s breakfast!",
   'Gawrsh there sure are a lot of ' + Cogs + ' near ' + lDonaldsDock + '.',
   'At the Brrrgh branch of my Gag Shop, Hypno-Goggles are on sale for only 1 jellybean!',
-  "Goofy's Gag Shops offer the best jokes, tricks, and funnybone-ticklers in all of Toontown!",
+  "Goofy's Gag Shops offer the best jokes, tricks, and funnybone-ticklers in all of Glonktown!",
   "At Goofy's Gag Shops, every pie in the face is guaranteed to make a laugh or you get your jellybeans back!"], ['Good luck in the Grand Prix!',
   "I'm going to catch the next race in the Grand Prix!",
   'Gawrsh I think the next race is about to start!',
   'Gosh, I better go check on the new Leaderboard and make sure it is working right!'])
 SillyPhase1Chatter = ["If you haven't seen the Silly Meter, head to Toon Hall!",
- 'Toontown is getting sillier by the day!',
- "Cause silly surges in battle to boost Toontown's silly levels!",
+ 'Glonktown is getting sillier by the day!',
+ "Cause silly surges in battle to boost Glonktown's silly levels!",
  'Objects on the street are starting to animate!',
  'I saw a fire hydrant on Silly Street move!']
 SillyPhase2Chatter = ['Silly levels are still rising!',
@@ -3929,18 +3929,18 @@ SillyPhase2Chatter = ['Silly levels are still rising!',
  'A mailbox on Lighthouse Lane has gone nuts!',
  'Go see the Silly Meter in Toon Hall!',
  'Keep causing those silly surges!']
-SillyPhase3Chatter = ['The Cogs hated how silly Toontown was becoming!',
+SillyPhase3Chatter = ['The Cogs hated how silly Glonktown was becoming!',
  'Keep a sharp eye out for Cog Invasions!',
  'Cog Invasions have caused the silly levels to drop!',
  'The Silly Meter went down after the Cog Invasions!',
- 'Every street of Toontown has animated objects now!',
- 'Toontown is sillier than ever!']
+ 'Every street of Glonktown has animated objects now!',
+ 'Glonktown is sillier than ever!']
 SillyPhase4Chatter = ['Fire hydrants make your Squirt Gags squirtier!',
  'Mail Boxes give your Throw Gags a special delivery!',
  'Those crazy Trash Cans can help boost your Toon-up!',
  'Objects on the street can help you in battle!',
  "I just know we'll get the Silly Meter back up soon!",
- 'Enjoy the sillier Toontown!']
+ 'Enjoy the sillier Glonktown!']
 for chatter in [MickeyChatter,
  DonaldChatter,
  MinnieChatter,
@@ -3978,29 +3978,29 @@ toontownDialogues = {BoringTopic: {(1, 2018): ['Hello Albert', 'It looks like th
                                            'But when things get REALLY crazy again\xe2\x80\xa6',
                                            'The Silly Meter will return!']},
  EmceeDialoguePhase1Topic: {(1, 2020): ['Fellow Toons, this is the Silly Meter!',
-                                        "It is tracking Toontown's rising silly levels...",
+                                        "It is tracking Glonktown's rising silly levels...",
                                         'Which are causing objects on the street to animate!',
                                         'And YOU can help push these levels higher!',
                                         'Battle Cogs to cause Silly Surges...',
-                                        'Make Toontown sillier than ever...',
+                                        'Make Glonktown sillier than ever...',
                                         "And let's watch the world come alive!",
                                         "Now I'll repeat what I said, but only once more."]},
  EmceeDialoguePhase2Topic: {(1, 2020): ['Good Gag work, Toons!',
                                         "You're keeping those silly levels rising...",
-                                        'And Toontown is getting sillier every day!',
+                                        'And Glonktown is getting sillier every day!',
                                         'Fire hydrants, trash cans, and mailboxes are springing to life...',
                                         'Making the world more animated than ever!',
                                         "You know the Cogs aren't happy about this...",
                                         'But Toons sure are!']},
  EmceeDialoguePhase3Topic: {(1, 2020): ['Gadzooks! The Silly Meter is even crazier than expected!',
                                         'Your Silly Surges are working wonders...',
-                                        'And Toontown is getting more animated every day!',
+                                        'And Glonktown is getting more animated every day!',
                                         'Keep up the good Gag work...',
-                                        'And lets see how silly we can make Toontown!',
+                                        'And lets see how silly we can make Glonktown!',
                                         "You know the Cogs aren't happy about what's going on...",
                                         'But Toons sure are!']},
  EmceeDialoguePhase3_5Topic: {(1, 2020): ['YOU DID IT TOONS!',
-                                          'You brought the streets of Toontown to life!',
+                                          'You brought the streets of Glonktown to life!',
                                           'You deserve a reward!',
                                           'Enter the code SILLYMETER in your Shticker Book...',
                                           '...to get a Silly Meter T-Shirt!']},
@@ -4021,10 +4021,10 @@ toontownDialogues = {BoringTopic: {(1, 2018): ['Hello Albert', 'It looks like th
  EmceeDialoguePhase6Topic: {(1, 2020): ['Congratulations Toons!',
                                         'You all succesfully held off the Cog Invasions...',
                                         'With a little help from our newly animated friends...',
-                                        'And brought Toontown back to its usual silly self!',
+                                        'And brought Glonktown back to its usual silly self!',
                                         'We hope to get the Silly Meter rising again soon...',
                                         'So in the meantime, keep up the Cog fight...',
-                                        'And enjoy the silliest place ever, Toontown!']}}
+                                        'And enjoy the silliest place ever, Glonktown!']}}
 FriendsListPanelNewFriend = 'New Friend'
 FriendsListPanelSecrets = 'True Friend'
 FriendsListPanelOnlineFriends = 'ONLINE TOON\nFRIENDS'
@@ -4039,7 +4039,7 @@ FriendInviterThatToon = 'That toon'
 FriendInviterPlayer = 'Player'
 FriendInviterThatPlayer = 'That player'
 FriendInviterBegin = 'What type of friend would you like to make?'
-FriendInviterToonFriendInfo = 'A friend only in Toontown'
+FriendInviterToonFriendInfo = 'A friend only in Glonktown'
 FriendInviterPlayerFriendInfo = 'A friend across the Disney.com network'
 FriendInviterToonTooMany = 'You have too many toon friends to add another one now. You will have to remove some toon friends if you want to make friends with %s. You could also try making player friends them.'
 FriendInviterPlayerTooMany = 'You have too many player friends to add another one now. You will have to remove some player friends if you want to make friends with %s. You could also try making toon friends with them.'
@@ -4105,7 +4105,7 @@ LauncherPhaseNames = {0: 'Initialization',
  12: Bossbot + ' HQ',
  13: 'Parties'}
 LauncherProgress = '%(name)s (%(current)s of %(total)s)'
-LauncherStartingMessage = "Starting Disney's Toontown Online... "
+LauncherStartingMessage = "Starting Glonktown... "
 LauncherDownloadFile = 'Downloading update for ' + LauncherProgress + '...'
 LauncherDownloadFileBytes = 'Downloading update for ' + LauncherProgress + ': %(bytes)s'
 LauncherDownloadFilePercent = 'Downloading update for ' + LauncherProgress + ': %(percent)s%%'
@@ -4115,16 +4115,16 @@ LauncherExtractingFile = 'Extracting update for ' + LauncherProgress + '...'
 LauncherExtractingPercent = 'Extracting update for ' + LauncherProgress + ': %(percent)s%%'
 LauncherPatchingFile = 'Applying update for ' + LauncherProgress + '...'
 LauncherPatchingPercent = 'Applying update for ' + LauncherProgress + ': %(percent)s%%'
-LauncherConnectProxyAttempt = 'Connecting to Toontown: %s (proxy: %s) attempt: %s'
-LauncherConnectAttempt = 'Connecting to Toontown: %s attempt %s'
-LauncherDownloadServerFileList = 'Updating Toontown...'
-LauncherCreatingDownloadDb = 'Updating Toontown...'
-LauncherDownloadClientFileList = 'Updating Toontown...'
-LauncherFinishedDownloadDb = 'Updating Toontown... '
-LauncherStartingGame = 'Starting Toontown...'
-LauncherRecoverFiles = 'Updating Toontown. Recovering files...'
+LauncherConnectProxyAttempt = 'Connecting to Glonktown: %s (proxy: %s) attempt: %s'
+LauncherConnectAttempt = 'Connecting to Glonktown: %s attempt %s'
+LauncherDownloadServerFileList = 'Updating Glonktown...'
+LauncherCreatingDownloadDb = 'Updating Glonktown...'
+LauncherDownloadClientFileList = 'Updating Glonktown...'
+LauncherFinishedDownloadDb = 'Updating Glonktown... '
+LauncherStartingGame = 'Starting Glonktown...'
+LauncherRecoverFiles = 'Updating Glonktown. Recovering files...'
 LauncherCheckUpdates = 'Checking for updates for ' + LauncherProgress
-LauncherVerifyPhase = 'Updating Toontown...'
+LauncherVerifyPhase = 'Updating Glonktown...'
 LoadingDownloadWatcherUpdate = 'Loading %s'
 AvatarChoiceMakeAToon = 'Make A\nToon'
 AvatarChoicePlayThisToon = 'Play\nThis Toon'
@@ -4179,7 +4179,7 @@ PartyHasStartedNotAcceptedInvite = '%s party has started! You can still go to it
 EventsPageName = 'Events'
 EventsPageCalendarTabName = 'Calendar'
 EventsPageCalendarTabParty = 'Party'
-EventsPageToontownTimeIs = 'TOONTOWN TIME IS'
+EventsPageToontownTimeIs = 'GLONKTOWN TIME IS'
 EventsPageConfirmCancel = 'If you cancel, you will get a %d%% refund. Are you sure you want to cancel your party?'
 EventsPageCancelPartyResultOk = 'Your party was cancelled and you got %d jellybeans back!'
 EventsPageCancelPartyResultError = 'Sorry, your party was not cancelled.'
@@ -4191,7 +4191,7 @@ EventsPagePublicPrivateAlreadyStarted = "Sorry, your party has already started, 
 EventsPageHostTabName = 'Hosting'
 EventsPageHostTabTitle = 'My Next Party'
 EventsPageHostTabTitleNoParties = 'No Parties'
-EventsPageHostTabDateTimeLabel = 'You are having a party on %s at %s Toontown Time.'
+EventsPageHostTabDateTimeLabel = 'You are having a party on %s at %s Glonktown Time.'
 EventsPageHostingTabNoParty = 'Go to a playground\nParty Gate to plan\nyour own party!'
 EventsPageHostTabPublicPrivateLabel = 'This party is:'
 EventsPageHostTabToggleToPrivate = 'Private'
@@ -4209,12 +4209,12 @@ EventsPageInvitedTabName = 'Invitations'
 EventsPageInvitedTabTitle = 'Party Invitations'
 EventsPageInvitedTabInvitationListTitle = 'Invitations'
 EventsPageInvitedTabActivityListTitle = 'Activities'
-EventsPageInvitedTabTime = '%s %s Toontown Time'
+EventsPageInvitedTabTime = '%s %s Glonktown Time'
 EventsPageNewsTabName = 'News'
 EventsPageNewsTabTitle = 'News'
 EventsPageNewsDownloading = 'Retrieving News...'
 EventsPageNewsUnavailable = 'Chip and Dale played with the printing press. News not available.'
-EventsPageNewsPaperTitle = 'TOONTOWN TIMES'
+EventsPageNewsPaperTitle = 'GLONKTOWN TIMES'
 EventsPageNewsLeftSubtitle = 'Still only 1 jellybean'
 EventsPageNewsRightSubtitle = 'Established toon-thousand nine'
 NewsPageName = 'News'
@@ -4229,10 +4229,10 @@ NewsPageNoIssues = 'Whoops! The "Toon News ... for the Amused!" has gone missing
 IssueFrameThisWeek = 'this week'
 IssueFrameLastWeek = 'last week'
 IssueFrameWeeksAgo = '%d weeks ago'
-SelectedInvitationInformation = '%s is having a party on %s at %s Toontown Time.'
+SelectedInvitationInformation = '%s is having a party on %s at %s Glonktown Time.'
 PartyPlannerNextButton = 'Continue'
 PartyPlannerPreviousButton = 'Back'
-PartyPlannerWelcomeTitle = 'Toontown Party Planner'
+PartyPlannerWelcomeTitle = 'Glonktown Party Planner'
 PartyPlannerInstructions = 'Hosting your own party is a lot of fun!\nStart planning with the arrows at the bottom!'
 PartyPlannerDateTitle = 'Pick A Day For Your Party'
 PartyPlannerTimeTitle = 'Pick A Time For Your Party'
@@ -4240,11 +4240,11 @@ PartyPlannerGuestTitle = 'Choose Your Guests'
 PartyPlannerEditorTitle = 'Design Your Party\nPlace Activities and Decorations'
 PartyPlannerConfirmTitle = 'Choose Invitations To Send'
 PartyPlannerConfirmTitleNoFriends = 'Double Check Your Party'
-PartyPlannerTimeToontown = 'Toontown'
+PartyPlannerTimeToontown = 'Glonktown'
 PartyPlannerTimeTime = 'Time'
 PartyPlannerTimeRecap = 'Party Date and Time'
 PartyPlannerPartyNow = 'As Soon As Possible'
-PartyPlannerTimeToontownTime = 'Toontown Time:'
+PartyPlannerTimeToontownTime = 'Glonktown Time:'
 PartyPlannerTimeLocalTime = 'Party Local Time : '
 PartyPlannerPublicPrivateLabel = 'This party will be:'
 PartyPlannerPublicDescription = 'Any Toon\ncan come!'
@@ -4255,7 +4255,7 @@ PartyPlannerCheckAll = 'Check\nAll'
 PartyPlannerUncheckAll = 'Uncheck\nAll'
 PartyPlannerDateText = 'Date'
 PartyPlannerTimeText = 'Time'
-PartyPlannerTTTimeText = 'Toontown Time'
+PartyPlannerTTTimeText = 'Glonktown Time'
 PartyPlannerEditorInstructionsIdle = 'Click on the Party Activity or Decoration you would like to purchase.'
 PartyPlannerEditorInstructionsClickedElementActivity = 'Click Buy or Drag the Activity Icon onto the Party Grounds Map'
 PartyPlannerEditorInstructionsClickedElementDecoration = 'Click Buy or Drag the Decoration onto the Party Grounds Map'
@@ -4296,8 +4296,8 @@ PartyPlannerInvitationThemeWhatSentenceNoFriends = 'I am hosting a %s party! %s!
 PartyPlannerInvitationThemeWhatActivitiesBeginning = 'It will have '
 PartyPlannerInvitationWhoseSentence = '%s Party'
 PartyPlannerInvitationTheme = 'Theme'
-PartyPlannerInvitationWhenSentence = 'It will be on %s,\nat %s Toontown Time.\nHope you can make it!'
-PartyPlannerInvitationWhenSentenceNoFriends = 'It will be on %s,\nat %s Toontown Time.\nToontastic!'
+PartyPlannerInvitationWhenSentence = 'It will be on %s,\nat %s Glonktown Time.\nHope you can make it!'
+PartyPlannerInvitationWhenSentenceNoFriends = 'It will be on %s,\nat %s Glonktown Time.\nToontastic!'
 PartyPlannerComingSoon = 'Coming Soon'
 PartyPlannerCantBuy = "Can't Buy"
 PartyPlannerGenericName = 'Party Planner'
@@ -4307,10 +4307,10 @@ MusicEncntrGeneralBg = 'Encounter With Cogs'
 MusicTcSzActivity = 'Toontorial Medley'
 MusicTcSz = 'Strolling Along'
 MusicCreateAToon = 'The New Toon in Town'
-MusicTtTheme = 'The Toontown Theme'
+MusicTtTheme = 'The Glonktown Theme'
 MusicMinigameRace = 'Slow and Steady'
 MusicMgPairing = 'Remember Me?'
-MusicTcNbrhood = 'Toontown Central'
+MusicTcNbrhood = 'Glonktown Central'
 MusicMgDiving = 'Treasure Lullaby'
 MusicMgCannonGame = 'Fire the Cannons!'
 MusicMgTwodgame = 'Running Toon'
@@ -4321,7 +4321,7 @@ MusicMgVine = 'The Jungle Swing'
 MusicMgIcegame = 'Slippery Situation'
 MusicMgToontag = 'Minigame Medley'
 MusicMMatchBg2 = 'Jazzy Minnie'
-MusicMgTarget = "Soarin' Over Toontown"
+MusicMgTarget = "Soarin' Over Glonktown"
 MusicFfSafezone = 'The Funny Farm'
 MusicDdSz = 'Waddling Way'
 MusicMmNbrhood = "Minnie's Melodyland"
@@ -4666,7 +4666,7 @@ OptionsPageTitle = 'Options'
 OptionsTabTitle = 'Options\n& Codes'
 OptionsPagePurchase = 'Subscribe'
 OptionsPageLogout = 'Logout'
-OptionsPageExitToontown = 'Exit Toontown'
+OptionsPageExitToontown = 'Exit Glonktown'
 OptionsPageMusicOnLabel = 'Music is on.'
 OptionsPageMusicOffLabel = 'Music is off.'
 OptionsPageSFXOnLabel = 'Sound Effects are on.'
@@ -4688,10 +4688,10 @@ OptionsPageToggleOff = 'Turn Off'
 OptionsPageChange = 'Change'
 OptionsPageDisplaySettings = 'Display: %(screensize)s, %(api)s'
 OptionsPageDisplaySettingsNoApi = 'Display: %(screensize)s'
-OptionsPageExitConfirm = 'Exit Toontown?'
+OptionsPageExitConfirm = 'Exit Glonktown?'
 DisplaySettingsTitle = 'Display Settings'
-DisplaySettingsIntro = 'The following settings are used to configure the way Toontown is displayed on your computer.  It is probably not necessary to adjust these unless you are experiencing a problem.'
-DisplaySettingsIntroSimple = 'You may adjust the screen resolution to a higher value to improve the clarity of text and graphics in Toontown, but depending on your graphics card, some higher values may make the game run less smoothly or may not work at all.'
+DisplaySettingsIntro = 'The following settings are used to configure the way Glonktown is displayed on your computer.  It is probably not necessary to adjust these unless you are experiencing a problem.'
+DisplaySettingsIntroSimple = 'You may adjust the screen resolution to a higher value to improve the clarity of text and graphics in Glonktown, but depending on your graphics card, some higher values may make the game run less smoothly or may not work at all.'
 DisplaySettingsApi = 'Graphics API:'
 DisplaySettingsResolution = 'Resolution:'
 DisplaySettingsWindowed = 'In a window'
@@ -4790,13 +4790,13 @@ QuestPosterDeleteBtn = 'Delete'
 QuestPosterDialogYes = 'Delete'
 QuestPosterDialogNo = 'Cancel'
 ShardPageTitle = 'Districts'
-ShardPageHelpIntro = 'Each District is a copy of the Toontown world.'
+ShardPageHelpIntro = 'Each District is a copy of the Glonktown world.'
 ShardPageHelpWhere = '  You are currently in the "%s" District.'
 ShardPageHelpWelcomeValley = '  You are currently in the "Welcome Valley" District, within "%s".'
 ShardPageHelpMove = '  To move to a new District, click on its name.'
-ShardPagePopulationTotal = 'Total Toontown Population: %d'
+ShardPagePopulationTotal = 'Total Glonktown Population: %d'
 ShardPagePopulation = 'Population: %d'
-ShardPageInvasion = '%s are invading Toontown!'
+ShardPageInvasion = '%s are invading Glonktown!'
 ShardPageScrollTitle = 'Name            Population'
 ShardPageLow = 'Quiet'
 ShardPageMed = 'Ideal'
@@ -5185,7 +5185,7 @@ FishPokerPair = 'Pair'
 TutorialGreeting1 = 'Hi %s!'
 TutorialGreeting2 = 'Hi %s!\nCome over here!'
 TutorialGreeting3 = 'Hi %s!\nCome over here!\nUse the arrow keys!'
-TutorialMickeyWelcome = 'Welcome to Toontown!'
+TutorialMickeyWelcome = 'Welcome to Glonktown!'
 TutorialFlippyIntro = 'Let me introduce you to my friend %s...' % Flippy
 TutorialFlippyHi = 'Hi, %s!'
 TutorialQT1 = 'You can talk by using this.'
@@ -5217,7 +5217,7 @@ TutorialAllFriendsButton = 'You can view all your friends by clicking the friend
 TutorialEmptyFriendsList = "Right now your list is empty because %s isn't a real player." % Flippy
 TutorialCloseFriendsList = "Click the 'Close'\nbutton to make the\nlist go away"
 TutorialShtickerButton = 'The button in the lower, right corner opens your Shticker Book. Try it...'
-TutorialBook1 = 'The book contains lots of useful information like this map of Toontown.'
+TutorialBook1 = 'The book contains lots of useful information like this map of Glonktown.'
 TutorialBook2 = 'You can also check the progress of your ToonTasks.'
 TutorialBook3 = 'When you are done click the book button again to make it close'
 TutorialLaffMeter1 = 'You will also need this...'
@@ -5423,7 +5423,7 @@ ColorShopAll = 'Single Color'
 ClothesShopShorts = 'Shorts'
 ClothesShopShirt = 'Shirts'
 ClothesShopBottoms = 'Bottoms'
-PromptTutorial = "Congratulations!!\nYou are Toontown's newest citizen!\n\nWould you like to continue to the Toontorial or teleport directly to Toontown Central?"
+PromptTutorial = "Congratulations!!\nYou are Glonktown's newest citizen!\n\nWould you like to continue to the Toontorial or teleport directly to Glonktown Central?"
 MakeAToonSkipTutorial = 'Skip Toontorial'
 MakeAToonEnterTutorial = 'Enter Toontorial'
 MakeAToonDone = 'Done'
@@ -5446,7 +5446,7 @@ MustHaveAFirstOrLast1 = "Your toon should have a first or last name, don't you t
 MustHaveAFirstOrLast2 = "Don't you want your toon to have a first or last name?"
 ApprovalForName1 = "That's it, your toon deserves a great name!"
 ApprovalForName2 = 'Toon names are the best kind of names!'
-MakeAToonLastStep = 'Last step before going to Toontown!'
+MakeAToonLastStep = 'Last step before going to Glonktown!'
 PickANameYouLike = 'Pick a name you like!'
 TitleCheckBox = 'Title'
 FirstCheckBox = 'First'
@@ -5593,22 +5593,22 @@ STOREOWNER_OK = lOK
 STOREOWNER_CANCEL = lCancel
 STOREOWNER_TROPHY = 'Wow! You collected %s of %s fish. That deserves a trophy and a Laff boost!'
 SuitInvasionBegin1 = lToonHQ + ': A Cog Invasion has begun!!!'
-SuitInvasionBegin2 = lToonHQ + ': %s have taken over Toontown!!!'
+SuitInvasionBegin2 = lToonHQ + ': %s have taken over Glonktown!!!'
 SuitInvasionEnd1 = lToonHQ + ': The %s Invasion has ended!!!'
 SuitInvasionEnd2 = lToonHQ + ': The Toons have saved the day once again!!!'
 SuitInvasionUpdate1 = lToonHQ + ': The Cog Invasion is now at %s Cogs!!!'
 SuitInvasionUpdate2 = lToonHQ + ': We must defeat those %s!!!'
 SuitInvasionBulletin1 = lToonHQ + ': There is a Cog Invasion in progress!!!'
-SuitInvasionBulletin2 = lToonHQ + ': %s have taken over Toontown!!!'
+SuitInvasionBulletin2 = lToonHQ + ': %s have taken over Glonktown!!!'
 LeaderboardTitle = 'Toon Platoon'
-QuestScriptTutorialMickey_1 = 'Toontown has a new citizen! Do you have some extra gags?'
+QuestScriptTutorialMickey_1 = 'Glonktown has a new citizen! Do you have some extra gags?'
 QuestScriptTutorialMickey_2 = 'Sure, %s!'
 QuestScriptTutorialMickey_3 = 'Tutorial Tom will tell you all about the Cogs.\x07Gotta go!'
 QuestScriptTutorialMickey_4 = 'Come here! Use the arrow keys to move.'
-QuestScriptTutorialMinnie_1 = 'Toontown has a new citizen! Do you have some extra gags?'
+QuestScriptTutorialMinnie_1 = 'Glonktown has a new citizen! Do you have some extra gags?'
 QuestScriptTutorialMinnie_2 = 'Sure, %s!'
 QuestScriptTutorialMinnie_3 = 'Tutorial Tom will tell you all about the Cogs.\x07Gotta go!'
-QuestScript101_1 = 'These are Cogs. They are robots that are trying to take over Toontown.'
+QuestScript101_1 = 'These are Cogs. They are robots that are trying to take over Glonktown.'
 QuestScript101_2 = 'There are many different kinds of Cogs and...'
 QuestScript101_3 = '...they turn happy Toon buildings...'
 QuestScript101_4 = '...into ugly Cog buildings!'
@@ -5639,7 +5639,7 @@ QuestScriptTutorialBlocker_3 = "Oh! You don't know how to use SpeedChat!"
 QuestScriptTutorialBlocker_4 = 'Click on the button to say something.'
 QuestScriptTutorialBlocker_5 = 'Very good!\x07Where you are going there are many Toons to talk to.'
 QuestScriptTutorialBlocker_6 = "If you want to chat with other Toons using the keyboard, there's another button you can use."
-QuestScriptTutorialBlocker_7 = "It's called the Chat button. You need to turn on Speedchat Plus in your Account Manager on the Toontown Web site to use it."
+QuestScriptTutorialBlocker_7 = "It's called the Chat button. You need to turn on Speedchat Plus in your Account Manager on the Glonktown Web site to use it."
 QuestScriptTutorialBlocker_8 = 'Good luck! See you later!'
 QuestScriptGagShop_1 = 'Welcome to the Gag Shop!'
 QuestScriptGagShop_1a = 'This is where Toons come to buy gags to use against the Cogs.'
@@ -5650,7 +5650,7 @@ QuestScriptGagShop_6 = "When you're done buying gags, click this button to retur
 QuestScriptGagShop_7 = 'Normally you can use this button to play another Trolley Game...'
 QuestScriptGagShop_8 = "...but there's no time for another game right now. You're needed in Toon HQ!"
 QuestScript120_1 = "Good job finding the trolley!\x07By the way, have you met Banker Bob?\x07He has quite a sweet tooth.\x07Why don't you introduce yourself by taking him this candy bar as a gift."
-QuestScript120_2 = 'Banker Bob is over in the Toontown Bank.'
+QuestScript120_2 = 'Banker Bob is over in the Glonktown Bank.'
 QuestScript121_1 = "Yum, thank you for the Candy Bar.\x07Say, if you can help me, I'll give you a reward.\x07Those Cogs stole the keys to my safe. Defeat Cogs to find a stolen key.\x07When you find a key, bring it back to me."
 QuestScript130_1 = 'Good job finding the trolley!\x07By the way, I received a package for Professor Pete today.\x07It must be his new chalk he ordered.\x07Can you please take it to him?\x07He is over in the school house.'
 QuestScript131_1 = 'Oh, thanks for the chalk.\x07What?!?\x07Those Cogs stole my blackboard. Defeat Cogs to find my stolen blackboard.\x07When you find it, bring it back to me.'
@@ -5658,7 +5658,7 @@ QuestScript140_1 = 'Good job finding the trolley!\x07By the way, I have this fri
 QuestScript141_1 = 'Oh, yes, this book almost completes my collection.\x07Let me see...\x07Uh oh...\x07Now where did I put my glasses?\x07I had them just before those Cogs took over my building.\x07Defeat Cogs to find my stolen glasses.\x07When you find them, bring them back to me for a reward.'
 QuestScript145_1 = 'I see you had no problem with the trolley!\x07Listen, the Cogs have stolen our blackboard eraser.\x07Go into the streets and fight Cogs until you recover the eraser.\x07To reach the streets go through one of the tunnels like this:'
 QuestScript145_2 = "When you find our eraser, bring it back here.\x07Don't forget, if you need gags, ride the trolley.\x07Also, if you need to recover Laff points, collect ice cream cones in the Playground."
-QuestScript150_1 = 'Great work!\x07Toontown is more fun when you have friends!'
+QuestScript150_1 = 'Great work!\x07Glonktown is more fun when you have friends!'
 QuestScript150_2 = 'To make friends, find another player, and use the New Friend button.'
 QuestScript150_3 = 'Once you have made a friend, come back here.'
 QuestScript150_4 = 'Some tasks are too difficult to do alone!'
@@ -7646,9 +7646,9 @@ NPCToonNames = {20000: 'Tutorial Tom',
  7008: 'Ima Cagedtoon',
  7009: 'Jimmy Thelock'}
 zone2TitleDict = {2513: ('Toon Hall', ''),
- 2514: ('Toontown Bank', ''),
- 2516: ('Toontown School House', ''),
- 2518: ('Toontown Library', ''),
+ 2514: ('Glonktown Bank', ''),
+ 2516: ('Glonktown School House', ''),
+ 2518: ('Glonktown Library', ''),
  2519: ('Gag Shop', ''),
  2520: (lToonHQ, ''),
  2521: ('Clothing Shop', ''),
@@ -7657,7 +7657,7 @@ zone2TitleDict = {2513: ('Toon Hall', ''),
  2602: ('', ''),
  2603: ('One-Liner Miners', ''),
  2604: ('Hogwash & Dry', ''),
- 2605: ('Toontown Sign Factory', ''),
+ 2605: ('Glonktown Sign Factory', ''),
  2606: ('', ''),
  2607: ('Jumping Beans', ''),
  2610: ('Dr. Tom Foolery', ''),
@@ -7672,7 +7672,7 @@ zone2TitleDict = {2513: ('Toon Hall', ''),
  2629: ("The Laughin' Place", ''),
  2632: ('Clown Class', ''),
  2633: ('Tee-Hee Tea Shop', ''),
- 2638: ('Toontown Playhouse', ''),
+ 2638: ('Glonktown Playhouse', ''),
  2639: ('Monkey Tricks', ''),
  2643: ('Canned Bottles', ''),
  2644: ('Impractical Jokes', ''),
@@ -7687,7 +7687,7 @@ zone2TitleDict = {2513: ('Toon Hall', ''),
  2660: ('Tickle Machines', ''),
  2661: ('Daffy Taffy', ''),
  2662: ('Dr. I.M. Euphoric', ''),
- 2663: ('Toontown Cinerama', ''),
+ 2663: ('Glonktown Cinerama', ''),
  2664: ('The Merry Mimes', ''),
  2665: ("Mary's Go Around Travel Company", ''),
  2666: ('Laughing Gas Station', ''),
@@ -7699,7 +7699,7 @@ zone2TitleDict = {2513: ('Toon Hall', ''),
  2704: ('Movie Multiplex', ''),
  2705: ("Wiseacre's Noisemakers", ''),
  2708: ('Blue Glue', ''),
- 2711: ('Toontown Post Office', ''),
+ 2711: ('Glonktown Post Office', ''),
  2712: ('Chortle Cafe', ''),
  2713: ('Laughter Hours Cafe', ''),
  2714: ('Kooky CinePlex', ''),
@@ -7730,7 +7730,7 @@ zone2TitleDict = {2513: ('Toon Hall', ''),
  2804: ('Dr. Pulyurleg, Chiropractor', ''),
  2805: ('', ''),
  2809: ('The Punch Line Gym', ''),
- 2814: ('Toontown Theatre', ''),
+ 2814: ('Glonktown Theatre', ''),
  2818: ('The Flying Pie', ''),
  2821: ('', ''),
  2822: ('Rubber Chicken Sandwiches', ''),
@@ -8294,7 +8294,7 @@ FireworksNewYearsEveBeginning = lToonHQ + ': Happy New Year! Enjoy the fireworks
 FireworksNewYearsEveEnding = lToonHQ + ': Hope you enjoyed the show! Happy New Year!'
 FireworksComboBeginning = lToonHQ + ': Enjoy lots of Laffs with Toon fireworks!'
 FireworksComboEnding = lToonHQ + ': Thank you, Toons! Hope you enjoyed the show!'
-BlockerTitle = 'LOADING TOONTOWN...'
+BlockerTitle = 'LOADING GLONKTOWN...'
 BlockerLoadingTexts = ['Scrubbing pie tins',
  'Baking pie crusts',
  'Heating pie filling',
@@ -8343,7 +8343,7 @@ TipDict = {TIP_NONE: ('',),
                'Open or close your Shticker Book by pressing the "F8" key.',
                'You can look up by pressing the "Page Up" key and look down by pressing the "Page Down" key.',
                'Press the "Control" key to jump.',
-               'Press the "F9" key to take a screenshot, which will be saved in your Toontown folder on your computer.',
+               'Press the "F9" key to take a screenshot, which will be saved in your Glonktown folder on your computer.',
                'You can change your screen resolution, adjust audio, and control other options on the Options Page in the Shticker Book.',
                "Try on your friend's clothing at the closet in their house.",
                'You can go to your house using the "Go Home" button on your map.',
@@ -8351,13 +8351,13 @@ TipDict = {TIP_NONE: ('',),
                'You can browse the selection at Clothing Stores even without a clothing ticket.',
                'Rewards for some ToonTasks allow you to carry more gags and jellybeans.',
                'You can have up to 50 friends on your Friends List.',
-               'Some ToonTask rewards let you teleport to playgrounds in Toontown by using the Map Page in the Shticker Book.',
+               'Some ToonTask rewards let you teleport to playgrounds in Glonktown by using the Map Page in the Shticker Book.',
                'Increase your Laff points in the Playgrounds by collecting treasures like stars and ice cream cones.',
                'To heal quickly after a battle, go to your estate and play with your Doodle.',
                'Change to different views of your Toon by pressing the Tab Key.',
                'Sometimes you can find several different ToonTasks offered for the same reward. Shop around!',
                'Finding friends with similar ToonTasks is a fun way to progress through the game.',
-               'You never need to save your Toontown progress. The Toontown servers continually save all the necessary information.',
+               'You never need to save your Glonktown progress. The Glonktown servers continually save all the necessary information.',
                'You can whisper to other Toons either by clicking on them or by selecting them from your Friends List.',
                'Some SpeedChat phrases play emotion animations on your Toon.',
                'If the area you are in is crowded, try changing Districts. Go to the District Page in the Shticker Book and select a different one.',
@@ -8365,7 +8365,7 @@ TipDict = {TIP_NONE: ('',),
                'If you rescue enough buildings to get a star above your head you may find your name on the blackboard in a Toon HQ.',
                'Rescued buildings are sometimes recaptured by the Cogs. The only way to keep your star is to go out and rescue more buildings!',
                'The names of your True Friends will appear in Blue.',
-               'See if you can collect all the fish in Toontown!',
+               'See if you can collect all the fish in Glonktown!',
                'Different ponds hold different fish. Try them all!',
                'When your fishing bucket is full sell your fish to the Fishermen in the Playgrounds.',
                'You can sell your fish to the Fishermen or inside Pet Shops.',
@@ -8387,7 +8387,7 @@ TipDict = {TIP_NONE: ('',),
                'Visit the Pet Shops every day to see what new Doodles they have.',
                'Different neighborhoods have different Doodles offered for adoption.',
                "Show off your stylin' ride and turbo-boost your Laff limit at Goofy Speedway.",
-               'Enter Goofy Speedway through the tire-shaped tunnel in Toontown Central Playground.',
+               'Enter Goofy Speedway through the tire-shaped tunnel in Glonktown Central Playground.',
                'Earn Laff points at Goofy Speedway.',
                'Goofy Speedway has six different race tracks. '),
  TIP_STREET: ('There are four types of Cogs: Lawbots, Cashbots, Sellbots, and Bossbots.',
@@ -8404,7 +8404,7 @@ TipDict = {TIP_NONE: ('',),
               'A gag that will earn experience has a blue background on the Gag Menu in battle.',
               'Gag experience is multiplied when used inside Cog Buildings. Higher floors have higher multipliers.',
               'When a Cog is defeated, each Toon in that round will get credit for the Cog when the battle is over.',
-              'Each street in Toontown has different Cog levels and types.',
+              'Each street in Glonktown has different Cog levels and types.',
               'Sidewalks are safe from Cogs.',
               'On the streets, side doors tell knock-knock jokes when approached.',
               'Some ToonTasks train you for new Gag Tracks. You only get to choose six of the seven Gag Tracks, so choose carefully!',
@@ -8426,7 +8426,7 @@ TipDict = {TIP_NONE: ('',),
               'Cogs tend to attack the Toon that has done them the most damage.',
               'Sound gags do not get bonus damage against lured Cogs.',
               'If you wait too long to attack a lured Cog, it will wake up. Higher level lures last longer.',
-              'There are fishing ponds on every street in Toontown. Some streets have unique fish.'),
+              'There are fishing ponds on every street in Glonktown. Some streets have unique fish.'),
  TIP_MINIGAME: ('After you fill up your jellybean jar, any jellybeans you get from Trolley Games automatically spill over into your bank.',
                 'You can use the arrow keys instead of the mouse in the "Match Minnie" Trolley Game.',
                 'In the Cannon Game you can use the arrow keys to move your cannon and press the "Control" key to fire.',
@@ -8657,7 +8657,7 @@ FishBingoTypeBlockout = 'BLOCKOUT!'
 FishBingoStart = "It's time for Fish Bingo!  Go to any available pier to play!"
 FishBingoOngoing = 'Welcome! Fish Bingo is currently in progress.'
 FishBingoEnd = 'Hope you had fun playing Fish Bingo.'
-FishBingoHelpMain = 'Welcome to Toontown Fish Bingo!  Everyone at the pond works together to fill the card before time runs out.'
+FishBingoHelpMain = 'Welcome to Glonktown Fish Bingo!  Everyone at the pond works together to fill the card before time runs out.'
 FishBingoHelpFlash = 'When you catch a fish, click on one of the flashing squares to mark the card.'
 FishBingoHelpNormal = 'This is a Classic Bingo card.  Mark any row down, across or diagonally to win.'
 FishBingoHelpDiagonals = 'Mark both of the diagonals to win.'
@@ -8942,9 +8942,9 @@ KartRace_RaceTimeoutNoRefund = 'You timed out of that race.  Your tickets have n
 KartRace_RacerTooSlow = 'You took too long to finish the race.  Your tickets have not been refunded.  Keep trying!'
 KartRace_PhotoFinish = 'Photo Finish!'
 KartRace_CircuitPoints = 'Circuit Points'
-CircuitRaceStart = 'The Toontown Grand Prix at Goofy Speedway is about to begin!  To win, collect the most points in three consecutive races!'
-CircuitRaceOngoing = 'Welcome! The Toontown Grand Prix is currently in progress.'
-CircuitRaceEnd = "That's all for today's Toontown Grand Prix at Goofy Speedway.  See you next week!"
+CircuitRaceStart = 'The Glonktown Grand Prix at Goofy Speedway is about to begin!  To win, collect the most points in three consecutive races!'
+CircuitRaceOngoing = 'Welcome! The Glonktown Grand Prix is currently in progress.'
+CircuitRaceEnd = "That's all for today's Glonktown Grand Prix at Goofy Speedway.  See you next week!"
 TrickOrTreatMsg = 'You have already\nfound this treat!'
 WinterCarolingMsg = 'You have already been caroling here!'
 LawbotBossTempIntro0 = "Hmmm what's on the docket today?"
@@ -9411,9 +9411,9 @@ GolfCurrentHistory = 'Current %(historyDesc)s : %(num)s'
 GolfTieBreakWinner = '%(name)s wins the random tie breaker!'
 GolfSeconds = ' -  %(time).2f seconds'
 GolfTimeTieBreakWinner = '%(name)s wins the total aiming time tie breaker!!!'
-RoamingTrialerWeekendStart = 'Tour Toontown is starting! Free players may now enter any neighborhood!'
-RoamingTrialerWeekendOngoing = 'Welcome to Tour Toontown! Free players may now enter any neighborhood!'
-RoamingTrialerWeekendEnd = "That's all for Tour Toontown."
+RoamingTrialerWeekendStart = 'Tour Glonktown is starting! Free players may now enter any neighborhood!'
+RoamingTrialerWeekendOngoing = 'Welcome to Tour Glonktown! Free players may now enter any neighborhood!'
+RoamingTrialerWeekendEnd = "That's all for Tour Glonktown."
 MoreXpHolidayStart = 'Good news! Exclusive Test Toon double gag experience time has started.'
 MoreXpHolidayOngoing = 'Welcome! Exclusive Test Toon double gag experience time is currently ongoing.'
 MoreXpHolidayEnd = 'Exclusive Test Toon double gag experience time has ended. Thanks for helping us Test things!'
@@ -9431,20 +9431,20 @@ JellybeanFishingHolidayStart = 'Double Bean Days for Fishing have begun!'
 JellybeanFishingHolidayEnd = 'Double Bean Days for Fishing have ended!'
 JellybeanPartiesHolidayStart = "It's Jellybean Week! Get Double Jellybean rewards!"
 JellybeanPartiesHolidayEnd = "That's all for Jellybean Week. See you next year."
-JellybeanMonthHolidayStart = 'Celebrate Toontown with double beans, Cattlelog items and silly surprises!'
+JellybeanMonthHolidayStart = 'Celebrate Glonktown with double beans, Cattlelog items and silly surprises!'
 BankUpgradeHolidayStart = 'Something Toontastic happened to your Jellybean Bank!'
-HalloweenPropsHolidayStart = "It's Halloween in Toontown!"
+HalloweenPropsHolidayStart = "It's Halloween in Glonktown!"
 HalloweenPropsHolidayEnd = 'Halloween has ended. Boo!'
-SpookyPropsHolidayStart = 'Silly Meter spins Toontown into spooky mode!'
+SpookyPropsHolidayStart = 'Silly Meter spins Glonktown into spooky mode!'
 BlackCatHolidayStart = 'Create a Black Cat - Today only!'
 BlackCatHolidayEnd = 'Black Cat day has ended!'
 SpookyBlackCatHolidayStart = 'Friday 13th means a Black Cat blast!'
 TopToonsMarathonStart = "The Top Toons New Year's Day Marathon has begun!"
 TopToonsMarathonEnd = "The Top Toons New Year's Day Marathon has ended."
-WinterDecorationsStart = "It's Winter Holiday time in Toontown!"
+WinterDecorationsStart = "It's Winter Holiday time in Glonktown!"
 WinterDecorationsEnd = 'Winter Holiday is over - Happy New Year!'
 WackyWinterDecorationsStart = 'Brrr! Silly Meter goes from silly to chilly!'
-WinterCarolingStart = 'Caroling has come to Toontown. Sing for your Snowman Head - see the Blog for details!'
+WinterCarolingStart = 'Caroling has come to Glonktown. Sing for your Snowman Head - see the Blog for details!'
 ExpandedClosetsStart = 'Attention Toons: For a limited time, Members can purchase the new 50 item Closet from the Cattlelog for the low price of 50 jellybeans!'
 KartingTicketsHolidayStart = 'Get double tickets from Practice races at Goofy Speedway today!'
 IdesOfMarchStart = 'Toons go GREEN!'
@@ -9671,67 +9671,67 @@ DayNamesAbbrev = ('MON',
  'SUN')
 HolidayNamesInCalendar = {1: ('Summer Fireworks', 'Celebrate Summer with a fireworks show every hour in each playground!'),
  2: ('New Year Fireworks', 'Happy New Year! Enjoy a fireworks show every hour in each playground!'),
- 3: ('Bloodsucker Invasion', 'Help defend Toontown from the Bloodsucker invasion!'),
+ 3: ('Bloodsucker Invasion', 'Help defend Glonktown from the Bloodsucker invasion!'),
  4: ('Winter Holiday', 'Celebrate the Winter Holiday with Toontastic decorations, party and Cattlelog items, and more!'),
- 5: ('Skelecog Invasion', 'Stop the Skelecogs from invading Toontown!'),
- 6: ('Mr. Hollywood Invasion', 'Stop the Mr. Hollywood Cogs from invading Toontown!'),
+ 5: ('Skelecog Invasion', 'Stop the Skelecogs from invading Glonktown!'),
+ 6: ('Mr. Hollywood Invasion', 'Stop the Mr. Hollywood Cogs from invading Glonktown!'),
  7: ('Fish Bingo', 'Fish Bingo Wednesday! Everyone at the pond works together to complete the card before time runs out.'),
  8: ('Toon Species Election', 'Vote on the new Toon species! Will it be Goat? Will it be Pig?'),
  9: ('Black Cat Day', 'Happy Halloween! Create a Toontastic Black Cat Toon - Today Only!'),
- 13: ('Trick or Treat', 'Happy Halloween! Trick or treat throughout Toontown to get a nifty Halloween pumpkin head reward!'),
+ 13: ('Trick or Treat', 'Happy Halloween! Trick or treat throughout Glonktown to get a nifty Halloween pumpkin head reward!'),
  14: ('Grand Prix', 'Grand Prix Monday at Goofy Speedway! To win, collect the most points in three consecutive races!'),
  16: ('Grand Prix Weekend', 'Free and Paid players compete in circuit races at Goofy Speedway!'),
  17: ('Trolley Tracks', 'Trolley Tracks Thursday! Board any Trolley with two or more Toons to play.'),
  19: ('Silly Saturdays', 'Saturdays are silly with Fish Bingo and Grand Prix throughout the day!'),
- 24: ('Ides of March', 'Beware the Ides of March! Stop the Backstabber Cogs from invading Toontown!'),
- 26: ('Halloween Decor', 'Celebrate Halloween as spooky trees and streetlights transform Toontown!'),
+ 24: ('Ides of March', 'Beware the Ides of March! Stop the Backstabber Cogs from invading Glonktown!'),
+ 26: ('Halloween Decor', 'Celebrate Halloween as spooky trees and streetlights transform Glonktown!'),
  28: ('Winter Invasion', 'The sellbots are on the loose spreading their cold sales tactics!'),
  29: ("April Toons' Week", "Celebrate April Toons' Week - a holiday built by Toons for Toons!"),
- 33: ('Sellbot Surprise 1', 'Sellbot Surprise! Stop the Cold Caller Cogs from invading Toontown!'),
- 34: ('Sellbot Surprise 2', 'Sellbot Surprise! Stop the Name Dropper Cogs from invading Toontown!'),
- 35: ('Sellbot Surprise 3', 'Sellbot Surprise! Stop the Gladhander Cogs from invading Toontown!'),
- 36: ('Sellbot Surprise 4', 'Sellbot Surprise! Stop the Mover & Shaker Cogs from invading Toontown!'),
- 37: ('A Cashbot Conundrum 1', 'A Cashbot Conundrum. Stop the Short Change Cogs from invading Toontown!'),
- 38: ('A Cashbot Conundrum 2', 'A Cashbot Conundrum. Stop the Penny Pincher Cogs from invading Toontown!'),
- 39: ('A Cashbot Conundrum 3', 'A Cashbot Conundrum. Stop the Bean Counter Cogs from invading Toontown!'),
- 40: ('A Cashbot Conundrum 4', 'A Cashbot Conundrum. Stop the Number Cruncher Cogs from invading Toontown!'),
- 41: ('The Lawbot Gambit 1', 'The Lawbot Gambit. Stop the Bottomfeeder Cogs from invading Toontown!'),
- 42: ('The Lawbot Gambit 2', 'The Lawbot Gambit. Stop the Double Talker Cogs from invading Toontown!'),
- 43: ('The Lawbot Gambit 3', 'The Lawbot Gambit. Stop the Ambulance Chaser Cogs from invading Toontown!'),
- 44: ('The Lawbot Gambit 4', 'The Lawbot Gambit. Stop the Backstabber Cogs from invading Toontown!'),
- 45: ('The Trouble With Bossbots 1', 'The Trouble with Bossbots. Stop the Flunky Cogs from invading Toontown!'),
- 46: ('The Trouble With Bossbots 2', 'The Trouble with Bossbots. Stop the Pencil Pusher Cogs from invading Toontown!'),
- 47: ('The Trouble With Bossbots 3', 'The Trouble with Bossbots. Stop the Micromanager Cogs from invading Toontown!'),
- 48: ('The Trouble With Bossbots 4', 'The Trouble with Bossbots. Stop the Downsizer Cogs from invading Toontown!'),
+ 33: ('Sellbot Surprise 1', 'Sellbot Surprise! Stop the Cold Caller Cogs from invading Glonktown!'),
+ 34: ('Sellbot Surprise 2', 'Sellbot Surprise! Stop the Name Dropper Cogs from invading Glonktown!'),
+ 35: ('Sellbot Surprise 3', 'Sellbot Surprise! Stop the Gladhander Cogs from invading Glonktown!'),
+ 36: ('Sellbot Surprise 4', 'Sellbot Surprise! Stop the Mover & Shaker Cogs from invading Glonktown!'),
+ 37: ('A Cashbot Conundrum 1', 'A Cashbot Conundrum. Stop the Short Change Cogs from invading Glonktown!'),
+ 38: ('A Cashbot Conundrum 2', 'A Cashbot Conundrum. Stop the Penny Pincher Cogs from invading Glonktown!'),
+ 39: ('A Cashbot Conundrum 3', 'A Cashbot Conundrum. Stop the Bean Counter Cogs from invading Glonktown!'),
+ 40: ('A Cashbot Conundrum 4', 'A Cashbot Conundrum. Stop the Number Cruncher Cogs from invading Glonktown!'),
+ 41: ('The Lawbot Gambit 1', 'The Lawbot Gambit. Stop the Bottomfeeder Cogs from invading Glonktown!'),
+ 42: ('The Lawbot Gambit 2', 'The Lawbot Gambit. Stop the Double Talker Cogs from invading Glonktown!'),
+ 43: ('The Lawbot Gambit 3', 'The Lawbot Gambit. Stop the Ambulance Chaser Cogs from invading Glonktown!'),
+ 44: ('The Lawbot Gambit 4', 'The Lawbot Gambit. Stop the Backstabber Cogs from invading Glonktown!'),
+ 45: ('The Trouble With Bossbots 1', 'The Trouble with Bossbots. Stop the Flunky Cogs from invading Glonktown!'),
+ 46: ('The Trouble With Bossbots 2', 'The Trouble with Bossbots. Stop the Pencil Pusher Cogs from invading Glonktown!'),
+ 47: ('The Trouble With Bossbots 3', 'The Trouble with Bossbots. Stop the Micromanager Cogs from invading Glonktown!'),
+ 48: ('The Trouble With Bossbots 4', 'The Trouble with Bossbots. Stop the Downsizer Cogs from invading Glonktown!'),
  49: ('Jellybean Day', 'Celebrate Jellybean Day with double Jellybean rewards at parties!'),
- 53: ('Cold Caller Invasion', 'Stop the Cold Caller Cogs from invading Toontown!'),
- 54: ('Bean Counter Invasion', 'Stop the Bean Counter Cogs from invading Toontown!'),
- 55: ('Double Talker Invasion', 'Stop the Double Talker Cogs from invading Toontown!'),
- 56: ('Downsizer Invasion', 'Stop the Downsizer Cogs from invading Toontown!'),
+ 53: ('Cold Caller Invasion', 'Stop the Cold Caller Cogs from invading Glonktown!'),
+ 54: ('Bean Counter Invasion', 'Stop the Bean Counter Cogs from invading Glonktown!'),
+ 55: ('Double Talker Invasion', 'Stop the Double Talker Cogs from invading Glonktown!'),
+ 56: ('Downsizer Invasion', 'Stop the Downsizer Cogs from invading Glonktown!'),
  57: ('Caroling', 'Sing for your Snowman Head! See the Blog for details!'),
  59: ("ValenToon's Day", "Celebrate ValenToon's Day from Feb 09 to Feb 16!"),
- 72: ('Yes Men Invasion', 'Stop the Yes Men Cogs from invading Toontown!'),
- 73: ('Tightwad Invasion', 'Stop the Tightwad Cogs from invading Toontown!'),
- 74: ('Telemarketers Invasion', 'Stop the Telemarketer Cogs from invading Toontown!'),
- 75: ('Head Hunter Invasion', 'Stop the Head Hunter Cogs from invading Toontown!'),
- 76: ('Spin Doctor Invasion', 'Stop the Spin Doctor Cogs from invading Toontown!'),
- 77: ('Moneybags Invasion', 'Stop the Moneybags from invading Toontown!'),
- 78: ('Two-faces Invasion', 'Stop the Two-faces from invading Toontown!'),
- 79: ('Mingler Invasion', 'Stop the Mingler Cogs from invading Toontown!'),
- 80: ('Loan Shark Invasion', 'Stop the Loanshark Cogs from invading Toontown!'),
- 81: ('Corporate Raider Invasion', 'Stop the Corporate Raider Cogs from invading Toontown!'),
- 82: ('Robber Baron Invasion', 'Stop the Robber Baron Cogs from invading Toontown!'),
- 83: ('Legal Eagle Invasion', 'Stop the Legal Eagle Cogs from invading Toontown!'),
- 84: ('Big Wig Invasion', 'Stop the Big Wig Cogs from invading Toontown!'),
- 85: ('Big Cheese Invasion', 'Stop the Big Cheese from invading Toontown!'),
- 86: ('Down Sizer Invasion', 'Stop the Down Sizer Cogs from invading Toontown!'),
- 87: ('Mover And Shaker Invasion', 'Stop the Mover and Shaker Cogs from invading Toontown!'),
- 88: ('Double Talker Invasion', 'Stop the Double Talkers Cogs from invading Toontown!'),
- 89: ('Penny Pincher Invasion', 'Stop the Penny Pinchers Cogs from invading Toontown!'),
- 90: ('Name Dropper Invasion', 'Stop the Name Dropper Cogs from invading Toontown!'),
- 91: ('Ambulance Chaser Invasion', 'Stop the Ambulance Chaser Cogs from invading Toontown!'),
- 92: ('Micro Manager Invasion', 'Stop the Micro Manager Cogs from invading Toontown!'),
- 93: ('Number Cruncher Invasion', 'Stop the Number Cruncher Cogs from invading Toontown!'),
+ 72: ('Yes Men Invasion', 'Stop the Yes Men Cogs from invading Glonktown!'),
+ 73: ('Tightwad Invasion', 'Stop the Tightwad Cogs from invading Glonktown!'),
+ 74: ('Telemarketers Invasion', 'Stop the Telemarketer Cogs from invading Glonktown!'),
+ 75: ('Head Hunter Invasion', 'Stop the Head Hunter Cogs from invading Glonktown!'),
+ 76: ('Spin Doctor Invasion', 'Stop the Spin Doctor Cogs from invading Glonktown!'),
+ 77: ('Moneybags Invasion', 'Stop the Moneybags from invading Glonktown!'),
+ 78: ('Two-faces Invasion', 'Stop the Two-faces from invading Glonktown!'),
+ 79: ('Mingler Invasion', 'Stop the Mingler Cogs from invading Glonktown!'),
+ 80: ('Loan Shark Invasion', 'Stop the Loanshark Cogs from invading Glonktown!'),
+ 81: ('Corporate Raider Invasion', 'Stop the Corporate Raider Cogs from invading Glonktown!'),
+ 82: ('Robber Baron Invasion', 'Stop the Robber Baron Cogs from invading Glonktown!'),
+ 83: ('Legal Eagle Invasion', 'Stop the Legal Eagle Cogs from invading Glonktown!'),
+ 84: ('Big Wig Invasion', 'Stop the Big Wig Cogs from invading Glonktown!'),
+ 85: ('Big Cheese Invasion', 'Stop the Big Cheese from invading Glonktown!'),
+ 86: ('Down Sizer Invasion', 'Stop the Down Sizer Cogs from invading Glonktown!'),
+ 87: ('Mover And Shaker Invasion', 'Stop the Mover and Shaker Cogs from invading Glonktown!'),
+ 88: ('Double Talker Invasion', 'Stop the Double Talkers Cogs from invading Glonktown!'),
+ 89: ('Penny Pincher Invasion', 'Stop the Penny Pinchers Cogs from invading Glonktown!'),
+ 90: ('Name Dropper Invasion', 'Stop the Name Dropper Cogs from invading Glonktown!'),
+ 91: ('Ambulance Chaser Invasion', 'Stop the Ambulance Chaser Cogs from invading Glonktown!'),
+ 92: ('Micro Manager Invasion', 'Stop the Micro Manager Cogs from invading Glonktown!'),
+ 93: ('Number Cruncher Invasion', 'Stop the Number Cruncher Cogs from invading Glonktown!'),
  95: ('Victory Parties', 'Celebrate our historic triumph against the Cogs!'),
  96: ('Operation: Storm Sellbot', "Sellbot HQ is open to everyone. Let's go fight the VP!"),
  97: ('Double Bean Days - Trolley Games', ''),

@@ -1,19 +1,24 @@
 @font-face { font-family: "Toon Display"; src: url("_ui/ToonDisplay.ttf") format("truetype"); font-weight: 100 900; font-style: normal; font-display: swap; }
-/* Glonktown (web): All sizes are in points times --sc, the page scale. */
+@font-face { font-family: "ImpressBT"; src: url("_ui/ImpressBT.ttf") format("truetype"); font-weight: 100 900; font-style: normal; font-display: swap; }
+/* Glonktown (web): All sizes are in points times --sc, the page scale. The look is the game's own: its loading-screen sky, its interface
+   font (ImpressBT, from _ui/), pale-yellow dialogs with a green rim, and yellow lettering with a blue edge. */
 :root {
   --sc: 1;
-  --mf: "Toon Display", "Marker Felt", "MarkerFelt-Wide", "Chalkboard SE", "Comic Sans MS", "Segoe Print", system-ui, sans-serif;   /* the title only */
-  --uf: "Nunito", ui-rounded, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;                                             /* everything else */
+  --mf: "Toon Display", "Luckiest Guy", "Marker Felt", "MarkerFelt-Wide", "Chalkboard SE", "Comic Sans MS", system-ui, sans-serif;   /* the title, headings and big buttons */
+  --uf: "ImpressBT", "Nunito", ui-rounded, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;                                 /* everything else */
   --ink: #1a3373;
   --navy: #1c3f9c;
   --shade: rgba(12, 40, 110, .3);
+  --gold: #ffd926;
+  --dlg: #ffffbf;        /* the game's dialog colour (GlobalDialogColor) */
+  --rim: #00a63d;
   --sat: env(safe-area-inset-top, 0px);
   --sab: env(safe-area-inset-bottom, 0px);
   --sal: env(safe-area-inset-left, 0px);
   --sar: env(safe-area-inset-right, 0px);
 }
 html, body, #ttr, #ttr * { touch-action: manipulation; }   /* no double-tap zoom */
-html, body { margin: 0; padding: 0; height: 100%; background: #0a1438; overflow: hidden; overscroll-behavior: none; }
+html, body { margin: 0; padding: 0; height: 100%; background: #2f7fdc; overflow: hidden; overscroll-behavior: none; }
 #transfer, #infobox, #crt, #dlg, #pyconsole, #html, #box { display: none !important; }
 canvas.emscripten { touch-action: none; position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; margin: 0 !important; z-index: 5 !important; }
 @supports (height: 100dvh) { canvas.emscripten { width: 100dvw !important; height: 100dvh !important; } }   /* the visible area, not the one with the browser bars hidden (Android Chrome, Safari tabs) */
@@ -25,70 +30,74 @@ canvas.emscripten { touch-action: none; position: fixed !important; inset: 0 !im
 #ttr .hidden { display: none !important; }
 #ttr .on { pointer-events: auto; }
 
-/* ---- backdrop: an evening sky (stars, slow clouds, a warm glow behind the hills, light motes drifting up) ---- */
-#ttr-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none;
-  background: radial-gradient(ellipse 75% 40% at 50% 92%, rgba(255,196,140,.55), rgba(255,196,140,0) 70%),
-              linear-gradient(#0a1438 0%, #1c3175 40%, #4a58a4 63%, #b9839f 80%, #f1b78e 92%); }
-#ttr-bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-#ttr-bg .star { position: absolute; width: calc(var(--s) * 1px); height: calc(var(--s) * 1px); border-radius: 50%; background: #fff; opacity: .15; animation: ttrtwinkle ease-in-out infinite alternate; }
-#ttr-bg .cloud { position: absolute; left: 0; width: calc(var(--w) * 1px * var(--sc)); aspect-ratio: 4; opacity: var(--o); animation: ttrdrift linear infinite;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100'%3E%3Cfilter id='b' x='-10%25' y='-60%25' width='120%25' height='220%25'%3E%3CfeGaussianBlur stdDeviation='7'/%3E%3C/filter%3E%3Cg filter='url(%23b)' fill='%23f5d3d6'%3E%3Cellipse cx='200' cy='62' rx='175' ry='14'/%3E%3Cellipse cx='140' cy='52' rx='85' ry='17'/%3E%3Cellipse cx='255' cy='50' rx='100' ry='20'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; }
-#ttr-bg .hills { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(70px, 21%, 240px);
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 240' preserveAspectRatio='none'%3E%3Cpath fill='%23474a8e' d='M0 110 C180 40 380 30 560 95 S900 70 1080 60 S1340 70 1440 50 V240 H0Z'/%3E%3Cpath fill='%232c2f6c' d='M0 165 C220 100 440 105 680 150 S1120 95 1440 135 V240 H0Z'/%3E%3Cpath fill='%23191b48' d='M0 205 C260 165 560 175 820 205 S1240 165 1440 190 V240 H0Z'/%3E%3C/svg%3E") bottom / 100% 100% no-repeat; }
-#ttr-bg .mote { position: absolute; bottom: 14%; width: calc(var(--s) * 1px * var(--sc)); height: calc(var(--s) * 1px * var(--sc)); border-radius: 50%; background: #ffe0ad;
-  box-shadow: 0 0 calc(var(--s) * 2.5px * var(--sc)) #ffb866; opacity: 0; animation: ttrfloat ease-in-out infinite; }
-#ttr-bg.art > :not(img) { display: none; }      /* the sky picture has its own */
-@keyframes ttrdrift { from { transform: translateX(-100%); } to { transform: translateX(100vw); } }
-@keyframes ttrtwinkle { to { opacity: .9; } }
-@keyframes ttrfloat { 0% { transform: translate(0, 0); opacity: 0; } 25% { opacity: .85; } 100% { transform: translate(calc(var(--dx) * 1px), -38vh); opacity: 0; } }
+/* ---- backdrop: the game's loading-screen sky (_ui/sky.jpg), faded in over the same blue ---- */
+#ttr-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse 70% 70% at 50% 50%, #3b97ea, #3586e1 60%, #2f78da); }
+#ttr-bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .4s ease; }
+#ttr-bg.art img { opacity: 1; }
 
-/* ---- the title ---- */
-#ttr-title { position: absolute; left: 0; right: 0; top: 13%; text-align: center; font-family: var(--mf); font-weight: 700; line-height: 1.15; white-space: nowrap; transition: opacity .25s ease; }
-#ttr-title > span { display: inline-block; color: #fff4e2; letter-spacing: .04em; text-shadow: 0 0 .4em rgba(255,186,120,.45), 0 .05em .1em rgba(5,10,40,.55);
-  animation: ttrin 1.4s cubic-bezier(.2,.7,.2,1) both; }
-@keyframes ttrin { from { transform: translateY(.3em); opacity: 0; } to { transform: none; opacity: 1; } }
-#ttr-logo { position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; transition: opacity .25s ease; }
+/* ---- the title: lettered like the game's logo (yellow letters, a black edge, a red band, a dark rim) ---- */
+#ttr-title { position: absolute; left: 0; right: 0; text-align: center; line-height: 0; transition: opacity .25s ease, top .5s cubic-bezier(.3, 1.3, .5, 1); }
+#ttr-title svg { overflow: visible; font-family: var(--mf); animation: ttrin .8s cubic-bezier(.3, 1.6, .5, 1) both; }
+#ttr-title svg:not([viewBox]) { visibility: hidden; }
+#ttr-title use { stroke-linejoin: round; }
+#ttr-title .s { fill: rgba(10, 35, 100, .35); stroke: rgba(10, 35, 100, .35); stroke-width: 34px; }
+#ttr-title .e { fill: #5e1000; stroke: #5e1000; stroke-width: 34px; }
+#ttr-title .b { fill: #ee3d14; stroke: #ee3d14; stroke-width: 27px; }
+#ttr-title .k { fill: #1b0a00; stroke: #1b0a00; stroke-width: 11px; }
+#ttr-title .f { fill: url(#ttr-gold); }
+@keyframes ttrin { from { transform: scale(.55); opacity: 0; } to { transform: none; opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
-  #ttr-bg *, #ttr-bar i::before { animation-play-state: paused !important; }
-  #ttr-title > span { animation: none !important; }
+  #ttr-bar i::before { animation-play-state: paused !important; }
+  #ttr-title svg, #ttr-panel { animation: none !important; }
 }
 
-/* ---- loading ---- */
-#ttr-bar { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 999px; overflow: hidden; background: rgba(255,255,255,.16); }
-#ttr-bar i { position: relative; display: block; height: 100%; width: 0; overflow: hidden; border-radius: 999px; background: linear-gradient(90deg, #ffcf86, #ffad5c); transition: width .35s ease-out; }
+/* ---- loading: the game's loading bar (a dark glass track, a yellow fill) under yellow lettering with a blue edge ---- */
+#ttr-bar { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 999px; overflow: hidden; background: rgba(13, 38, 102, .55);
+  box-shadow: inset 0 calc(2px * var(--sc)) calc(3px * var(--sc)) rgba(0, 0, 0, .3), 0 0 0 calc(2px * var(--sc)) rgba(255, 255, 255, .6); }
+#ttr-bar i { position: relative; display: block; height: 100%; width: 0; overflow: hidden; border-radius: 999px; background: linear-gradient(#fff07a, var(--gold) 45%, #f0b400); transition: width .35s ease-out; }
 #ttr-bar i::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.6), rgba(255,255,255,0)); animation: ttrsheen 1.8s ease-in-out infinite; }
 @keyframes ttrsheen { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
-#ttr-status { position: absolute; left: 0; right: 0; text-align: center; font-weight: 800; font-size: calc(20px * var(--sc)); letter-spacing: .02em; color: #fff; text-shadow: 0 1px 8px rgba(5,10,40,.5); }
-#ttr-detail { position: absolute; left: 0; right: 0; text-align: center; font-weight: 600; font-size: calc(14px * var(--sc)); color: rgba(255,255,255,.75); text-shadow: 0 1px 6px rgba(5,10,40,.5); }
-#ttr-error { position: absolute; left: 40px; right: 40px; top: 30%; height: 36%; overflow: auto; background: rgba(0,0,0,.45); color: #ffd9d9; border-radius: 12px;
-  font: 12px ui-monospace, Menlo, monospace; padding: 12px; white-space: pre-wrap; }
-#ttr-spin { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: calc(8px * var(--sc)); }
-#ttr-spin i { width: calc(8px * var(--sc)); height: calc(8px * var(--sc)); border-radius: 50%; background: #fff; opacity: .25; animation: ttrfade 1.2s ease-in-out infinite; }
+#ttr-status { position: absolute; left: 0; right: 0; text-align: center; font: calc(26px * var(--sc)) var(--mf); letter-spacing: .04em; color: var(--gold);
+  -webkit-text-stroke: calc(5px * var(--sc)) var(--navy); paint-order: stroke fill; text-shadow: 0 calc(3px * var(--sc)) 0 var(--navy); }
+#ttr-detail { position: absolute; left: 0; right: 0; text-align: center; font: calc(15px * var(--sc)) var(--uf); color: #fff; text-shadow: 0 calc(2px * var(--sc)) 0 rgba(12, 40, 110, .75); }
+#ttr-error { position: absolute; left: 40px; right: 40px; overflow: auto; background: var(--dlg); color: #8a1616; border: 3px solid var(--rim); border-radius: 14px;
+  font: 12px ui-monospace, Menlo, monospace; padding: 12px; white-space: pre-wrap; box-shadow: -4px 6px 8px rgba(0, 0, 0, .3); }
+#ttr-spin { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: calc(10px * var(--sc)); }
+#ttr-spin i { width: calc(14px * var(--sc)); height: calc(14px * var(--sc)); border-radius: 50%; background: var(--gold); border: calc(3px * var(--sc)) solid var(--navy); opacity: .3; animation: ttrfade 1.2s ease-in-out infinite; }
 #ttr-spin i:nth-child(2) { animation-delay: .2s; }
 #ttr-spin i:nth-child(3) { animation-delay: .4s; }
-@keyframes ttrfade { 0%, 100% { opacity: .25; } 40% { opacity: 1; } }
+@keyframes ttrfade { 0%, 100% { opacity: .3; transform: none; } 40% { opacity: 1; transform: translateY(calc(-6px * var(--sc))); } }
 
-/* ---- sign in ---- */
-.ttr-field { position: absolute; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,.1); border-radius: calc(12px * var(--sc)); border: 1px solid rgba(255,255,255,.28);
-  font: 600 calc(17px * var(--sc)) var(--uf); color: #fff; caret-color: #ffc27a; text-align: center; outline: none; padding: 0 16px; height: calc(46px * var(--sc)); -webkit-appearance: none; appearance: none;
-  transition: border-color .15s, background-color .15s, box-shadow .15s; }
-.ttr-field::placeholder { color: rgba(255,255,255,.55); font-weight: 600; }
-.ttr-field:focus { border-color: #ffc27a; background: rgba(255,255,255,.14); box-shadow: 0 0 0 3px rgba(255,194,122,.25); }
-.ttr-field:-webkit-autofill { -webkit-text-fill-color: #fff; transition: background-color 9999s; }      /* keep the browser's pale autofill colour off the dark field */
-.ttr-btn { position: absolute; border-radius: calc(12px * var(--sc)); border: 0; background: linear-gradient(#ffd08a, #ffad5c); color: #2a1a3f; font: 800 calc(18px * var(--sc)) var(--uf);
-  letter-spacing: .18em; text-indent: .18em; text-align: center; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 calc(6px * var(--sc)) calc(20px * var(--sc)) rgba(255,160,80,.3); transition: transform .12s ease, box-shadow .12s ease, filter .12s ease; }
-#ttr-login .ttr-btn:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 calc(8px * var(--sc)) calc(26px * var(--sc)) rgba(255,160,80,.45); }
-#ttr-login .ttr-btn:active { transform: translateY(1px); filter: brightness(.96); }
+/* ---- sign in: a dialog like the game's (pale yellow, a green rim, a shadow down to the left) ---- */
+.ttr-dialog { background: var(--dlg); color: var(--ink); border: calc(4px * var(--sc)) solid var(--rim); border-radius: calc(20px * var(--sc));
+  box-shadow: inset 0 0 0 calc(2px * var(--sc)) rgba(0, 0, 0, .1), calc(-5px * var(--sc)) calc(7px * var(--sc)) calc(8px * var(--sc)) rgba(0, 0, 0, .35); }
+#ttr-panel { position: absolute; display: flex; flex-direction: column; gap: calc(8px * var(--sc)); padding: calc(12px * var(--sc)) calc(20px * var(--sc)) calc(18px * var(--sc));
+  animation: ttrpop .45s cubic-bezier(.3, 1.5, .5, 1) both; }
+.ttr-tabs { display: flex; gap: calc(4px * var(--sc)); padding: calc(3px * var(--sc)); border-radius: calc(13px * var(--sc)); background: rgba(120, 110, 30, .14); }
+.ttr-tabs button { flex: 1; height: calc(30px * var(--sc)); padding: 0 .4em; border: 0; border-radius: calc(10px * var(--sc)); background: none; color: #6f6a3c; font: calc(15px * var(--sc)) var(--uf);
+  white-space: nowrap; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: background-color .15s, color .15s; }
+.ttr-tabs button:hover { color: var(--ink); }
+.ttr-tabs button.sel { background: #3b97ea; color: #fff; box-shadow: 0 calc(3px * var(--sc)) 0 var(--navy); }
+#ttr-panel.kb .ttr-tabs, #ttr-panel.kb #ttr-msg:not(.bad) { display: none; }
+@keyframes ttrpop { from { transform: scale(.7); opacity: 0; } to { transform: none; opacity: 1; } }
+.ttr-field { display: block; width: 100%; height: calc(44px * var(--sc)); padding: 0 calc(14px * var(--sc)); border-radius: calc(12px * var(--sc)); border: calc(2px * var(--sc)) solid #cbc78c;
+  background: #fff; box-shadow: inset 0 calc(2px * var(--sc)) calc(3px * var(--sc)) rgba(90, 80, 20, .18); font: calc(19px * var(--sc)) var(--uf); color: var(--ink);
+  text-align: center; outline: none; -webkit-appearance: none; appearance: none; transition: border-color .15s, box-shadow .15s; }
+.ttr-field::placeholder { color: #a39e72; }
+.ttr-field:focus { border-color: #3b97ea; box-shadow: inset 0 calc(2px * var(--sc)) calc(3px * var(--sc)) rgba(90, 80, 20, .18), 0 0 0 3px rgba(59, 151, 234, .3); }
+.ttr-field:-webkit-autofill { -webkit-text-fill-color: var(--ink); -webkit-box-shadow: 0 0 0 100px #fff inset; }      /* keep the browser's autofill colour off the field */
+.ttr-btn { display: block; height: calc(52px * var(--sc)); margin-top: calc(3px * var(--sc)); padding: calc(4px * var(--sc)) 0 0; border-radius: calc(14px * var(--sc));
+  border: calc(3px * var(--sc)) solid #0d6b1c; background: linear-gradient(#7ee05c, #34b83a 55%, #22982b); color: #fff; font: calc(28px * var(--sc)) var(--mf);
+  letter-spacing: .1em; text-indent: .1em; -webkit-text-stroke: calc(5px * var(--sc)) #0d5a18; paint-order: stroke fill; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  box-shadow: inset 0 calc(3px * var(--sc)) 0 rgba(255, 255, 255, .45), 0 calc(5px * var(--sc)) 0 #0d6b1c; transition: transform .1s ease, box-shadow .1s ease, filter .1s ease; }
+#ttr-panel .ttr-btn:hover { filter: brightness(1.07); }
+#ttr-panel .ttr-btn:active { transform: translateY(calc(3px * var(--sc))); box-shadow: inset 0 calc(3px * var(--sc)) 0 rgba(255, 255, 255, .45), 0 calc(2px * var(--sc)) 0 #0d6b1c; }
 .ttr-btn:disabled { opacity: .6; cursor: default; }
-.ttr-pill { position: absolute; border-radius: 999px; border: 2px solid rgba(255,255,255,.9); color: #fff; font: 800 calc(13px * var(--sc)) var(--uf); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 8px; -webkit-tap-highlight-color: transparent; }
-.ttr-pill.light { background: #fff; color: var(--ink); border-color: #fff; box-shadow: 0 3px 0 var(--shade); }
-.ttr-link { position: absolute; font: 600 calc(14px * var(--sc)) var(--uf); color: rgba(255,255,255,.75); text-align: center; white-space: nowrap; padding: 0 .5em; background: none; border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.ttr-link:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
-#ttr-msg { position: absolute; left: 0; right: 0; margin: 0 auto; width: fit-content; max-width: calc(100% - 40px); padding: .3em .9em; border-radius: 8px;
-  text-align: center; font-weight: 600; font-size: calc(15px * var(--sc)); color: rgba(255,255,255,.85); text-shadow: 0 1px 6px rgba(5,10,40,.6); }
-#ttr-msg.bad { background: rgba(220,50,80,.85); color: #fff; text-shadow: none; }
+.ttr-pill { position: absolute; border-radius: 999px; border: 2px solid rgba(255,255,255,.9); color: #fff; font: calc(14px * var(--sc)) var(--uf); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 8px; -webkit-tap-highlight-color: transparent; }
+.ttr-pill.light { background: var(--dlg); color: var(--ink); border-color: var(--rim); box-shadow: 0 3px 0 var(--shade); }
+#ttr-msg { align-self: center; max-width: 100%; text-wrap: balance; padding: .2em .7em; border-radius: 8px; text-align: center; font-size: calc(15px * var(--sc)); color: var(--ink); }
+#ttr-msg.bad { background: #e0302f; color: #fff; }
 #ttr-msg:empty { display: none; }
 
 /* ---- in-game controls ---- */
@@ -105,11 +114,11 @@ canvas.emscripten { touch-action: none; position: fixed !important; inset: 0 !im
 
 /* touch feel on the sign-in screen */
 .ttr-field { -webkit-user-select: text; user-select: text; touch-action: manipulation; -webkit-touch-callout: default; caret-color: var(--navy); }
-.ttr-btn, .ttr-pill, .ttr-link { touch-action: manipulation; }
+.ttr-btn, .ttr-pill { touch-action: manipulation; }
 
 /* turn-your-phone prompt */
 #ttr-rotate { position: fixed; inset: 0; z-index: 300; pointer-events: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
-#ttr-rotate .tx { font: 800 24px var(--uf); color: #fff; text-align: center; padding: 0 30px; text-shadow: 0 2px 0 rgba(12,40,110,.45); }
+#ttr-rotate .tx { font: 28px var(--mf); letter-spacing: .03em; color: var(--gold); text-align: center; padding: 0 30px; -webkit-text-stroke: 5px var(--navy); paint-order: stroke fill; text-shadow: 0 3px 0 var(--navy); }
 #ttr-rotate .ph { width: 64px; height: 108px; border: 6px solid #ffd926; border-radius: 14px; box-shadow: 0 4px 0 rgba(0,0,0,.35); animation: ttrturn 2.2s ease-in-out infinite; }
 @keyframes ttrturn { 0%, 15% { transform: rotate(0deg); } 55%, 100% { transform: rotate(90deg); } }
 
@@ -121,18 +130,18 @@ html, body { position: fixed; width: 100%; height: 100%; overflow: hidden; }
 /* add-to-home-screen instructions (normal iPhone/iPad browser tab): same look as the turn-your-phone screen */
 #ttr-install { position: fixed; inset: 0; z-index: 400; pointer-events: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex;
   padding: max(16px, var(--sat)) max(16px, var(--sar)) max(16px, var(--sab)) max(16px, var(--sal)); }
-#ttr-install .box { margin: auto; display: flex; flex-direction: column; align-items: center; gap: 16px; max-width: 640px; text-align: center; padding: 22px 18px; border-radius: 28px;
-  background: rgba(20, 70, 190, .45); box-shadow: 0 6px 0 rgba(10, 40, 120, .3), inset 0 0 0 3px rgba(255,255,255,.35); }
-#ttr-install .ic { width: 52px; height: 52px; border: 6px solid #ffd926; border-radius: 14px; box-shadow: 0 4px 0 rgba(0,0,0,.35); color: #ffd926; display: flex; align-items: center; justify-content: center; }
-#ttr-install .h { font: 900 26px var(--uf); color: #fff; text-shadow: 0 2px 0 rgba(12,40,110,.45); }
+#ttr-install .box { margin: auto; display: flex; flex-direction: column; align-items: center; gap: 16px; max-width: 640px; text-align: center; padding: 22px 18px; border-radius: 24px;
+  background: var(--dlg); border: 4px solid var(--rim); box-shadow: inset 0 0 0 2px rgba(0,0,0,.1), -5px 7px 8px rgba(0,0,0,.35); }
+#ttr-install .ic { width: 52px; height: 52px; border: 5px solid var(--rim); border-radius: 14px; color: var(--rim); display: flex; align-items: center; justify-content: center; }
+#ttr-install .h { font: 26px var(--mf); letter-spacing: .02em; color: var(--ink); }
 #ttr-install ol { list-style: none; margin: 0; padding: 0; text-align: left; display: flex; flex-direction: column; gap: 10px; }
-#ttr-install li { display: flex; gap: 12px; align-items: center; font: 700 18px var(--uf); color: #fff; text-shadow: 0 1px 2px rgba(12,40,110,.6); }
-#ttr-install li i { flex: none; width: 32px; height: 32px; border-radius: 50%; background: #ffd926; color: #733805; text-shadow: none; font-style: normal; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; box-shadow: 0 3px 0 rgba(0,0,0,.35); }
-#ttr-install .shr { vertical-align: middle; color: #ffd926; margin: 0 2px; }
-#ttr-install .go { font: 700 16px var(--uf); color: rgba(255,255,255,.9); background: none; border: 0; text-decoration: underline; padding: 8px; cursor: pointer; text-shadow: 0 1px 2px rgba(12,40,110,.6); }
+#ttr-install li { display: flex; gap: 12px; align-items: center; font: 18px var(--uf); color: var(--ink); }
+#ttr-install li i { flex: none; width: 32px; height: 32px; border-radius: 50%; background: #3b97ea; color: #fff; border: 2px solid var(--navy); font-style: normal; display: flex; align-items: center; justify-content: center; font: 18px var(--mf); padding-top: 3px; }
+#ttr-install .shr { vertical-align: middle; color: var(--navy); margin: 0 2px; }
+#ttr-install .go { font: 16px var(--uf); color: #2f6fd0; background: none; border: 0; text-decoration: underline; padding: 8px; cursor: pointer; }
 
-/* the same sky as the sign-in screen (or the cloud-sky picture, when there is one) behind the turn-your-phone and add-to-home-screen screens */
-#ttr-rotate, #ttr-install { background: url(_ui/background.jpg) center / cover no-repeat, linear-gradient(#2f7cf6 0%, #58a8ff 50%, #a9e2ff 100%); }
+/* the same sky as the sign-in screen behind the turn-your-phone and add-to-home-screen screens */
+#ttr-rotate, #ttr-install { background: url(_ui/sky.jpg) center / cover no-repeat, radial-gradient(ellipse 70% 70% at 50% 50%, #3b97ea, #2f78da); }
 
 /* iPhone: let the full-screen pages reach under the bottom toolbar instead of stopping above it */
 @supports (height: 100lvh) {
@@ -143,8 +152,8 @@ html, body { position: fixed; width: 100%; height: 100%; overflow: hidden; }
 /* ---- display settings ---- */
 #ttr-set { position: absolute; inset: 0; z-index: 20; pointer-events: auto; background: rgba(10,25,60,.55); display: flex; align-items: center; justify-content: center; overflow-y: auto;
   padding: max(12px, var(--sat)) max(12px, var(--sar)) max(12px, var(--sab)) max(12px, var(--sal)); }
-#ttr-set .card { width: min(100%, 520px); margin: auto; background: #fff; border-radius: 24px; color: var(--ink); padding: 14px 18px 18px; font-family: var(--uf); box-shadow: 0 8px 0 var(--shade), 0 20px 40px rgba(12,40,110,.3); }
-#ttr-set h2 { margin: 0 0 6px; text-align: center; font: 900 24px var(--uf); }
+#ttr-set .card { width: min(100%, 520px); margin: auto; background: var(--dlg); border: 4px solid var(--rim); border-radius: 22px; color: var(--ink); padding: 14px 18px 18px; font-family: var(--uf); box-shadow: inset 0 0 0 2px rgba(0,0,0,.1), -5px 7px 8px rgba(0,0,0,.35); }
+#ttr-set h2 { margin: 0 0 6px; text-align: center; font: 26px var(--mf); letter-spacing: .02em; }
 #ttr-set .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid rgba(31,77,166,.15); flex-wrap: wrap; }
 #ttr-set .lbl { font-weight: 800; font-size: 16px; min-width: 150px; flex: 1; }
 #ttr-set .lbl small { display: block; font-weight: 600; font-size: 12px; opacity: .7; margin-top: 2px; }
@@ -158,3 +167,8 @@ html, body { position: fixed; width: 100%; height: 100%; overflow: hidden; }
   box-shadow: 0 4px 0 #d27a00; touch-action: manipulation; cursor: pointer; }
 #ttr-set .act.done { background: linear-gradient(#6db4ff, #3d8bf0); color: #fff; box-shadow: 0 4px 0 #2462c4; }
 .ttr-gear { position: absolute; border-radius: 50%; border: 2px solid rgba(255,255,255,.6); background: rgba(0,0,0,.25); color: #fff; font-size: 18px; line-height: 1; padding: 0; opacity: .75; touch-action: manipulation; }
+/* in game, in a browser tab that has left full screen: the button that goes back to it */
+.ttr-full { position: absolute; padding: 0; border-radius: calc(10px * var(--sc)); border: 2px solid rgba(255,255,255,.8); background: rgba(12,40,110,.45); color: #fff; opacity: .8; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: opacity .15s ease, transform .15s ease; }
+.ttr-full:hover { opacity: 1; transform: scale(1.08); }
+.ttr-full svg { width: 62%; height: 62%; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }

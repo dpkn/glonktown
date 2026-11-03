@@ -29,7 +29,7 @@ logErr = LogAndOutput(sys.__stderr__, log)
 sys.stdout = logOut
 sys.stderr = logErr
 
-print('\n\nStarting Toontown...')
+print('\n\nStarting Glonktown...')
 
 if 1:
     print('Current time: ' + time.asctime(time.localtime(time.time())) + ' ' + time.tzname[0])
@@ -42,7 +42,7 @@ from panda3d.core import *
 from toontown.toonbase import TTLocalizer
 
 class ToontownLauncher(LauncherBase):
-    GameName = 'Toontown'
+    GameName = 'Glonktown'
     LauncherPhases = [3, 3.5, 4, 5, 5.5, 6, 7, 8, 9, 10, 11, 12, 13]
     Localizer = TTLocalizer
 

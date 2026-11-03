@@ -362,7 +362,7 @@ class ToonBase(OTPBase.OTPBase):
         print('ignoring InputState-forward')
 
     def exitShow(self, errorCode = None):
-        self.notify.info('Exiting Toontown: errorCode = %s' % errorCode)
+        self.notify.info('Exiting Glonktown: errorCode = %s' % errorCode)
         if errorCode:
             launcher.setPandaErrorCode(errorCode)
         else:
