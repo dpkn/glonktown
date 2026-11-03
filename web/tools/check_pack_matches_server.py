@@ -3,7 +3,7 @@
 A mismatch locks every player out ("Your installed files appear to be invalid", Astron error 125: DC hash mismatch), so run this
 after changing etc/toon.dc or etc/otp.dc, once the pack is uploaded.
 
-    python check_pack_matches_server.py http://<the Mac's LAN address>:7380 ~/Documents/glonktown/server/etc
+    python check_pack_matches_server.py http://<the Mac's LAN address>:7380 server/etc
 (the second argument is the server's etc folder; on the server itself that is $ROOT/src/etc)
 """
 import hashlib

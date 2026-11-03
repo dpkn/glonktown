@@ -5,17 +5,19 @@ This folder builds **one image that runs the whole Glonktown server**: Astron (b
 Anywhere's server fork; Glonktown runs it on the host's Mac for a LAN party.
 
 The image has the game's **code**. It does **not** have the game's **resources** (the art, sound and DNA files): they belong to
-Disney and are not in this repository. They are mounted read-only from the stock `~/Documents/open-toontown/resources`.
+Disney and are not in this repository. Clone <https://github.com/open-toontown/resources> into `server/resources` (or symlink an
+existing copy there); it is mounted read-only.
 
 ## Build and run
 
-On the Mac, with Docker (Docker Desktop or OrbStack) and Rosetta emulation for amd64 switched on, from the root of this repository:
+On the Mac, with Docker (Docker Desktop or OrbStack), from the root of the repository:
 
 ```
-docker compose -f docker/docker-compose.yml up -d --build
+docker compose -f server/docker/docker-compose.yml up -d --build
 ```
 
-The image is `linux/amd64`, because the server's Panda3D wheel only exists for x86_64; the first build compiles Astron and takes
+The image is `linux/amd64`, because the server's Panda3D wheel only exists for x86_64 (on Apple Silicon Docker emulates it, with
+Rosetta or QEMU); the first build compiles Astron and takes
 several minutes. The district is open when `runtime/data/logs/ai1.log` ends with `Done.`, about a minute and a half after the start.
 
 | Mount (from `docker-compose.yml`) | What it holds |
@@ -23,15 +25,15 @@ several minutes. The district is open when `runtime/data/logs/ai1.log` ends with
 | `/ot/src/resources` | **Required.** The game's resources, read-only. The container stops with a message if `phase_3` is missing. |
 | `/ot/src/astron/databases` | `runtime/databases`: the toons and accounts (Astron's YAML database). Back this up. |
 | `/ot/data` | `runtime/data`: `users.json` (sign-ins), `gameconfig.json`, `logs/`, `backups/`. |
-| `/ot/web` | `runtime/web`: the browser client's page (`_play/`) and download packs (`root/`), built by `tools/build_client.sh`. |
+| `/ot/web` | `runtime/web`: the browser client's page (`_play/`) and download packs (`root/`), built by `tools/build_client.sh` at the repository root. |
 
 Port **80** inside is the only port published, as **7380** on the Mac: nginx serves the page and packs, and passes `/ws` (the game's
 WebSocket), `/auth`, `/recover` and `/setrecovery` (sign-in) to the services behind it. Keep it on the home network.
 
 ## The client
 
-The browser client (the page, its Python glue, and the scripts that build the download packs from the resources) is the `web/`
-repository next to this one.
+The browser client (the page, its Python glue, and the scripts that build the download packs from the resources) is in `web/`
+at the repository root.
 
 ## Notes
 

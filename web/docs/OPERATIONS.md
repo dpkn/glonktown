@@ -2,30 +2,30 @@
 
 How to run, update, back up and debug Glonktown on the host Mac. Read [ARCHITECTURE.md](ARCHITECTURE.md) first.
 
-Everything lives in `~/Documents/glonktown/`:
+Paths here are from the repository root:
 
 ```
-server/    the game server repository (code, docker/, otpy/); server/resources links to the stock resources
-web/       this repository (the browser client)
-runtime/   the container's mounts: databases/, data/, web/{_play,root}
+server/    the game server (code, docker/, otpy/); server/resources holds the stock Open Toontown resources (not in git)
+web/       the browser client
+runtime/   the container's mounts (not in git): databases/, data/, web/{_play,root}
 tools/     build_client.sh (page + packs into runtime/web), make_icons.py
 ```
 
-The game's resources are the stock ones in `~/Documents/open-toontown/resources`, mounted read-only.
+The game's resources are a clone of <https://github.com/open-toontown/resources> in `server/resources` (or a symlink to one),
+mounted read-only.
 
 ## Everyday
 
 ### Start, stop, restart
 
-From `~/Documents/glonktown/server`:
-
 ```
-docker compose -f docker/docker-compose.yml up -d --build      # build (if needed) and start
-docker compose -f docker/docker-compose.yml stop
-docker compose -f docker/docker-compose.yml restart
+docker compose -f server/docker/docker-compose.yml up -d --build      # build (if needed) and start
+docker compose -f server/docker/docker-compose.yml stop
+docker compose -f server/docker/docker-compose.yml restart
 ```
 
-The image is built for `linux/amd64` (the server's Panda3D wheel exists only for x86_64), so Docker runs it under Rosetta.
+The image is built for `linux/amd64` (the server's Panda3D wheel exists only for x86_64), so on Apple Silicon Docker emulates it
+(Rosetta if it is switched on, QEMU otherwise; both are fast enough).
 A start takes **about a minute and a half**: the UberDOG, then the one district. Everyone playing is disconnected by a restart,
 and the browser game reconnects by itself when it can. The container restarts itself if the UberDOG or the district crashes.
 
@@ -33,8 +33,8 @@ and the browser game reconnects by itself when it can. The container restarts it
 
 ```
 docker ps --filter name=glonktown
-tail -n 1 ~/Documents/glonktown/runtime/data/logs/ai1.log           # the district ends its start-up with "Done."
-grep -il traceback ~/Documents/glonktown/runtime/data/logs/*.log    # should print nothing
+tail -n 1 runtime/data/logs/ai1.log           # the district ends its start-up with "Done."
+grep -il traceback runtime/data/logs/*.log    # should print nothing
 ```
 
 ### Logs
@@ -56,13 +56,13 @@ A `ConnectionClosedError` traceback in `bridge.log` is just a device disconnecti
 ### Who is online
 
 ```
-docker cp tools/who_is_online.py glonktown:/tmp/ && docker exec glonktown python /tmp/who_is_online.py
+docker cp web/tools/who_is_online.py glonktown:/tmp/ && docker exec glonktown python /tmp/who_is_online.py
 ```
 
 ## Settings without a rebuild
 
 `runtime/data/gameconfig.json` holds the settings the host may want to change on the night (gag XP boost, holidays, typed names,
-invasion length). They are listed in the server's `docker/README.md`. The server rereads the file every few seconds; browsers read it
+invasion length). They are listed in `server/docker/README.md`. The server rereads the file every few seconds; browsers read it
 when the page starts the game.
 
 ## Updating
@@ -72,7 +72,7 @@ when the page starts the game.
 The code is copied into the image, so after a change in `server/` rebuild and restart:
 
 ```
-docker compose -f docker/docker-compose.yml up -d --build
+docker compose -f server/docker/docker-compose.yml up -d --build
 ```
 
 ### The client (what players run)
@@ -80,8 +80,8 @@ docker compose -f docker/docker-compose.yml up -d --build
 Anything the **browser** runs (the game's Python, art, or the page's own files) is built into `runtime/web`:
 
 ```
-~/Documents/glonktown/tools/build_client.sh          # the page and the packs
-~/Documents/glonktown/tools/build_client.sh packs    # the packs only (game code changed)
+tools/build_client.sh          # the page and the packs
+tools/build_client.sh packs    # the packs only (game code changed)
 ```
 
 Players reload the page once. Packs whose size changed are downloaded again; the rest stay cached on the device.
@@ -89,7 +89,7 @@ Players reload the page once. Packs whose size changed are downloaded again; the
 **After changing `etc/toon.dc` or `etc/otp.dc`, rebuild the image and the packs together**, then check they match:
 
 ```
-python tools/check_pack_matches_server.py http://<the Mac's address>:7380 ~/Documents/glonktown/server/etc
+python web/tools/check_pack_matches_server.py http://<the Mac's address>:7380 server/etc
 ```
 
 If they disagree, Astron rejects every player (error 125, "Client DC hash mismatch") and the game says "Your installed files appear
@@ -124,7 +124,7 @@ and get the same toons back, because the game account is matched by name (`runti
 - Take one by hand before the party and before any risky change:
 
   ```
-  cd ~/Documents/glonktown/runtime && tar czf data/backups/manual-$(date +%Y%m%d-%H%M).tgz databases data/users.json
+  cd runtime && tar czf data/backups/manual-$(date +%Y%m%d-%H%M).tgz databases data/users.json
   ```
 
 - To restore, stop the container, unpack over `runtime/databases` and `runtime/data/users.json`, and start it.
@@ -133,9 +133,9 @@ and get the same toons back, because the game account is matched by name (`runti
 
 Every browser sends **crash information** to `runtime/data/logs/client.log`, quietly: Python tracebacks and error lines, page errors,
 lost connections, one line about the device (browser, screen size) and one line with the sign-in name. At most 400 lines per visit;
-nothing else (no passwords, touches or frame timings). The page decides this (`quietLog` in `web/ttr-ui.js`).
+nothing else (no passwords, touches or frame timings). The page decides this (`quietLog` in `web/web/ttr-ui.js`).
 
-The file stops growing at 30 MB, and each address may send 6,000 lines an hour (see `docker/auth_service.py` in the server).
+The file stops growing at 30 MB, and each address may send 6,000 lines an hour (see `server/docker/auth_service.py`).
 
 ## Test sessions with logging
 

@@ -6,14 +6,14 @@ What runs on the phone. How it fits together is in [../docs/ARCHITECTURE.md](../
 |---|---|
 | `ttr-ui.js`, `ttr-ui.css` | The page shell: sign-in, loading and download, touch controls, rotate and install screens, recovery cards, test-session logging |
 | `ttr-audio.js` | Sound through the Web Audio API |
-| `icon-*.png` | Home Screen icons (drawn by `tools/make_icons.py` in the Glonktown folder) |
+| `icon-*.png` | Home Screen icons (drawn by `tools/make_icons.py` at the repository root) |
 | `game/` | The Python glue that starts Open Toontown in the browser (`main.py` and helpers) |
 | `make_ot_packs.py` | Builds the download packs and `packs.json` |
 | `patch_web.py` | Adds the shell, manifest and icons to the page pygbag builds |
 | `ot_server.py`, `bridge_ot.py` | A small local test server and WebSocket bridge for development |
 | `NOTICE.txt` | The licence notice packed into the code pack |
 
-Not in the repository: the game's art, sound and data (your Open Toontown `resources/`), the `_ui/` pictures the page
+Not in the repository: the game's art, sound and data (`server/resources`, see the README at the root), the `_ui/` pictures the page
 uses (`background.jpg` for the sky and the Toon font `ToonDisplay.ttf` for the title; the page works without them, with a
 drawn sky and system fonts) and an optional `logo.png`. The rest of the page uses Nunito from Google Fonts.
 
@@ -31,13 +31,13 @@ page once with `?display=1` to show the Display button and the in-game gear on t
    ```
 
    For a local test use `python web/patch_web.py ws://localhost:8766` instead.
-3. Build the packs from your patched Open Toontown checkout:
+3. Build the packs from the server's code and resources:
 
    ```
-   OT_DIR=/path/to/open-toontown python web/make_ot_packs.py      # makes web/build/site/
+   OT_DIR=../server python web/make_ot_packs.py      # makes web/build/site/
    ```
 
-4. Put the files where the server serves them (`$ROOT/web`, see [the operations notes](../docs/OPERATIONS.md)):
+4. Put the files where the server serves them (`runtime/web` at the repository root, see [the operations notes](../docs/OPERATIONS.md)):
    `web/game/build/web/*` to `_play/`, `web/build/site/*` to `root/`, and your `_ui/` folder into both `_play/` and `root/`.
 
 ## Try it locally

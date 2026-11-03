@@ -182,7 +182,8 @@ The files are served as a handful of zip "packs" listed in `packs.json` (name an
 - **`models.zip` and one zip per `phase_*` folder**: the game's art, sound and data, taken as they are from the
   checkout's `resources/` folder.
 
-The resources are not in this repository. You supply them in your own Open Toontown checkout.
+The resources are not in this repository. You clone them from <https://github.com/open-toontown/resources> into
+`server/resources` (see the README at the repository root).
 
 ## 5. Accounts
 

@@ -1,8 +1,8 @@
 # What differs from stock Open Toontown
 
-Everything changed in the game, grouped by what it is for, followed by the known problems. The server repository's `glonktown`
-branch is upstream Open Toontown commit `2b366a2`, plus Toontown: Anywhere's server fork (most of this file), plus Glonktown's own
-changes (the first section). `git log 2b366a2..glonktown` in `server/` lists them all.
+Everything changed in the game, grouped by what it is for, followed by the known problems. The server (`server/`) is upstream
+Open Toontown commit `2b366a2`, plus Toontown: Anywhere's server fork (most of this file), plus Glonktown's own changes (the
+first section). `git log 2b366a2..cc55a23` lists Toontown: Anywhere's server changes; Glonktown's come after `cc55a23`.
 
 ## Glonktown
 
