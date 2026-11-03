@@ -1,17 +1,18 @@
 # Glonktown
 
 An easy-to-use, private Toontown server and client. Guests play **in a web browser** on a laptop, phone or tablet, against a server running in
-Docker on the host's Mac. Nobody installs anything.
+Docker on the host's PC or Mac. Nobody else installs anything.
 
 ## What's in it
 
-- **Plays in the browser** (from Toontown: Anywhere): CPython and Panda3D compiled to WebAssembly, touch controls for phones,
-  sound through Web Audio, sign-in with a name and password, and game files cached on the device after the first load.
+- **Plays in the browser** (from Toontown: Anywhere): CPython and Panda3D compiled to WebAssembly, touch controls for phones, sound through Web Audio, sign-in with a name and password, and game files cached on the device after the first load.
+- **Easy server setup**: one Docker image to run, nothing else to worry about.  
 - **One district with Cog invasions**, the game is tuned for a few friends: boosted gag XP, accuracy up to 100, x3 invasion XP, TTR-style gag
   balance, no Laff requirement for facilities, street Cog levels per neighborhood, and toons on one side of a boss fight when
   there are fewer than four.
 - **Rebindable controls**: a Controls tab in the Shticker Book, plus a Smooth Animations option.
 - **Crash fixes and polish** from Open Toontown's open pull requests and from other forks (see [Credits](#credits)).
+- **Magic Words**: Admins can trigger events and change game stats easily using the chat. 
 
 Everything that differs from stock Open Toontown is listed in [web/docs/CHANGES.md](web/docs/CHANGES.md).
 
