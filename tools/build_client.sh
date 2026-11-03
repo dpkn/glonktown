@@ -5,6 +5,7 @@
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PY="$ROOT/.venv/bin/python"
+mkdir -p "$ROOT/runtime/web"
 cd "$ROOT/web/web"
 if [ "$1" != "packs" ]; then
   "$ROOT/.venv/bin/pygbag" --build game > /dev/null

@@ -2,7 +2,7 @@
 *.pyo
 *.pyd
 *.log
-resources/
+resources
 news/
 sign/
 whitelist/

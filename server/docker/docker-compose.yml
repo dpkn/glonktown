@@ -1,5 +1,6 @@
-# Glonktown on the host Mac: docker compose -f docker/docker-compose.yml up -d --build
-# Paths are relative to this file: ~/Documents/glonktown/{server,runtime} and the stock resources in ~/Documents/open-toontown.
+# Glonktown on the host Mac, from the repository root: docker compose -f server/docker/docker-compose.yml up -d --build
+# Paths are relative to this file: the resources in server/resources (a clone of open-toontown/resources, or a symlink to one)
+# and the container's data in runtime/ at the repository root.
 services:
   glonktown:
     image: glonktown-server
@@ -20,7 +21,7 @@ services:
     ports:
       - "7380:80"
     volumes:
-      - ../../../open-toontown/resources:/ot/src/resources:ro
+      - ../resources:/ot/src/resources:ro
       - ../../runtime/databases:/ot/src/astron/databases
       - ../../runtime/data:/ot/data
       - ../../runtime/web:/ot/web
