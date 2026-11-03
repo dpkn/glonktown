@@ -110,10 +110,6 @@ def web_patch(arc, text):
             "        x, y, z = _webChatScale(nodeName, x, y, z)\n        return Sequence(LerpScaleInterval(node, t, VBase3(x, y, z), blendType='easeInOut'), duration=0.0)")
         sub("        return Func(arrows.arrowsOn, x1, y1, h1, x2, y2, h2)",
             "        if max(x1, x2) < -0.5:\n            return Func(lambda: arrows.arrowsOn(x1 + 4.0 / 3.0, y1 - 1.0, h1, x2 + 4.0 / 3.0, y2 - 1.0, h2, parent=base.a2dTopLeft))\n        return Func(arrows.arrowsOn, x1, y1, h1, x2, y2, h2)")
-    elif arc.endswith("toontown/toon/LocalToon.py"):
-        # the page hangs screen-edge buttons from the side anchors, so a slide to an absolute spot would throw this one off screen: only scale it
-        sub("self.__furnitureGui.posHprScaleInterval(pos=Point3(-1.19, 0.0, 0.33), hpr=Vec3(0.0, 0.0, 0.0), scale=Vec3(0.04, 0.04, 0.04), duration=1.0, blendType='easeInOut', name='lerpFurnitureButton')",
-            "self.__furnitureGui.scaleInterval(1.0, Vec3(0.04, 0.04, 0.04), blendType='easeInOut', name='lerpFurnitureButton')")
     elif arc.endswith("otp/otpbase/OTPGlobals.py"):
         # a phone's wide screen with the stock 52 degrees feels zoomed in: widen the default view (everything resets to this value)
         sub("DefaultCameraFov = 52.0", "DefaultCameraFov = 75.0")

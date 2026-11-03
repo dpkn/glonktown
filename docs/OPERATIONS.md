@@ -48,6 +48,7 @@ happened before a restart):
 | `bridge.log` | the WebSocket bridge (one `open` and one `close` line per connection, with the address) |
 | `auth.log` | the sign-in service |
 | `client.log` | crash reports and test sessions from the browsers (see below) |
+| `tunnel.log` | the Cloudflare Tunnel: whether it connected, or "off" when there is no `tunnel_token` |
 
 A `ConnectionClosedError` traceback in `bridge.log` is just a device disconnecting.
 

@@ -30,6 +30,8 @@ RUN printf 'import sys\nsys.path.insert(0, "/ot/src")\ntry:\n    import otpy.ins
 # the game's code (see .dockerignore: no resources, no databases, no Windows files)
 COPY . /ot/src
 COPY --from=astron /abuild/astrond /ot/src/astron/linux/astrond
+# the Cloudflare Tunnel connector, which run.sh starts only when there is a token for it
+COPY --from=cloudflare/cloudflared:2026.10.7 /usr/local/bin/cloudflared /usr/local/bin/cloudflared
 COPY docker/auth_service.py docker/wsbridge.py docker/nginx.conf docker/run.sh /ot/
 COPY docker/live.prc /ot/src/etc/live.prc
 # Astron's client port is opened to the bridge inside the container only

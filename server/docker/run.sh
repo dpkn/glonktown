@@ -1,10 +1,11 @@
 #!/bin/sh
-# Open Toontown, everything in one container: Astron, UberDOG, one district, the web bridge, the sign-in service, nginx and nightly backups.
+# Open Toontown, everything in one container: Astron, UberDOG, one district, the web bridge, the sign-in service, nginx, nightly backups
+# and, when there is a token for one, the Cloudflare Tunnel.
 if [ ! -d /ot/src/resources/phase_3 ]; then
   echo "The game's resources are missing: mount your resources folder (with phase_3, phase_4 and the rest) at /ot/src/resources" >&2
   exit 1
 fi
-mkdir -p /ot/data/phone_logs /ot/data/backups /ot/data/logs /ot/src/astron/databases/astrondb /ot/src/astron/logs
+mkdir -p /ot/data/backups /ot/data/logs /ot/src/astron/databases/astrondb /ot/src/astron/logs
 [ -f /ot/data/users.json ] || echo '{"open_registration": true, "users": {}}' > /ot/data/users.json
 # the key the sign-in service signs play tokens with and the login manager checks them with
 [ -s /ot/data/login_secret ] || head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n' > /ot/data/login_secret
@@ -12,9 +13,9 @@ chmod 600 /ot/data/login_secret
 chmod 666 /ot/data/users.json
 L=/ot/data/logs
 # the services write their own log files (so they survive in the data folder); show them in `docker logs` / the Zima's Logs tab too
-for f in auth bridge astron ud ai1 client; do touch $L/$f.log; done
+for f in auth bridge astron ud ai1 client tunnel; do touch $L/$f.log; done
 echo "Open Toontown: starting. The district opens in about a minute and a half."
-tail -n 0 -F $L/auth.log $L/bridge.log $L/astron.log $L/ud.log $L/ai1.log $L/client.log 2>/dev/null &
+tail -n 0 -F $L/auth.log $L/bridge.log $L/astron.log $L/ud.log $L/ai1.log $L/client.log $L/tunnel.log 2>/dev/null &
 nginx
 python -u /ot/auth_service.py > $L/auth.log 2>&1 &
 python -u /ot/wsbridge.py > $L/bridge.log 2>&1 &
@@ -27,6 +28,21 @@ UD=$!
 sleep 25
 python -u -m toontown.ai.AIStart --base-channel 401000000 $COMMON --district-name "Toon Valley" etc/Configrc.prc etc/live.prc > $L/ai1.log 2>&1 &
 A1=$!
+# The Cloudflare Tunnel that puts the server on the internet (README: Playing over the internet), only when runtime/data/tunnel_token
+# holds a token. The file may hold the token or the whole install command the dashboard shows: the last word is the token. A tunnel
+# that cannot connect tries again every minute and never stops the game.
+if [ -s /ot/data/tunnel_token ]; then
+  chmod 600 /ot/data/tunnel_token
+  TOKEN=$(tr -s ' \t\r\n' '\n' < /ot/data/tunnel_token | grep . | tail -n 1)
+  echo "tunnel: starting" > $L/tunnel.log
+  ( while true; do
+      TUNNEL_TOKEN="$TOKEN" cloudflared --no-autoupdate tunnel run >> $L/tunnel.log 2>&1
+      echo "tunnel: stopped, trying again in a minute" >> $L/tunnel.log
+      sleep 60
+    done ) &
+else
+  echo "tunnel: off (no token in runtime/data/tunnel_token), so the server is on the home network only" > $L/tunnel.log
+fi
 # nightly backup of the toons, users and planned parties, keeping 14 days
 ( while true; do sleep 86400; tar czf /ot/data/backups/auto-$(date +%Y%m%d-%H%M).tgz -C /ot/src/astron databases -C /ot/data users.json parties.json 2>/dev/null; ls -1t /ot/data/backups/auto-*.tgz | tail -n +15 | xargs -r rm -f; done ) &
 # if the UberDOG or a district dies, exit so Docker restarts everything

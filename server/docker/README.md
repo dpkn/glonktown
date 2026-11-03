@@ -41,7 +41,8 @@ at the repository root.
   `SYSTEM_ADMIN` (or `ADMIN`, `DEVELOPER`, `MODERATOR`) in their account file under `runtime/databases/astrondb`, while the server is stopped.
 - **Sign-in.** The sign-in service keeps `users.json` (salted PBKDF2-SHA256) and gives each signed-in player a play token, signed with
   `login_secret` in the data folder; the game's login manager only lets in genuine tokens. Everything is plain HTTP, so keep the server
-  reachable only through nginx on the home network: never publish Astron's ports, forward 7380 or tunnel it to the internet.
+  reachable only through nginx: never publish Astron's ports or forward 7380 to the internet. For the internet, `run.sh` runs a
+  Cloudflare Tunnel (HTTPS) when the data folder has a `tunnel_token`; without one it stays off.
 - **What is inside.** Python 3.9, Panda3D 1.11 (a development wheel), the Python side of Panda3D 1.11 in `docker/overlay/direct`
   (Panda3D's own files, with its license), our pure-Python replacement for the compiled `libotp` / `libtoontown` (`otpy/`), and Astron
   built from <https://github.com/Astron/Astron> at the commit named in the Dockerfile.

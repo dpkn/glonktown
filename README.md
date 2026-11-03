@@ -143,16 +143,17 @@ GitHub, so a push updates it. The game files are Disney's, so they stay out of g
 them from (`web/worker.js`, set up in `web/wrangler.jsonc`). The game server stays on the Mac, or on a VPS, reached through a Cloudflare Tunnel, so no port is opened and everything
 is HTTPS. All of it fits in Cloudflare's free allowances; you need a domain on Cloudflare, and R2 asks for a payment method.
 
-1. In Cloudflare Zero Trust, under Networks → Tunnels, create a tunnel with a public hostname such as `play.example.com` pointing to
-   `http://localhost:7380`, and run its connector on the Mac:
+1. In Cloudflare Zero Trust, under Networks → Tunnels, create a tunnel (Cloudflared) and give it one route (Published application
+   routes, or Public hostnames on older dashboards): `play.example.com`, service `HTTP`, URL `localhost:7380`. No Access
+   application is needed. The dashboard then shows an install command that ends in the tunnel's token: copy the token (or the whole
+   command) and save it as `runtime/data/tunnel_token`, for example with
 
    ```bash
-   brew install cloudflared
+   pbpaste > runtime/data/tunnel_token
    ```
 
-   ```bash
-   sudo cloudflared service install <the tunnel's token>
-   ```
+   Then start the server with the command from step 4. The server runs the tunnel itself whenever it runs, and
+   `runtime/data/logs/tunnel.log` shows whether it connected. Without that file the server stays on your home network only.
 
 2. Put the game files in an R2 bucket. Build them first with `tools/build_client.sh` (step 3 of the setup).
 
@@ -190,8 +191,10 @@ Every push builds the page again; other branches get preview versions. A push ne
 
 - The page always opens on the sign-in screen; the game files download after signing in.
 - The server's address must be `https://`: a page on HTTPS cannot reach a plain HTTP server.
-- To move the server to a VPS, run the same Docker setup there with your `runtime/` folder, and run the tunnel's connector there
-  instead of on the Mac. The address stays the same, so the site needs no new build. Any 64-bit Linux VPS works, x86_64 or ARM,
+- To take the server off the internet, delete `runtime/data/tunnel_token` and start the server again.
+- To move the server to a VPS, run the same Docker setup there with your `runtime/` folder (the tunnel's token comes along), and
+  stop the server on the Mac: two servers on one tunnel would share the players between them. The address stays the same, so the
+  site needs no new build. Any 64-bit Linux VPS works, x86_64 or ARM,
   with 2 GB of memory or more (Oracle Cloud's free Ampere VM, for example). On a VPS, change the port in `docker-compose.yml` to
   `127.0.0.1:7380:80`: Docker's published ports skip the server's firewall, so otherwise anyone could reach the plain HTTP site
   on the server's public address.

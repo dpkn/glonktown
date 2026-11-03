@@ -122,6 +122,8 @@ Docker restarts everything together:
 6. **One district AI** (`toontown.ai.AIStart`): **Toon Valley** (channel base 401000000), with Cog invasions. It starts 25
    seconds after the UberDOG and takes about a minute to finish loading.
 7. **A backup loop** (section 6).
+8. **The Cloudflare Tunnel** (`cloudflared`), only when `runtime/data/tunnel_token` holds a token: it makes nginx reachable over
+   HTTPS at the tunnel's address, with no port opened. If it cannot connect it tries again every minute; it never stops the game.
 
 The image is Python 3.9 with:
 

@@ -1,5 +1,5 @@
-import http.server, os, re, json, hashlib, hmac, threading, time
-D="/ot/data/phone_logs"; U="/ot/data/users.json"
+import http.server, os, json, hashlib, hmac, threading, time
+U="/ot/data/users.json"
 SECRET=open("/ot/data/login_secret").read().strip().encode()   # shared with the UberDOG's login manager (otp/login/PlayToken.py)
 TOKEN_SECONDS=24*3600   # long enough for the game's own reconnects after a phone sleeps
 LOCK=threading.Lock()
@@ -109,8 +109,6 @@ class H(http.server.BaseHTTPRequestHandler):
         if self.path=="/__log":
             # a test session (page opened with ?log=1): keep what the game prints, with the time and the device's address
             return self.reply(204 if client_log(ip,body) else 429,"")
-        name=re.sub(r"[^A-Za-z0-9_.-]","_",self.path.strip("/") or "log")
-        with open(os.path.join(D,name+(".png" if name.startswith("shot") else ".txt")),"wb") as f: f.write(raw)
-        self.reply(200,"ok")
+        self.reply(404,"")
     def log_message(self,*a): pass
 http.server.ThreadingHTTPServer(("0.0.0.0",7381),H).serve_forever()
