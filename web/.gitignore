@@ -4,3 +4,4 @@ web/build/
 web/game/build/
 web/game/*.tar.gz
 server/overlay/
+.wrangler/
