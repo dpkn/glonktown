@@ -1,9 +1,27 @@
 #!/bin/sh
 # Open Toontown, everything in one container: Astron, UberDOG, one district, the web bridge, the sign-in service, nginx, nightly backups
 # and, when there is a token for one, the Cloudflare Tunnel.
-if [ ! -d /ot/src/resources/phase_3 ]; then
-  echo "The game's resources are missing: mount your resources folder (with phase_3, phase_4 and the rest) at /ot/src/resources" >&2
-  exit 1
+# The game's resources are Disney's, so they are not in the image: with an empty resources folder, the first start downloads them from
+# open-toontown/resources, at the commit the browser client's packs are built from. The download unpacks beside them first, so a
+# download that breaks off leaves no half folder behind and the next start tries again.
+R=/ot/src/resources
+if [ ! -d $R/phase_3 ]; then
+  if ! touch $R/.write_test 2>/dev/null; then
+    echo "The game's resources are missing: mount your resources folder (with phase_3, phase_4 and the rest) at $R" >&2
+    exit 1
+  fi
+  rm -f $R/.write_test
+  echo "Downloading the game's resources (about 400 MB, only on the first start)..."
+  rm -rf $R/.partial && mkdir $R/.partial
+  if curl -fsSL "https://codeload.github.com/open-toontown/resources/tar.gz/$RESOURCES_COMMIT" | tar xz --strip-components=1 -C $R/.partial \
+     && [ -d $R/.partial/phase_3 ]; then
+    mv $R/.partial/* $R/ && rmdir $R/.partial
+    echo "Resources downloaded."
+  else
+    rm -rf $R/.partial
+    echo "Downloading the game's resources failed; trying again on the next start" >&2
+    exit 1
+  fi
 fi
 mkdir -p /ot/data/backups /ot/data/logs /ot/src/astron/databases/astrondb /ot/src/astron/logs
 [ -f /ot/data/users.json ] || echo '{"open_registration": true, "users": {}}' > /ot/data/users.json

@@ -3,7 +3,8 @@
 #   docker build -f docker/Dockerfile -t open-toontown-anywhere .
 #
 # The image holds the game's code, Astron, Panda3D, nginx and the small services around them. It does NOT hold the game's
-# resources (the art, sound and DNA files): they are Disney's, so you supply them and mount them (see docker/README.md).
+# resources (the art, sound and DNA files): they are Disney's, so run.sh downloads them into the resources mount on the first start,
+# or you mount your own (see docker/README.md).
 
 # ---- stage 1: Astron, the game's message director, state server, database server and client agent
 FROM debian:bookworm-slim AS astron
@@ -17,7 +18,7 @@ RUN cmake -S /src -B /abuild -DCMAKE_BUILD_TYPE=Release && cd /abuild && make -j
 # ---- stage 2: the server (the same Debian release as stage 1, so Astron finds the libraries it was built against)
 FROM python:3.9-slim-bookworm
 RUN apt-get update \
- && apt-get install -y --no-install-recommends nginx libgl1 libglib2.0-0 tini libyaml-cpp0.7 libuv1 libboost-system1.74.0 libboost-filesystem1.74.0 libboost-regex1.74.0 libboost-thread1.74.0 libboost-date-time1.74.0 libboost-program-options1.74.0 libssl3 \
+ && apt-get install -y --no-install-recommends nginx curl libgl1 libglib2.0-0 tini libyaml-cpp0.7 libuv1 libboost-system1.74.0 libboost-filesystem1.74.0 libboost-regex1.74.0 libboost-thread1.74.0 libboost-date-time1.74.0 libboost-program-options1.74.0 libssl3 \
  && rm -rf /var/lib/apt/lists/* \
  && pip install --no-cache-dir pytz websockets \
  && pip install --no-cache-dir --pre --index-url https://archive.panda3d.org/simple/ panda3d==1.11.0.dev4050
@@ -39,9 +40,12 @@ RUN sed 's#bind: 127.0.0.1:7198#bind: 0.0.0.0:7198#' /ot/src/astron/config/astro
  && chmod +x /ot/run.sh /ot/src/astron/linux/astrond \
  && cp /ot/nginx.conf /etc/nginx/conf.d/default.conf && rm -f /etc/nginx/sites-enabled/default
 
+# the open-toontown/resources commit run.sh downloads when the resources folder is empty: the one the browser client's packs are built from
+ENV RESOURCES_COMMIT=d00df01af876cc9c5d1a22329f394a9a50245e9c
+
 WORKDIR /ot/src
 EXPOSE 80
-# resources/ is required; astron/databases/ and /ot/data keep the toons, accounts, logs and backups; /ot/web is the browser client's page and packs (optional)
+# resources/ holds the game's resources, downloaded on the first start when it is empty; astron/databases/ and /ot/data keep the toons, accounts, logs and backups; /ot/web is the browser client's page and packs (optional)
 VOLUME ["/ot/src/resources", "/ot/src/astron/databases", "/ot/data", "/ot/web"]
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/ot/run.sh"]

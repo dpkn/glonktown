@@ -5,8 +5,9 @@ This folder builds **one image that runs the whole Glonktown server**: Astron (b
 LAN party.
 
 The image has the game's **code**. It does **not** have the game's **resources** (the art, sound and DNA files): they belong to
-Disney and are not in this repository. Clone them into `server/resources` (the README's setup step 2); they are mounted
-read-only.
+Disney and are not in this repository. When the resources mount is empty, the first start downloads them from
+[open-toontown/resources](https://github.com/open-toontown/resources) at `RESOURCES_COMMIT` (in the Dockerfile). The source setup
+mounts your own clone in `server/resources` read-only instead.
 
 ## Build and run
 
@@ -21,10 +22,13 @@ several minutes. The district is open when `runtime/data/logs/ai1.log` ends with
 
 | Mount (from `docker-compose.yml`) | What it holds |
 |---|---|
-| `/ot/src/resources` | **Required.** The game's resources, read-only. The container stops with a message if `phase_3` is missing. |
+| `/ot/src/resources` | The game's resources. Downloaded on the first start when empty; a read-only mount without `phase_3` stops the container with a message. |
 | `/ot/src/astron/databases` | `runtime/databases`: the toons and accounts (Astron's YAML database). Back this up. |
 | `/ot/data` | `runtime/data`: `users.json` (sign-ins), `gameconfig.json`, `logs/`, `backups/`. |
 | `/ot/web` | `runtime/web`: the browser client's page (`_play/`) and download packs (`root/`), built by `tools/build_client.sh` at the repository root. |
+
+Hosts run the published image (`ghcr.io/dpkn/glonktown`) with the `docker-compose.yml` at the repository root instead, which
+publishes the port to the computer itself only and keeps everything in `runtime/` next to it.
 
 Port **80** inside is the only port published, as **7380** on the Mac: nginx serves the page and packs, and passes `/ws` (the game's
 WebSocket), `/auth`, `/recover` and `/setrecovery` (sign-in) to the services behind it. Keep it on the home network.

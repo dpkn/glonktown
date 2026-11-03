@@ -1,0 +1,23 @@
+# Glonktown's server. Put this file in an empty folder and run: docker compose up -d
+# Everything it keeps (the game's resources, the toons, the accounts, the logs) goes in runtime/ next to this file.
+services:
+  glonktown:
+    image: ghcr.io/dpkn/glonktown:latest
+    container_name: glonktown
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      # every player arrives through the tunnel from the same address, so the per-address limits are shared by everyone
+      MAX_PER_IP: "100"
+      MAX_NEW_PER_MIN: "300"
+      CLOG_PER_HOUR: "60000"
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+    # players come in through the Cloudflare Tunnel, which runs inside the container; this port is only for this computer
+    ports:
+      - "127.0.0.1:7380:80"
+    volumes:
+      - ./runtime/resources:/ot/src/resources
+      - ./runtime/databases:/ot/src/astron/databases
+      - ./runtime/data:/ot/data
