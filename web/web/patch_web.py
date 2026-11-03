@@ -36,6 +36,8 @@ json.dump({"name": "Glonktown", "short_name": "Glonktown", "start_url": "./", "s
           open(os.path.join(web, "manifest.webmanifest"), "w"))
 s = open(index, encoding="utf-8").read()
 s = re.sub(r"<title>[^<]*</title>", "<title>Glonktown</title>", s, count=1)
+# the tab icon: our app icon, not pygbag's default favicon.png
+s = re.sub(r'<link rel="icon"[^>]*>', '<link rel="icon" type="image/png" href="icon-192.png">', s, count=1)
 if "apple-touch-icon" not in s:
     tags = "".join(t + chr(10) for t in (
         '<link rel="manifest" href="manifest.webmanifest">',
